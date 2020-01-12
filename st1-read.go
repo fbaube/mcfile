@@ -2,9 +2,7 @@ package mcfile
 
 import (
 	"fmt"
-	// "encoding/xml"
 	S "strings"
-	// "log"
 	"errors"
 	"golang.org/x/net/html"
 	"github.com/fbaube/gparse"
@@ -20,8 +18,8 @@ import (
 // - - (§1) Use `golang.org/x/net/html` to get a tree of `html.Node`
 // - - (§1) From each Node make a `HtmlToken` (in a list?) incl. `GToken` and `GTag`
 
-// GetParseTokenization_Xml v GetParseTree_nonXml
-// GetNodelistFromParseTree_NonXml
+// GetParseTokenization_Xml v GetParseCST_nonXml
+// GetNodelistFromCST_NonXml
 // GetGTokensFromParseTokenization_Xml v
 // GetGTokensFromNodelist_NonXml
 
@@ -37,7 +35,7 @@ func (p *MCFile) st1_Read() *MCFile {
 	println("--> (1) Read")
 	return p.
 		st1a_PreMeta().
-		st1b_AST_notXml().
+		st1b_CST_notXml().
 		st1c_Tokenize().
 		st1d_PostMeta_notMkdn(). // XML per format; HTML <head>
 		st1e_GTokenize()
@@ -59,8 +57,8 @@ func (p *MCFile) st1a_PreMeta() *MCFile {
 	return p
 }
 
-// st1b_AST_notXml is Step 1b (MKDN,HTML): TBS...
-func (p *MCFile) st1b_AST_notXml() *MCFile {
+// st1b_CST_notXml is Step 1b (MKDN,HTML): TBS...
+func (p *MCFile) st1b_CST_notXml() *MCFile {
 	if p.GetError() != nil {
 		return p
 	}

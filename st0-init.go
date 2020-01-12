@@ -6,8 +6,9 @@ import (
 )
 
 // st0_Init does pre-processing prep.
-// Input: A bare-bones `MCFile` made from a `fileutils.CheckedPath`
-// made from a `fileutils.AbsFilePath` made from a CLI argument.
+// Input: A bare-bones `MCFile` made from a `fileutils.CheckedContent` made
+// from a `fileutils.BasicPath` made from a `fileutils.AbsFilePath` made from
+// a CLI argument. <br/>
 // For `Init()` to work, the `MCFile` *must* refer to a readable
 // file, and the field `MCFile.MType` *must* already be set. <br/>
 // Output: An `MCFile` that is in-memory and analyzed (shallowly)

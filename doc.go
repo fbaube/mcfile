@@ -1,5 +1,6 @@
 // Package mcfile defines a per-file structure `MCFile` that holds all
 // relevant per-file information. This includes:
+//
 // - file path info
 // - file content (UTF-8, tietysti)
 // - file type information (MIME and more)
@@ -7,7 +8,7 @@
 // case, i.e. XML, this comprises tokens, gtokens, gelms, gtree)
 //
 // For a discussion of tree walk functions, see `doc_wfn.go`
-// 
+//
 // Note that if we do not get an explicit XML DOCTYPE
 // declaration, there is some educated guesswork required.
 //
@@ -22,14 +23,15 @@
 // so it makes sense to then have separate steps for making
 // `GToken's, GTag's, GTree`. <br/>
 // MKDN and HTML analyses use higher-level libraries that
-// deliver parse trees. We choose to do this processing in
-// `package gparse` rather than in `package gtree`.
+// deliver CSTs (Concrete Syntax Tree, i.e. parse tree).
+// We choose to do this processing in `package gparse`
+// rather than in `package gtree`.
 //
 // MKDN gets a tree of `yuin/goldmark/ast/Node`, and HTML
 // gets a tree of stdlib `golang.org/x/net/html/Node`.
-// Since a parse tree is delivered fully-formed, it makes
-// sense to have Step 1 that attaches to each node its
-// `GToken´ and `GTag`, and then Step 2 that builds a `GTree`.
+// Since a CST is delivered fully-formed, it makes sense
+// to have Step 1 that attaches to each node its `GToken´
+// and `GTag`, and then Step 2 that builds a `GTree`.
 //
 // There are three major types of `MCFile`,
 // corresponding to how we process the file content:

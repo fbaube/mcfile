@@ -6,7 +6,7 @@ import (
 
 // st2_Tree takes the output of st1_Read - which at a minimum
 // is a complete set of `GToken`s - and creates a `GTree`.
-// Note that st1_Read might have generated an AST (MKDN and
+// Note that st1_Read might have generated an CST (MKDN and
 // HHTML do this) but in such cases, st1_Read also prepared
 // the list of corresponding `GToken`s.
 // - PrepareToTree() // e.g. GTags
