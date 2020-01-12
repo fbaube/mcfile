@@ -145,8 +145,8 @@ func (p *MCFile) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error) {
 		if newEnt.IsPublicID {
 			s1, s2, e = SU.SplitOffQuotedToken(extIDtext)
 			if e != nil {
-				elog.Printf("PUBLIC external ID not properly quoted: (%s) |%s| \n",
-					newEnt.NameAsRef, extIDtext)
+				/* elog.Printf("PUBLIC external ID not properly quoted: (%s) |%s| \n",
+					newEnt.NameAsRef, extIDtext) */
 				return nil, fmt.Errorf("Bad quotes on ID for %s ID", extIDtext)
 			}
 			newEnt.ID = S.TrimSpace(s1)
@@ -156,8 +156,8 @@ func (p *MCFile) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error) {
 		// The URL should be in quotes - either single or
 		// double - so if we don't find them, it's an error.
 		if !SU.IsXmlQuoted(extIDtext) {
-			elog.Printf("External ID's URL not properly quoted: (%s) |%s| \n",
-				newEnt.NameAsRef, extIDtext)
+			/* elog.Printf("External ID's URL not properly quoted: (%s) |%s| \n",
+				newEnt.NameAsRef, extIDtext) */
 			return nil, fmt.Errorf("Bad quotes on URL %s for external ID", extIDtext)
 		}
 		newEnt.URI = SU.MustXmlUnquote(extIDtext)
@@ -271,8 +271,8 @@ func (p *MCFile) DoEntitiesList() error {
 		if newEnt.IsPublicID {
 			s1, s2, e = SU.SplitOffQuotedToken(extIDtext)
 			if e != nil {
-				elog.Printf("PUBLIC external ID not properly quoted: (%s) |%s| \n",
-					newEnt.NameAsRef, extIDtext)
+				/* elog.Printf("PUBLIC external ID not properly quoted: (%s) |%s| \n",
+					newEnt.NameAsRef, extIDtext) */
 				return fmt.Errorf("Bad quotes on ID for %s ID", extIDtext)
 			}
 			newEnt.ID = S.TrimSpace(s1)
@@ -282,8 +282,8 @@ func (p *MCFile) DoEntitiesList() error {
 		// The URL should be in quotes - either single or
 		// double - so if we don't find them, it's an error.
 		if !SU.IsXmlQuoted(extIDtext) {
-			elog.Printf("External ID's URL not properly quoted: (%s) |%s| \n",
-				newEnt.NameAsRef, extIDtext)
+			/* elog.Printf("External ID's URL not properly quoted: (%s) |%s| \n",
+				newEnt.NameAsRef, extIDtext) */
 			return fmt.Errorf("Bad quotes on URL %s for external ID", extIDtext)
 		}
 		newEnt.URI = SU.MustXmlUnquote(extIDtext)
