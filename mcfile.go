@@ -109,6 +109,7 @@ func NewMCFile(pCC *FU.CheckedContent) *MCFile {
 		pCC.SetError(fmt.Errorf("NewMCFile <%s>: %w", pCC.AbsFilePath, pCC.GetError()))
 		return pMF
 	}
+	pMF.GLinkSet = new(GLinkSet)
 	return pMF
 }
 
