@@ -39,11 +39,13 @@ func (p *MCFile) st2a_PrepareToTree() *MCFile {
 		}
 	case "MKDN":
 		println("TODO> 2a. PrepareToTree MKDN")
+	case "HTML":
+		println("TODO> 2a. PrepareToTree HTML")
 	}
 	return p
 }
 
-// ParseIntoTree is Step 2b. <br/>
+// ParseIntoTree is Step 2b.
 func (p *MCFile) ParseIntoTree() *MCFile {
 	if p.GetError() != nil {
 		return p
@@ -61,6 +63,7 @@ func (p *MCFile) ParseIntoTree() *MCFile {
 		}
 		return p
 	case "MKDN":
+	case "HTML":
 		// TREE
 		p.GTree, e = gtree.NewGTreeFromGTags(p.GTags)
 		if e != nil {
@@ -107,6 +110,8 @@ func (p *MCFile) PostTreeMeta() *MCFile {
 		*/
 	case "MKDN":
 		println("TODO> 2c. NormalizeTree MKDN")
+	case "HTML":
+		println("TODO> 2c. NormalizeTree HTML")
 	}
 	return p
 }

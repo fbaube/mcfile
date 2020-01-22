@@ -1,7 +1,7 @@
 package mcfile
 
 import (
-	// "fmt"
+	"fmt"
 	"errors"
 	SU "github.com/fbaube/stringutils"
 )
@@ -24,6 +24,7 @@ func (p *MCFile) GetYamlHeader() *MCFile {
 	var rem string
 	var e error
 	yps, rem, e = SU.GetYamlMetadataAsPropSet(p.CheckedContent.Raw)
+	fmt.Printf("(D) mcfl.yaml: nProps<%d> Rem'ng:< %s >\n", len(yps), rem)
 	if e != nil {
 		println("--> YAML error:", e.Error())
 		return p

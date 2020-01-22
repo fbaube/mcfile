@@ -35,17 +35,17 @@ func (p *MCFile) st0a_SetTypeSpecific() *MCFile {
 		if !p.IsXML {
 			panic("Init error: is XML but:!XML?!")
 		}
-		p.TypeSpecificStructP = new(TypeXml)
+		p.FFSdataP = new(TypeXml)
 	case "MKDN":
 		if p.IsXML {
 			panic("Init error: is Mkdn but:XML?!")
 		}
-		p.TypeSpecificStructP = new(TypeMkdn)
+		p.FFSdataP = new(TypeMkdn)
 	case "HTML":
 		if !p.IsXML {
 			panic("Init error: is HTML but:!XML?!")
 		}
-		p.TypeSpecificStructP = new(TypeHtml)
+		p.FFSdataP = new(TypeHtml)
 	default:
 		panic("Init error: file type: " + p.FileType())
 	}
@@ -58,7 +58,7 @@ func (p *MCFile) st0b_SanityCheck() *MCFile {
 	var errmsg string
 	// fmt.Printf("TypeSpecific: set? <%b> type? <%t> \n",
 	//  p.TypeSpecific != nil, p.TypeSpecific)
-	switch p.TypeSpecificStructP.(type) {
+	switch p.FFSdataP.(type) {
 	case *TypeMkdn:
 		if p.MType[0] != "mkdn" {
 			errmsg = "TypeMarkdown: MType[0]!=\"mkdn\" ?!"
@@ -72,7 +72,8 @@ func (p *MCFile) st0b_SanityCheck() *MCFile {
 			errmsg = "TypeHtml: MType[0,1]!=\"xml:html\" ?!"
 		}
 	default:
-		errmsg = fmt.Sprintf("Unknown type for TypeSpecificStruct: %T", p.TypeSpecificStructP)
+		errmsg = fmt.Sprintf(
+			"Unknown type for file-format-specific data struct: %T", p.FFSdataP)
 	}
 	if errmsg != "" {
 		errmsg = "st[0b] " + errmsg

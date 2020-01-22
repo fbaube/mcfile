@@ -10,26 +10,32 @@ import (
 	FU "github.com/fbaube/fileutils"
 	MU "github.com/fbaube/miscutils"
 	SU "github.com/fbaube/stringutils"
-	// "github.com/fbaube/gctx"
 	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtree"
 	"github.com/pkg/errors"
 	_ "github.com/sanity-io/litter"
 )
 
-// MCFileProcessor signals an error by setting the embedded field `error`.
-// See `(*CheckedPath)` funcs `Error() string` and `GetError() error`.
+// MCFileProcessor is here for reference, altho the name is not really used.
+// It signals an error by setting the embedded field `error`; see
+// `(*CheckedPath)` funcs `Error() string` and `GetError() error`.
 type MCFileProcessor = func(*MCFile) *MCFile
 
+// CCTnode is a node in a CCT, which is a parse tree of HTML or Markdown-
+type CCTnode interface{}
+
 // The data structure food chain:
+// - CLI arg
 // - RelFilePath
 // - AbsFilePath
-// - CheckedPath
+// - BasicPath
+// - CheckedContent
 // - MCFile
-// - - TypeXml OR TypeMkdn
-// - MCTree
-// - ForesTree (with x-refs etc)
-// - Grove
+// - - TypeXml OR TypeHtml OR TypeMkdn
+// - CCT (Concrete Content Tree)
+// - ACT (Abstract Content Tree) (GTree embedded in MCFile)
+// - ForesTree (with x-refs etc) (TBD)
+// - Grove (?)
 
 // NOTE We always create an MCFile for every input file, so
 // it is a logical place to store a GTokenization and a GTree.
@@ -41,26 +47,46 @@ type MCFileProcessor = func(*MCFile) *MCFile
 // NOTE that we always create an MCFile for every input file, so
 // this is a logical place to store a GTokenization and a GTree.
 type MCFile struct {
-
 	MU.GCtx
+
+	// These THREE fields contain the file contents.
+	// CheckedContent.Raw == Header.Raw + Body
 	FU.CheckedContent // Field `Raw` has the raw content
 	*Header
 	Body string
-	*gtree.GTree // maybe not need GRootTag or RootOfASTp
-	TypeSpecificStructP interface{} // POINTER
 
-	RootOfASTp interface{} // POINTER
-	TypeSpecificTokenizationP interface{} // POINTER // []gparse.MarkupStringer
-	// Generalized tokens, converted from the precursor
-	// tokens (or, nodes) emitted by format-specific parsers.
-	// XML : https://golang.org/pkg/encoding/xml/#Token
-	// HTML: https://godoc.org/golang.org/x/net/html#Token
-	// MKDN: https://godoc.org/github.com/yuin/goldmark/ast#Node
-	// Each `gparse.GToken` wraps its precursor token.
+	// File-format-specific ptr to additional data - XML, HTML, MKDN
+	FFSdataP interface{}
+
+	// Data stuctures and conversions ("FFS" = file-format-specific):
+	// 1) CCT = Concrete Content Tree = FFS-nodes [not available for XML]
+	// 2) CFL = Concrete Flat List = FFS-nodes,tokens [incl. depth info]
+	// 3) AFL = Abstract Flat List = GTokens > GTags
+	// 4) ACT = Abstract Content Tree = GTags [assembled using depth info]
+
+	// CCT is the root of the CTT (tree); note that the type of the root
+	// node is normally the same as the type of the other nodes in the tree.
+
+	// CPR is ConcreteParseResults (i.e. parseutils.ParseResults_ffs)
+	// and it includes CCT and CFL.
+	CPR interface{}
+	// AFL
 	GTokens []*gparse.GToken
-	// Each `gtree.GTag` can be in a tree sructure,
-	// and wraps its corresponding `gparse.GToken`.
+	// AFL
 	GTags []*gtree.GTag
+	// ACT
+	*gtree.GTree // maybe not need GRootTag or RootOfASTp
+
+	// []GTokens are Generalized tokens, converted from the precursor
+	// tokens (or, nodes) emitted by format-specific parsers.
+	// - XML : https://golang.org/pkg/encoding/xml/#Token
+	// - HTML: https://godoc.org/golang.org/x/net/html#Token
+	// - MKDN: https://godoc.org/github.com/yuin/goldmark/ast#Node
+	// Each `gparse.GToken` wraps its precursor token.
+
+	// A  `gtree.GTag` wraps its corresponding
+	// `gparse.GToken` wraps its corresponding
+	// FFS-token
 
 	TagTally StringTally
 	AttTally StringTally
@@ -162,17 +188,24 @@ type Header struct {
 
 // TheXml is a convenience function.
 func (p *MCFile) TheXml() *TypeXml {
-	return (p.TypeSpecificStructP).(*TypeXml)
+	switch ptr := p.FFSdataP.(type) {
+	case *TypeXml:
+		return ptr // (p.FFSdataP).(*TypeXml)
+	case *TypeHtml:
+		return &(ptr.TypeXml) // (p.FFSdataP).(*TypeXml)
+	}
+	// return (p.FFSdataP).(*TypeXml)
+	panic("mcfile.TheXml")
 }
 
 // TheMkdn is a convenience function.
 func (p *MCFile) TheMkdn() *TypeMkdn {
-	return (p.TypeSpecificStructP).(*TypeMkdn)
+	return (p.FFSdataP).(*TypeMkdn)
 }
 
 // TheHtml is a convenience function.
 func (p *MCFile) TheHtml() *TypeHtml {
-	return (p.TypeSpecificStructP).(*TypeHtml)
+	return (p.FFSdataP).(*TypeHtml)
 }
 
 // At the top level (i.e. in main()), we don't wrap errors

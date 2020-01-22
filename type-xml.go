@@ -1,6 +1,6 @@
 package mcfile
 
-// propserties of a link: tag, att, text raw, ref abspath
+// propserties of a link: tag, att, text raw, ref abspath 
 
 import (
 	"bufio"

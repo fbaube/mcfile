@@ -1,10 +1,6 @@
 package mcfile
 
-// propserties of a link: tag, att, text raw, ref abspath
-
-import (
-	"github.com/fbaube/gparse"
-)
+// properties of a link: tag, att, text raw, ref abspath
 
 // The food chain:
 // RelFilePath
@@ -22,13 +18,8 @@ import (
 // and probably not for older versions of HTML (3, 4, etc.).
 //
 type TypeHtml struct {
-	// XmlDoctype is non-nil IFF a DOCTYPE directive was found
-	// (and this code sort of assumes that this is true).
-	*gparse.XmlDoctype
-
-	// These two distinctions are pretty fundamental to processing,
-	// so we dedicate booleans to them.
-	DoctypeIsDeclared, DoctypeIsGuessed bool
+	// Embedded!
+	TypeXml
 
 	// The article about go types for functions
 	// MAKE BLOCK LIST

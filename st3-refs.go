@@ -21,6 +21,8 @@ func (p *MCFile) DoBlockList() *MCFile {
 	switch p.FileType() {
 	case "XML":
 		println("TODO> 3a. DoBlockList XML")
+		case "HTML":
+			println("TODO> 3a. DoBlockList HTML")
 	case "MKDN":
 		println("TODO> 3a. DoBlockList MKDN")
 	}
@@ -35,6 +37,8 @@ func (p *MCFile) DoGLinks() *MCFile {
 	switch p.FileType() {
 	case "XML":
 		p.GatherXmlGLinks()
+	case "HTML":
+		println("TODO> 3b. DoGLinks HTML")
 	case "MKDN":
 		println("TODO> 3b. DoGLinks MKDN")
 	}
@@ -49,6 +53,8 @@ func (p *MCFile) DoTableOfContents() *MCFile {
 	switch p.FileType() {
 	case "XML":
 		println("TODO> 3c. DoTableOfContents XML")
+		case "HTML":
+			println("TODO> 3c. DoTableOfContents HTML")
 	case "MKDN":
 		println("TODO> 3c. DoTableOfContents MKDN")
 	}

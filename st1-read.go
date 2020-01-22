@@ -2,10 +2,9 @@ package mcfile
 
 import (
 	"fmt"
-	S "strings"
 	"errors"
-	"golang.org/x/net/html"
 	"github.com/fbaube/gparse"
+	PU "github.com/fbaube/parseutils"
 )
 
 // - "XML"
@@ -33,12 +32,12 @@ func (p *MCFile) st1_Read() *MCFile {
 		return p
 	}
 	println("--> (1) Read")
+	fmt.Printf("--> FileType<%s> MType<%v> \n", p.FileType(), p.MType)
 	return p.
 		st1a_PreMeta().
-		st1b_CST_notXml().
-		st1c_Tokenize().
-		st1d_PostMeta_notMkdn(). // XML per format; HTML <head>
-		st1e_GTokenize()
+		st1b_GetCPR().
+		st1c_MakeAFLfromCFL().
+		st1d_PostMeta_notmkdn() // XML per format; HTML <head>
 }
 
 // st1a_PreMeta is Step 1a: used when metadata can easily be
@@ -57,147 +56,117 @@ func (p *MCFile) st1a_PreMeta() *MCFile {
 	return p
 }
 
-// st1b_CST_notXml is Step 1b (MKDN,HTML): TBS...
-func (p *MCFile) st1b_CST_notXml() *MCFile {
-	if p.GetError() != nil {
-		return p
-	}
-	var e error
-	switch p.FileType() {
-	case "XML":
-		return p
-	case "MKDN":
-		var pTheMTokzn *gparse.MkdnTokenization
-		pTheMTokzn, e = gparse.MkdnTokenizeBuffer(p.CheckedContent.Raw)
-		p.RootOfASTp = pTheMTokzn.TreeRootNode
-		if e != nil {
-			e = errors.New("st[1b] " + e.Error())
-			p.Blare(p.OLP + e.Error())
-			p.SetError(e)
-			return p
-		}
-		p.TypeSpecificTokenizationP = pTheMTokzn
-		// p.TallyTags()
-	case "HTML":
-		// Parse returns the parse tree for the HTML from the given Reader.
-		// The input is assumed to be UTF-8 encoded.
-		var pTheHTokzn *gparse.HtmlTokenization
-		pTheHTokzn.TreeRootNodeP, e = html.Parse(S.NewReader(p.CheckedContent.Raw))
-		p.RootOfASTp = pTheHTokzn.TreeRootNodeP // gparse.HtmlAST{Node:*pHN}
-		if e != nil {
-			e = errors.New("st[1b] " + e.Error())
-			p.Blare(p.OLP + e.Error())
-			p.SetError(e)
-			return p
-		}
-		p.TypeSpecificTokenizationP = pTheHTokzn
-		// p.TallyTags()
-		return p
-	}
-	return p
-}
-
-// st1c_Tokenize is Step 1c: processing continues as far as it can whilst
-// still being done at the level of individual tokens, so that (for example)
-// every XML token is up-converted into a `GToken`.
-//
-// NOTE that if we have no separate tokenization step, and we go straight to
-// an AST (for example, Markdown and HTML), then h/ere we pause to make a list
-// of tokens, and up-convert them to `GToken`s, but we do not otherwise
-// process the AST at all yet.
-//
-func (p *MCFile) st1c_Tokenize() *MCFile {
+// st1b_GetCPR is Step 1b: Get ContreteParseResults
+func (p *MCFile) st1b_GetCPR() *MCFile {
 	if p.GetError() != nil {
 		return p
 	}
 	if len(p.CheckedContent.Raw) == 0 {
-		p.Whine(p.OLP + "st[1c] " + "Zero-length content")
+		p.Whine(p.OLP + "st[1b] " + "Zero-length content")
 		return p
 	}
 	var e error
-	var errmsg string
-
 	switch p.FileType() {
 	case "MKDN":
-		var pMT *gparse.MkdnTokenization
-		pMT = (p.TypeSpecificTokenizationP).(*gparse.MkdnTokenization)
-		// pMT = (&p.TreeRootNode).(*gparse.MkdnTokenization)
-		pMT.MkdnNodeListFromAST()
+		var pPR *PU.ConcreteParseResults_mkdn
+		pPR, e = PU.GetParseResults_mkdn(p.CheckedContent.Raw)
+		if e != nil {
+			e = errors.New("st[1b] " + e.Error())
+			p.Blare(p.OLP + e.Error())
+			p.SetError(e)
+			return p
+		}
+		p.CPR = pPR
+		fmt.Printf("==> MKDNtokens: got %d \n", len(pPR.NodeList))
+		// p.TallyTags()
 		return p
 	case "HTML":
-		var pHT *gparse.HtmlTokenization
-		pHT = (p.TypeSpecificTokenizationP).(*gparse.HtmlTokenization)
-		// pMT = (&p.TreeRootNode).(*gparse.MkdnTokenization)
-		pHT.HtmlNodeListFromAST()
+		var pPR *PU.ConcreteParseResults_html
+		pPR, e = PU.GetParseResults_html(p.CheckedContent.Raw)
+		if e != nil {
+			e = errors.New("st[1b] " + e.Error())
+			p.Blare(p.OLP + e.Error())
+			p.SetError(e)
+			return p
+		}
+		p.CPR = pPR
+		fmt.Printf("==> HTMLtokens: got %d \n", len(pPR.NodeList))
+		// p.TallyTags()
 		return p
 	case "XML":
-		var TheXTokzn gparse.XmlTokenization
-		TheXTokzn = *new(gparse.XmlTokenization)
-		// TheXTokzn.Tokens = make([]xml.Token, 0)
-		TheXTokzn.Tokens, e = gparse.XmlTokenizeBuffer(p.CheckedContent.Raw)
+		var pPR *PU.ConcreteParseResults_xml
+		pPR, e := PU.GetParseResults_xml(p.CheckedContent.Raw)
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
 		}
-		// TypeSpecificTokens []gparse.MarkupStringer
-		p.TypeSpecificTokenizationP = TheXTokzn
-	}
-	if e != nil {
-		errmsg = "st[1c] " + e.Error()
-		p.Blare(p.OLP + errmsg)
-		p.SetError(e)
+		p.CPR = pPR
+		fmt.Printf("==> XMLtokens: got %d \n", len(pPR.NodeList))
 		return p
+	default:
+		panic("st1b_GetCPR: bad file type: " + p.FileType())
 	}
-	p.TallyTags()
-	// fmt.Printf("==> Tags: %v \n", pGF.TagTally)
-	// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
-	return p
 }
 
-// st1d_PostMeta_notMkdn is Step 1d (XML,HTML): XML per format; HTML <head>
-func (p *MCFile) st1d_PostMeta_notMkdn() *MCFile {
-	switch p.FileType() {
-	case "MKDN":
-		return p
-	case "HTML":
-		// Inside <head>: <meta> <title> <base> <link> <style>
-		// See also: https://gist.github.com/lancejpollard/1978404
-		return p
-	}
-	return p
-}
 
-// st1e_GTokenize is Step 1e: TBS...
-func (p *MCFile) st1e_GTokenize() *MCFile {
+// st1c_MakeAFLfromCFL is Step 1d:
+// Make Abstract Flat List from Concrete Flat List
+func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
 	if p.GetError() != nil {
 		return p
 	}
 	var e error
 	var errmsg string
+	var GTs []*gparse.GToken
 
+		switch p.FileType() {
+		case "MKDN":
+			GTs, e = gparse.DoGTokens_mkdn(p.CPR.(*PU.ConcreteParseResults_mkdn))
+			if e != nil {
+				p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
+			}
+			p.GTokens = GTs
+			return p
+		case "HTML":
+			GTs, e = gparse.DoGTokens_html(p.CPR.(*PU.ConcreteParseResults_html))
+			if e != nil {
+				p.SetError(fmt.Errorf("st1d: html.GTs: %w", e))
+			}
+			p.GTokens = GTs
+			return p
+		case "XML":
+			GTs, e = gparse.DoGTokens_xml(p.CPR.(*PU.ConcreteParseResults_xml))
+			if e != nil {
+				e = fmt.Errorf("GToken-ization failed: %w", e)
+			}
+			if e != nil {
+				errmsg = "st[1f] " + e.Error()
+				p.Blare(p.OLP + errmsg)
+				p.SetError(e)
+				return p
+			}
+			p.TallyTags()
+			// fmt.Printf("==> Tags: %v \n", pGF.TagTally)
+			// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
+			p.GTokens = GTs
+		}
+		return p
+	}
+
+// st1d_PostMeta_notmkdn is Step 1c (XML,HTML): XML per format; HTML <head>
+func (p *MCFile) st1d_PostMeta_notmkdn() *MCFile {
 	switch p.FileType() {
 	case "MKDN":
-		// TBS: CONVERT THE FLAT LIST
+		// Markdown YAML metadata was processed in step st1a
 		return p
-	case "HTML":
-		// TBS: CONVERT THE FLAT LIST
+	case "HTML": /*
+		var pPR *PU.ConcreteParseResults_html
+		pPR = p.CPR.(*PU.ConcreteParseResults_html)
+		z := pPR. */
+		// Inside <head>: <meta> <title> <base> <link> <style>
+		// See also: https://gist.github.com/lancejpollard/1978404
 		return p
 	case "XML":
-		// XML-Tokenize
-		var XT gparse.XmlTokenization
-		XT = p.TypeSpecificTokenizationP.(gparse.XmlTokenization)
-		p.GTokens, e = gparse.GTokznFromXmlTokens(XT.Tokens)
-		if e != nil {
-			e = fmt.Errorf("GToken-ization failed: %w", e)
-		}
-		if e != nil {
-			errmsg = "st[1b] " + e.Error()
-			p.Blare(p.OLP + errmsg)
-			p.SetError(e)
-			return p
-		}
-		p.TallyTags()
-		// fmt.Printf("==> Tags: %v \n", pGF.TagTally)
-		// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
+		// [Lw]DITA stuff, ?DublinCore
 	}
 	return p
 }

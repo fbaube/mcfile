@@ -158,7 +158,7 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
 				s, _ := FP.Abs(FP.Join(p.BasicPath.AbsFilePathParts.Echo(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
-				println("URI AbsFP:", FU.NiceFP(pGL.AbsFP.S()))
+				println("URI AbsFP:", FU.Tilded(pGL.AbsFP.S()))
 			}
 			switch pGL.Att {
 			// Link SOURCES

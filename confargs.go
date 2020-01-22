@@ -50,7 +50,7 @@ func myUsage() {
 	fmt.Println(CA.AppName, "[-d] [-g] [-h] [-m] [-p] [-v] [-z] [-D] [-d dbdir] [-r port] Infile")
 	fmt.Println("   Process mixed content XML, XHTML (XDITA), and Markdown (MDITA) input.")
 	fmt.Println("   Infile is a single file or directory name; no wildcards (?,*).")
-	fmt.Println("   Infile (if a directory) is processed recursively.")
+	fmt.Println("          If a directory, it is processed recursively.")
 	fmt.Println("   Infile may be \"-\" for Stdin: input typed (or pasted) interactively")
 	fmt.Println("          is written to file ./Stdin.xml for processing")
 	flag.Usage()
@@ -111,7 +111,7 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 	// == Figure out what CLI name we were called as ==
 	osex, _ := os.Executable()
 	// The call to FP.Clean(..) is needed (!!)
-	println("==> Running:", FU.NiceFP(FP.Clean(osex)))
+	println("==> Running:", FU.Tilded(FP.Clean(osex)))
 
 	// == Locate xmllint for doing XML validations ==
 	xl, e := exec.LookPath("xmllint")
@@ -166,7 +166,7 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 
 	// If the absolute path does not match the argument provided, inform the user.
 	if CA.In.AbsFilePath.S() != CA.In.RelFilePath { // CA.In.ArgFilePath {
-		println("    -->" /* FU.NiceFP */, CA.In.AbsFilePath.S())
+		println("==> Input:" /* FU.NiceFP */, FU.Tilded(CA.In.AbsFilePath.S()))
 	}
 	if CA.In.IsOkayDir() {
 		println("    --> The input is a directory and will be processed recursively.")
@@ -245,7 +245,7 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 		}
 		println("==> Catalog:", pCA.XmlCat.RelFilePath)
 		if pCA.XmlCat.AbsFilePath.S() != pCA.XmlCat.RelFilePath {
-			println("     --> i.e. ", FU.NiceFP(pCA.XmlCat.AbsFilePath.S()))
+			println("     --> i.e. ", FU.Tilded(pCA.XmlCat.AbsFilePath.S()))
 		}
 	}
 	if gotS { // -s
@@ -262,11 +262,11 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 		// pCA.XmlCatSearch.ProcessFilePathArg(CA.XmlCatSearch.ArgFilePath)
 		pCA.XmlCatSearch = *FU.NewBasicPath(CA.XmlCatSearch.RelFilePath)
 		if CA.XmlCatSearch.AbsFilePath.S() != pCA.XmlCatSearch.RelFilePath {
-			println("     --> i.e. ", FU.NiceFP(pCA.XmlCatSearch.AbsFilePath.S()))
+			println("     --> i.e. ", FU.Tilded(pCA.XmlCatSearch.AbsFilePath.S()))
 		}
 		if !pCA.XmlCatSearch.IsOkayDir() {
 			println("==> ERROR: Schema path is not a readable directory: " +
-				FU.NiceFP(pCA.XmlCatSearch.AbsFilePath.S()))
+				FU.Tilded(pCA.XmlCatSearch.AbsFilePath.S()))
 			return fmt.Errorf("mcfile.ConfArgs.ProcCatalArgs.abs<%s>: %w",
 				pCA.XmlCatSearch.AbsFilePath, e)
 		}
