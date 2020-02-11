@@ -125,14 +125,12 @@ func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
 				p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
 			}
 			p.GTokens = GTs
-			return p
 		case "HTML":
 			GTs, e = gparse.DoGTokens_html(p.CPR.(*PU.ConcreteParseResults_html))
 			if e != nil {
 				p.SetError(fmt.Errorf("st1d: html.GTs: %w", e))
 			}
 			p.GTokens = GTs
-			return p
 		case "XML":
 			GTs, e = gparse.DoGTokens_xml(p.CPR.(*PU.ConcreteParseResults_xml))
 			if e != nil {
@@ -149,6 +147,7 @@ func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
 			// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
 			p.GTokens = GTs
 		}
+		fmt.Printf("st1c_MakeAFLfromCFL: nGTokens: %d %d \n", len(p.GTokens), len(GTs))
 		return p
 	}
 

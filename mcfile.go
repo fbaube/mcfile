@@ -9,7 +9,7 @@ import (
 
 	FU "github.com/fbaube/fileutils"
 	MU "github.com/fbaube/miscutils"
-	SU "github.com/fbaube/stringutils"
+	// SU "github.com/fbaube/stringutils"
 	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtree"
 	"github.com/pkg/errors"
@@ -117,7 +117,7 @@ func (p *MCFile) LogIt(s string) {
 func (p *MCFile) Blare(s string) {
 	p.LogIt(s)
 	fmt.Fprintf(os.Stderr, s)
-	println("Bogus SU ref \n", SU.GetIndent(2))
+	// println("Bogus SU ref \n", SU.GetIndent(2))
 }
 
 // Whine is used for non-fatal errors, i.e. strong warnings.

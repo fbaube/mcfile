@@ -1,7 +1,10 @@
 package mcfile
 
 import (
+	"os"
+	"fmt"
 	"github.com/fbaube/gtree"
+	"github.com/fbaube/gparse"
 )
 
 // st2_Tree takes the output of st1_Read - which at a minimum
@@ -38,9 +41,17 @@ func (p *MCFile) st2a_PrepareToTree() *MCFile {
 			return p // errors.Wrap(e, "MakeGTagsFromGTokens")
 		}
 	case "MKDN":
-		println("TODO> 2a. PrepareToTree MKDN")
+		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
+		if e != nil {
+			p.SetError(e)
+			return p // errors.Wrap(e, "MakeGTagsFromGTokens")
+		}
 	case "HTML":
-		println("TODO> 2a. PrepareToTree HTML")
+		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
+		if e != nil {
+			p.SetError(e)
+			return p // errors.Wrap(e, "MakeGTagsFromGTokens")
+		}
 	}
 	return p
 }
@@ -51,6 +62,8 @@ func (p *MCFile) ParseIntoTree() *MCFile {
 		return p
 	}
 	var e error
+	fmt.Printf("==> mcfl.st2b: FileType<%s> nGTags<%d> \n",
+		p.FileType(),len(p.GTags))
 	switch p.FileType() {
 	case "XML":
 		// TREE
@@ -59,17 +72,27 @@ func (p *MCFile) ParseIntoTree() *MCFile {
 		p.GTree, e = gtree.NewGTreeFromGTags(p.GTags)
 		if e != nil {
 			p.SetError(e)
+			println("==> mcfl.st2b: Error!:", e)
 			return p // errors.Wrap(e, "NewGTreeFromGTags")
 		}
-		return p
-	case "MKDN":
-	case "HTML":
+	case "MKDN", "HTML":
 		// TREE
 		p.GTree, e = gtree.NewGTreeFromGTags(p.GTags)
 		if e != nil {
 			p.SetError(e)
+			println("==> mcfl.st2b: Error!:", e)
 			return p // errors.Wrap(e, "NewGTreeFromGTags")
 		}
+	default:
+		println("==> mcfl.st2b: bad FileType:", p.FileType)
+	}
+	if p.GTree == nil {
+		println("==> mcfl.st2b: NIL Gtree !!")
+	}
+	if p.GTree != nil {
+		// println(p.GTree.String())
+		// gparse.DumpTo(p.GTree, os.Stdout)
+		gparse.DumpTo(p.GTokens, os.Stdout)
 	}
 	return p
 }
