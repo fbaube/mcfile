@@ -21,8 +21,8 @@ func (p *MCFile) DoBlockList() *MCFile {
 	switch p.FileType() {
 	case "XML":
 		println("TODO> 3a. DoBlockList XML")
-		case "HTML":
-			println("TODO> 3a. DoBlockList HTML")
+	case "HTML":
+		println("TODO> 3a. DoBlockList HTML")
 	case "MKDN":
 		println("TODO> 3a. DoBlockList MKDN")
 	}

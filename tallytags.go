@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"sort"
 	S "strings"
-
-	"github.com/fbaube/gparse"
+	"github.com/fbaube/gtoken"
 )
 
 var GlobalTagTally StringTally
@@ -33,7 +32,7 @@ func (p *MCFile) TallyTags() {
 	}
 }
 
-func AddInGName(ElmT StringTally, AttT StringTally, gT *gparse.GToken) {
+func AddInGName(ElmT StringTally, AttT StringTally, gT *gtoken.GToken) {
 	// Is there an entry for the tag yet ?
 	// if val, ok := dict["foo"]; ok {
 	var ok bool
@@ -45,7 +44,7 @@ func AddInGName(ElmT StringTally, AttT StringTally, gT *gparse.GToken) {
 	}
 	// Now process the attributes
 	for _, A := range gT.GAtts { // A is a *GAtt i.e. *xml.Attr
-		var gat gparse.GAtt = A // *A
+		var gat gtoken.GAtt = A // *A
 		var xat = xml.Attr(gat)
 		var sat = xat.Name.Local
 		if n, ok = AttT[sat]; ok {

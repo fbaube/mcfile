@@ -1,14 +1,14 @@
 package mcfile
 
 import (
-	"github.com/fbaube/gparse"
+	"github.com/fbaube/gtoken"
 	// "github.com/dimchansky/utfbom"
 )
 
 type BigFields struct {
 	hed  *Header
 	bod  string
-	gtox []*gparse.GToken
+	gtox []*gtoken.GToken
 	// gtags []*gtree.GTag
 }
 

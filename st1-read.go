@@ -3,7 +3,7 @@ package mcfile
 import (
 	"fmt"
 	"errors"
-	"github.com/fbaube/gparse"
+	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
 )
 
@@ -116,23 +116,23 @@ func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
 	}
 	var e error
 	var errmsg string
-	var GTs []*gparse.GToken
+	var GTs []*gtoken.GToken
 
 		switch p.FileType() {
 		case "MKDN":
-			GTs, e = gparse.DoGTokens_mkdn(p.CPR.(*PU.ConcreteParseResults_mkdn))
+			GTs, e = gtoken.DoGTokens_mkdn(p.CPR.(*PU.ConcreteParseResults_mkdn))
 			if e != nil {
 				p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
 			}
 			p.GTokens = GTs
 		case "HTML":
-			GTs, e = gparse.DoGTokens_html(p.CPR.(*PU.ConcreteParseResults_html))
+			GTs, e = gtoken.DoGTokens_html(p.CPR.(*PU.ConcreteParseResults_html))
 			if e != nil {
 				p.SetError(fmt.Errorf("st1d: html.GTs: %w", e))
 			}
 			p.GTokens = GTs
 		case "XML":
-			GTs, e = gparse.DoGTokens_xml(p.CPR.(*PU.ConcreteParseResults_xml))
+			GTs, e = gtoken.DoGTokens_xml(p.CPR.(*PU.ConcreteParseResults_xml))
 			if e != nil {
 				e = fmt.Errorf("GToken-ization failed: %w", e)
 			}
@@ -147,7 +147,7 @@ func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
 			// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
 			p.GTokens = GTs
 		}
-		fmt.Printf("st1c_MakeAFLfromCFL: nGTokens: %d %d \n", len(p.GTokens), len(GTs))
+		// fmt.Printf("st1c_MakeAFLfromCFL: nGTokens: %d %d \n", len(p.GTokens), len(GTs))
 		return p
 	}
 

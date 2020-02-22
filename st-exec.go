@@ -54,7 +54,7 @@ func (p *MCFile) ExecuteStages() *MCFile {
 		st0_Init().
 		st1_Read().
 		st2_Tree().
-		st3_Refs().
+		st3_Refs() /* .
 		// Stage/Step 4 works on all input files at once !
-		st4_Done()
+		st4_Done() */
 }

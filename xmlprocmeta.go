@@ -2,6 +2,7 @@ package mcfile
 
 import (
 	"github.com/fbaube/gparse"
+	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 	SU "github.com/fbaube/stringutils"
 	"github.com/pkg/errors"
@@ -122,7 +123,7 @@ func (p *MCFile) RefineDirectives() error {
 		// NOTATION Name ExtID
 		// ilog.Printf("Dir.PRE |%s|%s|", RT.string1, RT.string2)
 
-		pTag.TTType = gparse.TTType(pTag.Keyword)
+		pTag.TTType = gtoken.TTType(pTag.Keyword)
 		if pTag.TTType == "Dir" {
 			panic("YIKES, leftover Dir Tagtype")
 		}

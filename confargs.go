@@ -9,13 +9,12 @@ import (
 	"os/exec"
 	FP "path/filepath"
 
-	// "github.com/davecgh/go-spew/spew"
 	"github.com/fbaube/db"
 	FU "github.com/fbaube/fileutils"
 	"github.com/fbaube/gparse"
-	// "github.com/fbaube/glog"
 	SU "github.com/fbaube/stringutils"
 	MU "github.com/fbaube/miscutils"
+	WU "github.com/fbaube/wasmutils"
 	"errors"
 )
 
@@ -108,21 +107,21 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 	CA.AppName = appName
 	var e error
 
-	// == Figure out what CLI name we were called as ==
-	osex, _ := os.Executable()
-	// The call to FP.Clean(..) is needed (!!)
-	println("==> Running:", FU.Tilded(FP.Clean(osex)))
-
-	// == Locate xmllint for doing XML validations ==
-	xl, e := exec.LookPath("xmllint")
-	if e != nil {
-		xl = "not found"
-		if CA.Validate {
-			println("==> Validation is not possible: xmllint cannot be found")
+	if !WU.IsWasm() {
+		// == Figure out what CLI name we were called as ==
+		osex, _ := os.Executable()
+		// The call to FP.Clean(..) is needed (!!)
+		println("==> Running:", FU.Tilded(FP.Clean(osex)))
+		// == Locate xmllint for doing XML validations ==
+		xl, e := exec.LookPath("xmllint")
+		if e != nil {
+			xl = "not found"
+			if CA.Validate {
+				println("==> Validation is not possible: xmllint cannot be found")
+			}
 		}
+		println("==> xmllint:", xl)
 	}
-	println("==> xmllint:", xl)
-
 	// == Examine CLI invocation flags ==
 	flag.Parse()
 	if len(osArgs) < 2 || nil == flag.Args() || 0 == len(flag.Args()) {
@@ -141,13 +140,18 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 
 	// Handle case where XML comes from standard input i.e. os.Stdin
 	if flag.Args()[0] == "-" {
-		stat, e := os.Stdin.Stat()
-		checkbarf(e, "Cannot Stat() Stdin")
-		if (stat.Mode() & os.ModeCharDevice) != 0 {
-			println("==> Reading from Stdin; press ^D right after a newline to end")
+		if WU.IsWasm() {
+			println("==> Trying to read from Stdin; press ^D right after a newline to end")
 		} else {
-			println("==> Reading Stdin from a file or pipe")
+			stat, e := os.Stdin.Stat()
+			checkbarf(e, "Cannot Stat() Stdin")
+			if (stat.Mode() & os.ModeCharDevice) != 0 {
+				println("==> Reading from Stdin; press ^D right after a newline to end")
+				} else {
+					println("==> Reading Stdin from a file or pipe")
+				}
 		}
+
 		// bb, e := ioutil.ReadAll(os.Stdin)
 		stdIn := FU.GetStringFromStdin()
 		checkbarf(e, "Cannot read from Stdin")

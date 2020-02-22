@@ -85,6 +85,7 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 	// ## // ## // var Dir FU.AbsFilePath = pGF.InputFile.FileFullName.DirPath
 	// Iterate over all GTokens.
 	for _, GT := range p.GTokens {
+		if GT == nil { continue }
 		// If it's not a Start Element, skip it
 		if GT.TTType != "SE" {
 			continue

@@ -10,7 +10,7 @@ import (
 	FU "github.com/fbaube/fileutils"
 	MU "github.com/fbaube/miscutils"
 	// SU "github.com/fbaube/stringutils"
-	"github.com/fbaube/gparse"
+	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 	"github.com/pkg/errors"
 	_ "github.com/sanity-io/litter"
@@ -71,7 +71,7 @@ type MCFile struct {
 	// and it includes CCT and CFL.
 	CPR interface{}
 	// AFL
-	GTokens []*gparse.GToken
+	GTokens []*gtoken.GToken
 	// AFL
 	GTags []*gtree.GTag
 	// ACT

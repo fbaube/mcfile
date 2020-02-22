@@ -4,7 +4,7 @@ import (
 	"os"
 	// "fmt"
 	"github.com/fbaube/gtree"
-	"github.com/fbaube/gparse"
+	"github.com/fbaube/gtoken"
 )
 
 // st2_Tree takes the output of st1_Read - which at a minimum
@@ -74,7 +74,7 @@ func (p *MCFile) st2b_ParseIntoTree() *MCFile {
 		println("==> mcfl.st2b: NIL Gtree !!")
 	}
 	if p.GTree != nil {
-		gparse.DumpTo(p.GTokens, os.Stdout)
+		gtoken.DumpTo(p.GTokens, os.Stdout)
 	}
 	return p
 }
