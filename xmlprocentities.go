@@ -134,7 +134,7 @@ func (p *MCFile) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error) {
 		// It would be nice to use Golang's CSV parswer, per
 		// https://stackoverflow.com/questions/47489745/
 		// splitting-a-string-at-space-except-inside-quotation-marks-go
-		// NOTE tho that unfortunately it only works with double quotes,
+		// NOTE Unfortunately it only works with double quotes,
 		// NOT single quotes !
 		// r := csv.NewReader(S.NewReader(extIDtext))
 		// r.Comma = ' ' // space
@@ -260,7 +260,7 @@ func (p *MCFile) DoEntitiesList() error {
 		// It would be nice to use Golang's CSV parswer, per
 		// https://stackoverflow.com/questions/47489745/
 		// splitting-a-string-at-space-except-inside-quotation-marks-go
-		// NOTE tho that unfortunately it only works with double quotes,
+		// NOTE Unfortunately it only works with double quotes,
 		// NOT single quotes !
 		// r := csv.NewReader(S.NewReader(extIDtext))
 		// r.Comma = ' ' // space
@@ -323,9 +323,9 @@ func (p *MCFile) SubstituteEntities() error {
 		}
 		chgs = false
 
-		// TODO TODO TODO
+		// TODO 
 
-		// First detemrine the longest sub string, and pick an arbitrary multiple
+		// First determine the longest sub string, and pick an arbitrary multiple
 		// of it (such as 20x) as an absolute upper limit for subs done here. Do
 		// this is order to prevent a DOS attack via entity explosion.
 
@@ -375,7 +375,7 @@ func (p *MCFile) SubstituteEntities() error {
 					}
 					// OK, let's brute force it
 					if -1 != S.Index(s2check, sEnt) {
-						// FIXME FIXME fmt.Printf("(DD) Got a hit? |%s|%s| \n", sEnt, s2check)
+						// FIXME:30 FIXME fmt.Printf("(DD) Got a hit? |%s|%s| \n", sEnt, s2check)
 					}
 				}
 			}

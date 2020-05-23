@@ -12,7 +12,7 @@ import (
 	// SU "github.com/fbaube/stringutils"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
-	"github.com/pkg/errors"
+	// "github.com/pkg/errors"
 	_ "github.com/sanity-io/litter"
 )
 
@@ -44,16 +44,19 @@ type CCTnode interface{}
 // its deduced (i.e. guessed) properties (MIME, XML, DITA),
 // its markup element tree, its output paths & files, and its
 // references to external files, URLs, and other content files.
-// NOTE that we always create an MCFile for every input file, so
+// NOTE We always create an MCFile for every input file, so
 // this is a logical place to store a GTokenization and a GTree.
 type MCFile struct {
 	MU.GCtx
 
 	// These THREE fields contain the file contents.
 	// CheckedContent.Raw == Header.Raw + Body
-	FU.CheckedContent // Field `Raw` has the raw content
-	*Header
-	Body string
+	FU.CheckedContent // Field `Raw` has the raw content of the entire file
+	// Header (i.e. Metadata) -- see comments below, after this struct def
+	Meta_raw   string
+	MetaFormat string // "yaml", "dita", "html", etc.
+	MetaProps  map[string]string
+	Text_raw   string
 
 	// File-format-specific ptr to additional data - XML, HTML, MKDN
 	FFSdataP interface{}
@@ -97,13 +100,27 @@ type MCFile struct {
 	// GATHER ToC ELEMENTS
 	// Sep. XML types into a map of callback functions ?
 
-	FU.OutputFiles // NOTE Does this belong here ? Not sure.
+	// FU.OutputFiles // NOTE Does this belong here ? Not sure.
 
 	*GLinkSet
 
-	// DitaInfo is two enums: Markup language & Content type
+	// DitaInfo is two enums (so far): Markup language & Content type.
+	// ML: "1.2", "1.3", "XDITA", "HDITA", "MDATA".
+	// CT: "Map", "Bookmap", "Topic", "Task", "Concept", "Reference",
+  // "Dita", "Glossary", "Conrefs", "LwMap", "LwTopic"
 	*DitaInfo
 }
+
+// The terms "header" and "metadata" are used interchangeably.
+// In default usage, this is metadata stored *in* the file, e.g.
+// YAML in LwDITA Markdown-XP, or `head/meta` tags in [X]HTML.
+// (Obv we want to store as much metadata as possible in-file rather
+// than externally, and we will need to map select terms btwn formats.)
+// We store it at the same level as the file's "content", aka "Text".
+// Metadata stored this way is easier to manage in a format-independent
+// manner, and it is easier to add to it and modify it at runtime, and
+// (TODO) when it is stored as JSON K/V pairs, it can be accessed from
+// the command line using Sqlite (and other nifty) tools.
 
 func (p *MCFile) LogIt(s string) {
 	if p.Log != nil {
@@ -155,7 +172,8 @@ func NewMCFileFromPath(path string) *MCFile {
 		println("====")
 	*/
 	pCC := pBP.ReadContent()
-	pCC.InspectFile().SetFileMtype()
+	pCC.InspectFile()
+	pCC.SetFileMtype()
 	println("--> MType:", pCC.Mstring())
 	/*
 		println("====")
@@ -170,20 +188,6 @@ func NewMCFileFromPath(path string) *MCFile {
 		return pMF
 	}
 	return pMF
-}
-
-// Header holds metadata. In default usage, this is metadata stored in the
-// file, e.g. YAML in LwDITA Markdown-XP, or `head/meta` tags in [X]HTML.
-// We store it here so that it is at the same level as the file "content",
-// and then we can remove it from `Raw` and store it in `Body`.
-// Metadata stored this way is easier to manage in a format-independent
-// manner, and it is easier to add to it and modify it at runtime, and
-// (TODO) when it is stored as JSON K/V pairs, it can be accessed from
-// the command line using Sqlite (and other nifty) tools.
-type Header struct {
-	HedRaw string
-	Format string // "yaml", "dita", "html", etc.
-	Props  map[string]string
 }
 
 // TheXml is a convenience function.
@@ -229,11 +233,11 @@ func (p *MCFile) Errorbarf(e error, s string) bool {
 
 func (p *MCFile) Lengths() string {
 	var hed string = "nil"
-	if p.Header != nil {
-		hed = strconv.Itoa(len(p.Header.HedRaw))
-	}
-	return fmt.Sprintf("raw.text<%d> hdr.meta<%d> cnt.body<%d>",
-		len(p.CheckedContent.Raw), len(hed), len(p.Body))
+	// if p.Header != nil {
+		hed = strconv.Itoa(len(p.Meta_raw))
+	// }
+	return fmt.Sprintf("raw.text<%d> hdr.props.meta<%d> cnt.body.text<%d>",
+		len(p.CheckedContent.Raw), len(hed), len(p.Text_raw))
 }
 
 // String is developer output. Hafta dump:
@@ -243,8 +247,8 @@ func (p MCFile) String() string {
 	var BF BigFields = p.PushBigFields()
 
 	// s := fmt.Sprintf("[len:%d]", p.Size())
-	s := fmt.Sprintf("(DD:GFILE)||%s||OtFiles|%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		p.BasicPath.String(), p.OutputFiles.String(), p.GTree.String(),
+	s := fmt.Sprintf("(DD:GFILE)||%s||OtFiles|ss||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
+		p.BasicPath.String(), /* p.OutputFiles.String(), */ p.GTree.String(),
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {
@@ -258,8 +262,8 @@ func (p MCFile) String() string {
 	/* ==
 	if p.GEnts != nil {
 		// FIXME s += fmt.Sprintf("GEnts|%s||", p.GEnts.String())
-	}
-	if p.DElms != nil {
+		 * 	}
+		 * 	if p.DElms != nil {
 		// FIXME s += fmt.Sprintf("DElms|%s||", p.DElms.String())
 	}
 	== */
@@ -274,11 +278,14 @@ func (p MCFile) String() string {
 // ConfigureOutputFiles might do nothing, depending on the dirSuffix
 // (it can be "") and the GFile's InputFile.
 func (p *MCFile) ConfigureOutputFiles(dirSuffix string) error {
+	println("mcfile.CfgOutputFiles OMITTED")
+	/*
 	pOF, e := p.CheckedContent.NewOutputFiles(dirSuffix)
 	if e != nil {
 		return errors.Wrapf(e,
 			"mcfile.ConfigureOutputFiles<%s>", p.BasicPath.AbsFilePathParts.String())
 	}
 	p.OutputFiles = *pOF
+	*/
 	return nil
 }

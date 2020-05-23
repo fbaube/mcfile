@@ -30,16 +30,16 @@ func (p *MCFile) DoValidation() (dtdS string, docS string, errS string) {
 	// print("DTD OK; ")
 	// NOTE At CLI, can use :: alias validate-lw-topic =
 	// 'xmllint --noout --dtdvalid file:///LwDTD/lw-topic.dtd'
-	// NOTE that if we don't specify the DTD, then xmllint only checks
-	// for well-formedness, but we've already done this ourselves when
+	// NOTE If we don't specify the DTD, then xmllint only checks for
+	// well-formedness, but we've already done this ourselves when
 	// building the GTree. So, we should specify the DTD when we invoke
 	// xmllint, or else not even bother.
-	// NOTE that we have to pass the flag "--nowarning", or else
+	// NOTE We have to pass the flag "--nowarning", or else
 	// validation will fail if the SYSTEM ID can't be found.
 	stdOut, stdErr, err := MU.RunCommand(
 		"xmllint", "--noout", "--nowarning", "--nonet", "--dtdvalid",
 		"file://"+string(val.AbsFilePath), p.AbsFilePathParts.String())
-	// NOTE that the return value "err" is dumb:
+	// NOTE:1060 that the return value "err" is dumb:
 	// it contains stuff like "exit status 3".
 	if S.TrimSpace(stdErr) == "" {
 		// print("Document is valid \n")

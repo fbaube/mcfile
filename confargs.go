@@ -206,16 +206,16 @@ func (pCA *ConfigurationArguments) ProcessDatabaseArgs() error {
 	if !mustAccessTheDB {
 		return nil
 	}
-	pCA.DBhandle, e = db.NewlyConfiguredMmmcDB(pCA.DBdirPath)
+	pCA.DBhandle, e = db.NewMmmcDB(pCA.DBdirPath)
 	if e != nil {
 		return fmt.Errorf("DB setup failure: %w", e)
 	}
-	theDBexists = CA.DBhandle.FilePath.Exists
+	theDBexists = CA.DBhandle.BasicPath.Exists
 	var s = "exists"
 	if !theDBexists {
 		s = "does not exist"
 	}
-	fmt.Printf("==> DB %s: %s\n", s, pCA.DBhandle.FilePath.AbsFilePath)
+	fmt.Printf("==> DB %s: %s\n", s, pCA.DBhandle.BasicPath.AbsFilePath)
 
 	if pCA.DBdoZeroOut {
 		println("    --> Zeroing out DB")
@@ -223,7 +223,7 @@ func (pCA *ConfigurationArguments) ProcessDatabaseArgs() error {
 		pCA.DBhandle.ForceEmpty()
 	} else {
 		pCA.DBhandle.DupeCurrentToBackup()
-		pCA.DBhandle.ForceExist()
+		pCA.DBhandle.ForceExistDBandTables()
 	}
 	// spew.Dump(pCA.DBhandle)
 	return nil
@@ -307,7 +307,7 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 		if CA.XmlCatSearch.RelFilePath != "" {
 			filePathToUse = CA.XmlCatSearch.AbsFilePath
 		}
-		fileNameList, e := FU.GatherNamedFiles(filePathToUse, fileNameToUse)
+		fileNameList, e := filePathToUse.GatherNamedFiles(fileNameToUse)
 		if e != nil {
 			fmt.Printf("==> No valid files named <%s> found in+under catalog search path: %s \n",
 				fileNameToUse, filePathToUse)
@@ -360,6 +360,6 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 	fmt.Printf("==> XML catalog(s) yielded %d valid entries \n",
 		len(CA.XmlCatalog.XmlPublicIDs))
 
-	// TODO: If import, create batch info ?
+	// TODO:470 If import, create batch info ?
 	return nil
 }

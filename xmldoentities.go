@@ -1,15 +1,5 @@
 package mcfile
 
-/*
-func (XIs XmlItems) String() string {
-	return ("[XmlItems]")
-}
-
-func (XIs XmlItems) DString() string {
-	return ("[dbg.XmlItems]")
-}
-*/
-
 func (p *MCFile) ProcessEntities_() error {
 	pX := p.TheXml()
 	// p := new(XmlItems)
@@ -37,7 +27,7 @@ func (p *MCFile) ProcessEntities_() error {
 	// PASS 6
 	// Entity substitutions, recursively.
 	// We do this before ELEMENTs and ATTLISTs are processed.
-	// TODO TODO
+	// TODO 
 	e = p.SubstituteEntities()
 	if e != nil {
 		panic("Pass 6: Recursive ENTITY substitution failed: " + e.Error())

@@ -60,11 +60,8 @@
 // aware that the presence of terminating newlines is not treated uniformly
 // - String() returns a string suitable for runtime nonitoring and debugging
 //
-// NOTE the use of shorthand in variable names: Doc, Elm, Att.
+// NOTE The use of shorthand in variable names: Doc, Elm, Att.
 //
-// NOTE that we use `godoc2md`, so we can use Markdown in these code comments.
-//
-// NOTE that like other godoc comments, this package comment must be *right*
-// above the target statement (`package`) if it is to be included by `godoc2md`.
+// NOTE We use `godoc2md`, so we can use Markdown in these code comments.
 //
 package mcfile

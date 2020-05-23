@@ -86,7 +86,7 @@ func (p *MCFile) TryXmlPreamble() *MCFile {
 		return p
 	}
 	pXP, e = gparse.NewXmlPreamble(p.Raw)
-	// NOTE that an error is not fatal! Not here anyways.
+	// NOTE An error is not fatal! Not here anyways.
 	if e != nil {
 		println("==> TryXmlPreamble:", e.Error())
 		return nil

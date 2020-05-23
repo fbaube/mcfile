@@ -38,7 +38,7 @@ type GLink struct {
 	// as redd in during parsing
 	Raw string
 	// RelFP can be a URI or the resolution of a keyref.
-	// "" if target is in same file; NOTE that this is relative to the
+	// "" if target is in same file; NOTE This is relative to the
 	// sourcing file, NOT to the current working directory during parsing!
 	RelFP string
 	// AbsFP can be a URI or the resolution of a keyref.

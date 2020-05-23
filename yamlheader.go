@@ -29,14 +29,14 @@ func (p *MCFile) GetYamlHeader() *MCFile {
 		println("--> YAML error:", e.Error())
 		return p
 	}
-	if p.Header != nil {
+	// if p.Header != nil {
 		println("--> YAML header reallocated!")
 		p.SetError(errors.New("YAML header reallocated"))
 		return p
-	}
-	p.Header = new(Header)
-	p.Format = "yaml"
-	p.Header.Props = yps
+	// }
+	// p.Header = new(Header)
+	p.MetaFormat = "yaml"
+	p.MetaProps = yps
 	if rem != "" {
 		println("OK!: Yaml caused re-assignment of MCFile Raw")
 		p.Raw = rem
@@ -52,10 +52,10 @@ func (p *MCFile) GetYamlHeader() *MCFile {
     	p.Props[k] = v
 		}
 
-		println("mcfile got YAML. TODO: Add it to MCFile.")
-		fmt.Printf("YAML: %+v \n", *ymb)
-	}
-	}
+		println("mcfile got YAML. TODO:80 Add it to MCFile.")
+* 		fmt.Printf("YAML: %+v \n", *ymb)
+* 	}
+* 	}
 	*/
 	return p
 }

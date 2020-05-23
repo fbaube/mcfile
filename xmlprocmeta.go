@@ -10,8 +10,8 @@ import (
 
 // ProcessMetaGetDoctype can safely assume that the file is XML. We scan
 // the file, from the beginning, just far enough to provide the data we seek.
-// TODO TODO TODO This should return DOCTYPE Micodo too, cos it is
-// even more valid than the results of analysis.
+// TODO This should return DOCTYPE Micodo too, cos it 
+// is even more valid than the results of analysis.
 func (p *MCFile) ProcessMetaGetDoctype() error {
 	pX := p.TheXml()
 
