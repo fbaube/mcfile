@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/fbaube/db"
 	FU "github.com/fbaube/fileutils"
 	MU "github.com/fbaube/miscutils"
 	// SU "github.com/fbaube/stringutils"
@@ -48,9 +49,12 @@ type CCTnode interface{}
 // this is a logical place to store a GTokenization and a GTree.
 type MCFile struct {
 	MU.GCtx
+	db.Times
+	Idx         int
+	Idx_Inbatch int
 
 	// These THREE fields contain the file contents.
-	// CheckedContent.Raw == Header.Raw + Body
+	// CheckedContent.Raw == Meta_raw + Text_raw
 	FU.CheckedContent // Field `Raw` has the raw content of the entire file
 	// Header (i.e. Metadata) -- see comments below, after this struct def
 	Meta_raw   string

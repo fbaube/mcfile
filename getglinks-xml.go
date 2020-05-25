@@ -165,7 +165,7 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 			// Link SOURCES
 			case "idref", "idrefs", "href", "conref",
 				"keyref", "data-conref", "data-keyref":
-				pGL.IsOutgoing = true
+				pGL.IsRef = true
 				if pGL.AddressMode == "key" {
 					p.OutgoingKeys = append(p.OutgoingKeys, pGL)
 				} else {

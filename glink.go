@@ -12,23 +12,25 @@ type GLinkSet struct {
 	// `GLink`s can be processed easily as simple data structures.
 	OwnerP     interface{}
 	// OutgoingKeys are outgoing key-based links/references
-	OutgoingKeys  []*GLink
+	OutgoingKeys  []*GLink // (Extl|Intl)KeyRefs
 	// IncomableKeys are unique key-based definitions that are possible
 	// resolution targets (of same or other files' `OutgoingKeys`)
-	IncomableKeys []*GLink
+	IncomableKeys []*GLink // (Extl|Intl)KeyDefs
 	// OutgoingURIs are outgoing URI-based links/references
-	OutgoingURIs  []*GLink
+	OutgoingURIs  []*GLink // (Extl|Intl)UriRefs
 	// IncomableURIs are unique URI-based definitions that are possible
 	// resolution targets (of same or other files' `OutgoingURIs`)
-	IncomableURIs []*GLink
+	IncomableURIs []*GLink // (Extl|Intl)UriDefs
 }
 
 // GLink summarizes a link (or key) (or reference) found in markup content.
 // It is either URI-based (`href conref id`) or key-based (`key keyref`). It
 // applies to all LwDITA formats, but not all fields apply to all LwDITA formats.
 type GLink struct {
-	// else is Incomable (which are much more numerous)
-	IsOutgoing bool
+	// else is Def (which are much more numerous)
+	IsRef bool
+	// else is Intl (which are more numerous)
+	IsExtl bool
 	// "http", "key", "idref", "uri"
 	AddressMode string
 	// id, idref, href, xref, keyref, etc.
