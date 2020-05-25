@@ -5,6 +5,34 @@ import (
 	"github.com/fbaube/gtree"
 )
 
+type Flags int
+
+const (
+    IsRef Flags = 1 << iota // 1 << 0 i.e. 0000 0001
+    IsExtl     // 1 << 1 i.e. 0000 0010
+    IsUri      // 1 << 2 i.e. 0000 0100
+		IsKey      // 1 << 3 i.e. 0000 1000
+		IsResolved // 1 << 4 i.e. 0001 0000
+)
+
+func (b Flags) Set  (flag Flags) Flags { return b |  flag }
+func (b Flags) Reset(flag Flags) Flags { return b & ^flag }
+func (b Flags) IsSet(flag Flags) bool  { return b &  flag  != 0 }
+// func Toggle(b, flag Flags) Flags { return b ^ flag }
+
+func (f Flags) String() string {
+	var deff = "Def"
+	var intl = "Intl"
+	var ltyp = "N/A"
+	var resd = "unReslvd"
+	if f.IsSet(IsRef)  { deff = "Ref" }
+	if f.IsSet(IsExtl) { intl = "Extl" }
+	if f.IsSet(IsUri)  { ltyp = "Uri" }
+	if f.IsSet(IsKey)  { ltyp = "Key" }
+	if f.IsSet(IsResolved) { resd = "Resolved"}
+	return deff + "," + intl + "," + ltyp + "," + resd
+}
+
 // GLinkSet is used for (1) intra-file ref resolution,
 // (2) inter-file ptr resolution, (3) ToC generation.
 type GLinkSet struct {
