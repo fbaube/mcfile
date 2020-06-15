@@ -1,22 +1,16 @@
 package mcfile
 
 import (
-	S "strings"
-
+	S  "strings"
 	MU "github.com/fbaube/miscutils"
 )
 
 // TODO If no DOCTYPE, make a guess based on Filext but it can't be fatal.
 func (p *MCFile) DoValidation() (dtdS string, docS string, errS string) {
 	errS = ""
-	// pX := p.TheXml()
-	if !p.IsXML() {
+	if 0 == p.IsXml {
 		panic("DoValidation !IsXML")
 	}
-	/*
-		if pX.XmlFileMeta == nil {
-			return "No_XFM!", "valid??", ""
-		} */
 	if p.XmlDoctypeFields == nil {
 		return "No_DcTp", "valid??", ""
 	}

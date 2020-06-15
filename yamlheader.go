@@ -23,7 +23,7 @@ func (p *MCFile) GetYamlHeader() *MCFile {
 	var yps SU.PropSet // *SU.YamlMeta
 	var rem string
 	var e error
-	yps, rem, e = SU.GetYamlMetadataAsPropSet(p.CheckedContent.Raw)
+	yps, rem, e = SU.GetYamlMetadataAsPropSet(p.Raw)
 	fmt.Printf("(D) mcfl.yaml: nProps<%d> Rem'ng:< %s >\n", len(yps), rem)
 	if e != nil {
 		println("--> YAML error:", e.Error())

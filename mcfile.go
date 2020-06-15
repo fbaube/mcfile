@@ -9,8 +9,9 @@ import (
 	"github.com/fbaube/db"
 	FU "github.com/fbaube/fileutils"
 	MU "github.com/fbaube/miscutils"
-	XM "github.com/fbaube/xmlmodels"
+	// XM "github.com/fbaube/xmlmodels"
 	"github.com/fbaube/gtoken"
+	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtree"
 	// "github.com/pkg/errors"
 	_ "github.com/sanity-io/litter"
@@ -49,20 +50,8 @@ type CCTnode interface{}
 type MCFile struct {
 	MU.GCtx
 	db.Times
-	Idx         int
-	Idx_Inbatch int
-
-	// These THREE fields contain the file contents.
-	// CheckedContent.Raw == Meta_raw + Text_raw
-	FU.CheckedContent // Field `Raw` has the raw content of the entire file
-	// Header (i.e. Metadata) -- see comments below, after this struct def
-	Meta_raw   string
-	MetaFormat string // "yaml", "dita", "html", etc.
-	MetaProps  map[string]string
-	Text_raw   string
-
-	// File-format-specific ptr to additional data - XML, HTML, MKDN
-	// FFSdataP interface{}
+	FU.PathInfo
+	db.ContentRecord // embeds FU.AnalysisRecord
 
 	// Data stuctures and conversions ("FFS" = file-format-specific):
 	// 1) CCT = Concrete Content Tree = FFS-nodes [not available for XML]
@@ -90,9 +79,9 @@ type MCFile struct {
 	// - MKDN: https://godoc.org/github.com/yuin/goldmark/ast#Node
 	// Each `gparse.GToken` wraps its precursor token.
 
-	// A  `gtree.GTag` wraps its corresponding
-	// `gparse.GToken` wraps its corresponding
-	// FFS-token
+	// A `gtree.GTag`   wraps its corresponding
+	//  `gparse.GToken` wraps its corresponding
+	//     FFS-token
 
 	TagTally StringTally
 	AttTally StringTally
@@ -107,13 +96,10 @@ type MCFile struct {
 
 	*GLinks
 
-	XM.XmlInfo
-	TypeXml
-	// DitaInfo is two enums (so far): Markup language & Content type.
-	// ML: "1.2", "1.3", "XDITA", "HDITA", "MDATA".
-	// CT: "Map", "Bookmap", "Topic", "Task", "Concept", "Reference",
-  // "Dita", "Glossary", "Conrefs", "LwMap", "LwTopic"
-	XM.DitaInfo
+	// GEnts is "ENTITY"" directives (both with "%" and without).
+	GEnts map[string]*gparse.GEnt
+	// DElms is "ELEMENT" directives.
+	DElms map[string]*gtree.GTag
 }
 
 // The terms "header" and "metadata" are used interchangeably.
@@ -148,11 +134,11 @@ func (p *MCFile) Whine(s string) {
 	fmt.Fprintf(os.Stdout, "--> " + s)
 }
 
-
 // NewMCFile // also sets `MCFile.MType[..]`.
 func NewMCFile(pCC *FU.CheckedContent) *MCFile {
 	pMF := new(MCFile)
-	pMF.CheckedContent = *pCC
+	// pMF.CheckedContent = *pCC
+	pMF.PathInfo = pCC.PathInfo
 	if pCC.GetError() != nil {
 		pCC.SetError(fmt.Errorf("NewMCFile <%s>: %w", pCC.AbsFilePath, pCC.GetError()))
 		return pMF
@@ -161,7 +147,6 @@ func NewMCFile(pCC *FU.CheckedContent) *MCFile {
 	println("NewMCFile:", pCC.MType, pCC.AbsFilePath)
 	return pMF
 }
-
 
 // NewMCFileFromPath checks that the path is actually a file,
 // and also sets `MCFile.MType[..]`.
@@ -191,39 +176,14 @@ func NewMCFileFromPath(path string) *MCFile {
 	*/
 	// Create the MCFile
 	pMF := new(MCFile)
-	pMF.CheckedContent = *pCC
+	// pMF.CheckedContent = *pCC
+	pMF.PathInfo = pCC.PathInfo
 	if pCC.GetError() != nil {
 		pCC.SetError(fmt.Errorf("NewMCFileFromPath.CC <%s>: %w", path, pCC.GetError()))
 		return pMF
 	}
 	return pMF
 }
-
-/*
-
-// TheXml is a convenience function.
-func (p *MCFile) TheXml() *TypeXml {
-	switch ptr := p.FFSdataP.(type) {
-	case *TypeXml:
-		return ptr // (p.FFSdataP).(*TypeXml)
-	case *TypeHtml:
-		return &(ptr.TypeXml) // (p.FFSdataP).(*TypeXml)
-	}
-	// return (p.FFSdataP).(*TypeXml)
-	panic("mcfile.TheXml")
-}
-
-// TheMkdn is a convenience function.
-func (p *MCFile) TheMkdn() *TypeMkdn {
-	return (p.FFSdataP).(*TypeMkdn)
-}
-
-// TheHtml is a convenience function.
-func (p *MCFile) TheHtml() *TypeHtml {
-	return (p.FFSdataP).(*TypeHtml)
-}
-
-*/
 
 // At the top level (i.e. in main()), we don't wrap errors
 // and return them. We just complain and die. Simple!

@@ -1,13 +1,15 @@
 package mcfile
 
 import (
-	"github.com/fbaube/gparse"
+	// "github.com/fbaube/gparse"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 	SU "github.com/fbaube/stringutils"
-	XM "github.com/fbaube/xmlmodels"
-	"github.com/pkg/errors"
+	// XM "github.com/fbaube/xmlmodels"
+	// "github.com/pkg/errors"
 )
+
+/*
 
 // ProcessMetaGetDoctype can safely assume that the file is XML. We scan
 // the file, from the beginning, just far enough to provide the data we seek.
@@ -47,7 +49,7 @@ func (p *MCFile) ProcessMetaGetDoctype() error {
 		if gparse.ExtraInfo {
 			println("    --> XML preamble processed OK")
 		}
-		p.XmlPreambleFields = pp
+		p.XmlPreambleFields = *pp
 	}
 
 	// =============================
@@ -106,6 +108,8 @@ func (p *MCFile) ProcessMetaGetDoctype() error {
 	}
 	return nil
 }
+
+*/
 
 // RefineDirectives scans to patch Directives with correct keyword.
 func (p *MCFile) RefineDirectives() error {

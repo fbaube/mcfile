@@ -11,7 +11,7 @@ func (p *MCFile) ProcessEntities_() error {
 
 	// PASS 5
 	// Fully process ENTITY declarations and build lists
-	p.TypeXml.GEnts, e = p.NewEntitiesList()
+	p.GEnts, e = p.NewEntitiesList()
 	if e != nil {
 		panic("Pass 5: ENTITY processing failed")
 	}

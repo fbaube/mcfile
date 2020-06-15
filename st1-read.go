@@ -49,7 +49,8 @@ func (p *MCFile) st1a_PreMeta() *MCFile {
 	}
 	switch p.FileType() {
 	case "XML", "HTML":
-		return p.TryXmlPreamble()
+		// return p.TryXmlPreamble()
+		println("st1a_PreMeta: XML/HTML TBS")
 	case "MKDN":
 		return p.GetYamlHeader()
 	}

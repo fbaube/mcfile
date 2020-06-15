@@ -31,17 +31,17 @@ func (p *MCFile) st0a_SanityCheck() *MCFile {
 	// println("Init:", p.FileType())
 	switch p.FileType() {
 	case "XML":
-		if !p.IsXML() {
+		if 0 == p.IsXml {
 			panic("Init error: is XML but:!XML?!")
 		}
 		// p.FFSdataP = new(TypeXml)
 	case "MKDN":
-		if p.IsXML() {
+		if 0 != p.IsXml {
 			panic("Init error: is Mkdn but:XML?!")
 		}
 		// p.FFSdataP = new(TypeMkdn)
 	case "HTML":
-		if !p.IsXML() {
+		if 0 == p.IsXml {
 			panic("Init error: is HTML but:!XML?!")
 		}
 		 // p.FFSdataP = new(TypeHtml)
@@ -50,33 +50,3 @@ func (p *MCFile) st0a_SanityCheck() *MCFile {
 	}
 	return p
 }
-
-/*
-	var errmsg string
-	// fmt.Printf("TypeSpecific: set? <%b> type? <%t> \n",
-	//  p.TypeSpecific != nil, p.TypeSpecific)
-	switch p.FFSdataP.(type) {
-	case *TypeMkdn:
-		if p.MType[0] != "mkdn" {
-			errmsg = "TypeMarkdown: MType[0]!=\"mkdn\" ?!"
-		}
-	case *TypeXml:
-		if !(p.IsXML() && p.MType[0] == "xml") {
-			errmsg = "TypeXml: MType[0]!=\"xml\" ?!"
-		}
-	case *TypeHtml:
-		if !(p.IsXML() && p.MType[0] == "xml" && p.MType[1] == "html") {
-			errmsg = "TypeHtml: MType[0,1]!=\"xml:html\" ?!"
-		}
-	default:
-		errmsg = fmt.Sprintf(
-			"Unknown type for file-format-specific data struct: %T", p.FFSdataP)
-	}
-	if errmsg != "" {
-		errmsg = "st[0b] " + errmsg
-		p.Blare(p.OLP + errmsg)
-		p.SetError(errors.New(errmsg))
-	}
-	return p
-}
-*/
