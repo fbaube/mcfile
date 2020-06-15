@@ -9,20 +9,20 @@ import (
 // TODO If no DOCTYPE, make a guess based on Filext but it can't be fatal.
 func (p *MCFile) DoValidation() (dtdS string, docS string, errS string) {
 	errS = ""
-	pX := p.TheXml()
-	if !p.IsXML {
+	// pX := p.TheXml()
+	if !p.IsXML() {
 		panic("DoValidation !IsXML")
 	}
 	/*
 		if pX.XmlFileMeta == nil {
 			return "No_XFM!", "valid??", ""
 		} */
-	if pX.XmlDoctype == nil {
+	if p.XmlDoctypeFields == nil {
 		return "No_DcTp", "valid??", ""
 	}
-	var ppid = pX.XmlDoctype.XmlPublicID
+	var ppid = p.XmlInfo.XmlDoctypeFields.XmlPublicIDcatalogRecord
 	// print("\t" + ppid.PTDesc + " --> ")
-	val := CA.XmlCatalog.GetByPublicID(ppid.String())
+	val := CA.XmlCatalogRecord.GetByPublicID(ppid.String())
 	if val == nil {
 		// println("DTD NOT FOUND")
 		return "DTD_Unk", "valid??", ""

@@ -1,13 +1,15 @@
 package mcfile
 
-// propserties of a link: tag, att, text raw, ref abspath 
+// propserties of a link: tag, att, text raw, ref abspath
 
 import (
 	"bufio"
 	S "strings"
 
+	// "github.com/fbaube/db"
 	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtree"
+	XM "github.com/fbaube/xmlmodels"
 )
 
 // The food chain:
@@ -22,28 +24,7 @@ import (
 // NOTE We always create a MCFile, so it is a logical place
 // to store a GTokenization and a GTree.
 
-// TypeXml is as granular as it gets (for now) for XML files.
-//
 type TypeXml struct {
-	XmlContype
-	// XmlPreamble (i.e. <?xml ...?> ) is non-nil
-	// IFF we know *definitively* that we have an XML file.
-	// If it is `nil` then when writing the file back out in
-	// canonical format, also write out `encoding.xml.Header`,
-	// which is the default preamble defined in the Go stdlib.
-	*gparse.XmlPreamble
-	// TagDefCt is for DTD-type files (.dtd, .mod, .ent)
-	TagDefCt int // Nr of <!ELEMENT ...>
-	// XmlDoctype is non-nil IFF a DOCTYPE directive was found
-	*gparse.XmlDoctype
-	// CmtdOasisPublicID *ParsedPublicID
-
-	// RootTagIndex int  // Or some sort of pointer into the tree.
-	// RootTagCt is >1 means mark the content as a Fragment.
-	RootTagCt int
-	// These two distinctions are pretty fundamental to processing,
-	// so we dedicate booleans to them.
-	DoctypeIsDeclared, DoctypeIsGuessed bool
 
 	// The article about go types for functions
 	// MAKE BLOCK LIST
@@ -72,26 +53,26 @@ func (p *MCFile) TryXmlPreamble() *MCFile {
 	var e error
 	var s string
 	var pR *bufio.Reader
-	var pX *TypeXml
-	var pXP *gparse.XmlPreamble
+	// var pX *TypeXml
+	var pXP *XM.XmlPreambleFields
 
 	if p.GetError() != nil {
 		return p
 	}
-	pX = p.TheXml()
+	// pX = p.TheXml()
 	pR = bufio.NewReader(S.NewReader(p.Raw))
 	s, e = pR.ReadString('\n')
 	// Quick failure ?
 	if !S.HasPrefix(s, "<?xml ") {
 		return p
 	}
-	pXP, e = gparse.NewXmlPreamble(p.Raw)
+	pXP, e = XM.NewXmlPreambleFields(p.Raw)
 	// NOTE An error is not fatal! Not here anyways.
 	if e != nil {
 		println("==> TryXmlPreamble:", e.Error())
 		return nil
 	}
-	pX.XmlPreamble = pXP
-	p.IsXML = true
+	p.XmlPreambleFields = pXP
+	p.IsXml = 1
 	return p
 }

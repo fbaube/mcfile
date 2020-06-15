@@ -61,7 +61,7 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 	if p.GetError() != nil {
 		return p
 	}
-	if len(p.CheckedContent.Raw) == 0 {
+	if len(p.Raw) == 0 {
 		p.Whine(p.OLP + "st[1b] " + "Zero-length content")
 		return p
 	}
@@ -69,7 +69,7 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 	switch p.FileType() {
 	case "MKDN":
 		var pPR *PU.ConcreteParseResults_mkdn
-		pPR, e = PU.GetParseResults_mkdn(p.CheckedContent.Raw)
+		pPR, e = PU.GetParseResults_mkdn(p.Raw)
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
 			p.Blare(p.OLP + e.Error())
@@ -82,7 +82,7 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 		return p
 	case "HTML":
 		var pPR *PU.ConcreteParseResults_html
-		pPR, e = PU.GetParseResults_html(p.CheckedContent.Raw)
+		pPR, e = PU.GetParseResults_html(p.Raw)
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
 			p.Blare(p.OLP + e.Error())
@@ -95,7 +95,7 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 		return p
 	case "XML":
 		var pPR *PU.ConcreteParseResults_xml
-		pPR, e := PU.GetParseResults_xml(p.CheckedContent.Raw)
+		pPR, e := PU.GetParseResults_xml(p.Raw)
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
 		}
@@ -103,8 +103,9 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 		fmt.Printf("==> XMLtokens: got %d \n", len(pPR.NodeList))
 		return p
 	default:
-		panic("st1b_GetCPR: bad file type: " + p.FileType())
+		println("ERROR st1b_GetCPR: bad file type:", p.FileType())
 	}
+	return p
 }
 
 
@@ -166,6 +167,7 @@ func (p *MCFile) st1d_PostMeta_notmkdn() *MCFile {
 		return p
 	case "XML":
 		// [Lw]DITA stuff, ?DublinCore
+		println("mcfl.st1.todo: SetMTypePerDoctypeFields")
 	}
 	return p
 }

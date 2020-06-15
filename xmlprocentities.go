@@ -185,14 +185,14 @@ func (p *MCFile) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error) {
 // rtType:ENTITY  string1:bar  string2:"BAR"  entityIsParameter:true
 //
 func (p *MCFile) DoEntitiesList() error {
-	pX := p.TheXml()
+	// pX := p.TheXml()
 	println("    ==> DoEntitiesList TODO")
 
 	/* if pGF.XmlItems == nil {
 		pGF.XmlItems = new(XmlItems)
 	}
 	var pXI = pGF.XmlItems */
-	pX.GEnts = make(map[string]*gparse.GEnt)
+	p.GEnts = make(map[string]*gparse.GEnt)
 
 	for _, E := range p.GTags {
 
@@ -217,7 +217,7 @@ func (p *MCFile) DoEntitiesList() error {
 
 		// fmt.Printf("Got an ENTITY: |%s|%s| \n", newEnt.NameAsRef, newEnt)
 		// FIXME This must be added AFTER the struct is fully loaded ?
-		pX.GEnts[newEnt.NameAsRef] = newEnt
+		p.GEnts[newEnt.NameAsRef] = newEnt
 
 		extIDtype, extIDtext := SU.SplitOffFirstWord(theRest)
 
@@ -310,7 +310,7 @@ var s2check = ""
 // SubstituteEntities does replacement in Entities for simple
 // (single-token) entity references, i.e. that begin with "%" or "&".
 func (p *MCFile) SubstituteEntities() error {
-	pX := p.TheXml()
+	// pX := p.TheXml()
 	println("    ==> SubstituteEntities TODO")
 
 	var chgs = true
@@ -323,7 +323,7 @@ func (p *MCFile) SubstituteEntities() error {
 		}
 		chgs = false
 
-		// TODO 
+		// TODO
 
 		// First determine the longest sub string, and pick an arbitrary multiple
 		// of it (such as 20x) as an absolute upper limit for subs done here. Do
@@ -333,7 +333,7 @@ func (p *MCFile) SubstituteEntities() error {
 
 		// Process all entity definitions and
 		// attribute definitions [and also (most importantly?) transclusions?]
-		for sEnt, E := range pX.GEnts {
+		for sEnt, E := range p.GEnts {
 
 			// ilog.Printf("SubEntRksvly: chkg: [%s]%s \n", sEnt, E)
 			if sEnt != E.NameAsRef {

@@ -10,35 +10,37 @@ import (
 	FP "path/filepath"
 
 	"github.com/fbaube/db"
-	FU "github.com/fbaube/fileutils"
 	"github.com/fbaube/gparse"
+	FU "github.com/fbaube/fileutils"
 	SU "github.com/fbaube/stringutils"
 	MU "github.com/fbaube/miscutils"
 	WU "github.com/fbaube/wasmutils"
+	XM "github.com/fbaube/xmlmodels"
 	"errors"
 )
 
 // Using this messes up the default Usage(), so **avoid** `flag.FlagSet`
 // var fs flag.FlagSet
 
+var sOutRelFP, sXmlCatRelFP, sXmlCatSearchRelFP string
+
 // ConfigurationArguments can probably be used with various 3rd-party utilities.
 type ConfigurationArguments struct {
 	AppName   string
 	DBdirPath string
 	DBhandle  *db.MmmcDB
-	In, Out, XmlCat,
-	XmlCatSearch FU.BasicPath // NOT ptr! Barfs at startup.
+	In, Out, XmlCat, XmlCatSearch FU.PathInfo // NOT ptr! Barfs at startup.
 	RestPort int
 	// CLI flags
 	FollowSymLinks, Pritt, DBdoImport, Help, Debug, GroupGenerated, Validate, DBdoZeroOut bool
 	// Result of processing CLI arg for input file(s)
 	SingleFile bool
 	// Result of processing CLI args (-c, -s)
-	*gparse.XmlCatalog
+	*gparse.XmlCatalogRecord
 }
 
 // var InFP, OutFP, XmlCatFP, XmlCatSearchFP string
-var xmlCatalogs []*gparse.XmlCatalog
+var xmlCatalogRecords []*gparse.XmlCatalogRecord
 
 // CA maybe should not be exported.
 var CA ConfigurationArguments
@@ -58,11 +60,13 @@ func myUsage() {
 func initVars() {
 	// flag.StringVar(&CA.Out.RelFilePath, "o", "", // &CA.outArg, "o", "",
 	// 	"Output file name (possibly ignored, depending on command)")
-	flag.StringVar(&CA.XmlCat.RelFilePath, "c", "",
+
+	//  .StringVar(&CA.XmlCat.RelFilePath, "c", "",
+	flag.StringVar(&sXmlCatRelFP, "c", "",
 		"Path to XML catalog file (do not use with \"-s\" flag)")
 	flag.StringVar(&CA.DBdirPath, "d", "",
 		"Directory path of/for database mmmc.db")
-	flag.StringVar(&CA.XmlCatSearch.RelFilePath, "s", "",
+	flag.StringVar(&sXmlCatSearchRelFP, "s", "",
 		"Directory path to DTD schema file(s) (.dtd, .mod)")
 	flag.BoolVar(&CA.DBdoImport, "m", false,
 		"Import input file(s) to database")
@@ -138,6 +142,10 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 		fmt.Println("D=> CLI tail:", flag.Args())
 	}
 
+	// ===========================================
+	//   PROCESS INPUT SPEC
+	// ===========================================
+
 	// Handle case where XML comes from standard input i.e. os.Stdin
 	if flag.Args()[0] == "-" {
 		if WU.IsWasm() {
@@ -151,40 +159,43 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 					println("==> Reading Stdin from a file or pipe")
 				}
 		}
-
 		// bb, e := ioutil.ReadAll(os.Stdin)
 		stdIn := FU.GetStringFromStdin()
 		checkbarf(e, "Cannot read from Stdin")
 		e = ioutil.WriteFile("Stdin.xml", []byte(stdIn), 0666)
 		checkbarf(e, "Cannot write to ./Stdin.xml")
-		CA.In.RelFilePath = "Stdin.xml"
-	}
+		CA.In = *FU.NewPathInfo("Stdin.xml") // .RelFilePath = "Stdin.xml"
+
+	} else {
+		// ===========================================
+		//   PROCESS INPUT SPEC (normal case) to get
+		//   info about path, existence, and type
+		// ===========================================
+		// Process input-file(s) argument, which can be a relative filepath.
+		CA.In = *FU.NewPathInfo(flag.Args()[0])
+		// If the absolute path does not match the argument provided, inform the user.
+		if CA.In.AbsFP() != flag.Args()[0] { // CA.In.RelFilePath { // CA.In.ArgFilePath {
+			println("==> Input:" /* FU.NiceFP */, FU.Tilded(CA.In.AbsFP()))
+		}
+		if CA.In.IsOkayDir() {
+			println("    --> The input is a directory and will be processed recursively.")
+			} else if CA.In.IsOkayFile() {
+				println("    --> The input is a single file: extra info will be listed here.")
+				CA.SingleFile = true
+			} else {
+				println("    --> The input is a type not understood.")
+				return nil, fmt.Errorf("Bad type for input: " + CA.In.AbsFP())
+			}
+		}
 
 	// ===========================================
 	//   PROCESS ARGUMENTS to get complete info
 	//   about path, existence, and type
 	// ===========================================
 
-	// Process input-file(s) argument, which can be a relative filepath.
-	CA.In = *FU.NewBasicPath(flag.Args()[0])
-
-	// If the absolute path does not match the argument provided, inform the user.
-	if CA.In.AbsFilePath.S() != CA.In.RelFilePath { // CA.In.ArgFilePath {
-		println("==> Input:" /* FU.NiceFP */, FU.Tilded(CA.In.AbsFilePath.S()))
-	}
-	if CA.In.IsOkayDir() {
-		println("    --> The input is a directory and will be processed recursively.")
-	} else if CA.In.IsOkayFile() {
-		println("    --> The input is a single file: extra info will be listed here.")
-		CA.SingleFile = true
-	} else {
-		println("    --> The input is a type not understood.")
-		return nil, fmt.Errorf("Bad type for input: " + CA.In.AbsFilePath.S())
-	}
-
 	// Process output-file(s) argument, which can be a relative filepath.
 	// CA.Out.ProcessFilePathArg(CA.Out.ArgFilePath)
-	CA.Out = *FU.NewBasicPath(CA.Out.RelFilePath)
+	CA.Out = *FU.NewPathInfo(sOutRelFP) // CA.Out.RelFilePath)
 
 	// Process database directory argument, which can be a relative filepath.
 	// CA.DB.ProcessFilePathArg(CA.DBdirPath)
@@ -210,12 +221,12 @@ func (pCA *ConfigurationArguments) ProcessDatabaseArgs() error {
 	if e != nil {
 		return fmt.Errorf("DB setup failure: %w", e)
 	}
-	theDBexists = CA.DBhandle.BasicPath.Exists
+	theDBexists = CA.DBhandle.PathInfo.Exists
 	var s = "exists"
 	if !theDBexists {
 		s = "does not exist"
 	}
-	fmt.Printf("==> DB %s: %s\n", s, pCA.DBhandle.BasicPath.AbsFilePath)
+	fmt.Printf("==> DB %s: %s\n", s, pCA.DBhandle.PathInfo.AbsFP())
 
 	if pCA.DBdoZeroOut {
 		println("    --> Zeroing out DB")
@@ -231,8 +242,8 @@ func (pCA *ConfigurationArguments) ProcessDatabaseArgs() error {
 
 func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 	var gotC, gotS bool
-	gotC = ("" != CA.XmlCat.RelFilePath)
-	gotS = ("" != CA.XmlCatSearch.RelFilePath)
+	gotC = ("" != sXmlCatRelFP)
+	gotS = ("" != sXmlCatSearchRelFP)
 	if !(gotC || gotS) {
 		return nil
 	}
@@ -241,38 +252,36 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 	}
 	if gotC { // -c
 		// pCA.XmlCat.ProcessFilePathArg(CA.XmlCat.ArgFilePath)
-		CA.XmlCat = *FU.NewBasicPath(CA.XmlCat.RelFilePath)
+		CA.XmlCat = *FU.NewPathInfo(sXmlCatRelFP)
 		if !(pCA.XmlCat.IsOkayFile() && pCA.XmlCat.Size > 0) {
-			println("==> ERROR: XML catalog filepath is not file: " + pCA.XmlCat.AbsFilePath)
+			println("==> ERROR: XML catalog filepath is not file: " + pCA.XmlCat.AbsFP())
 			return errors.New(fmt.Sprintf("mcfile.ConfArgs.ProcCatalArgs<%s:%s>",
-				CA.XmlCat.RelFilePath, CA.XmlCat.AbsFilePath))
+				sXmlCatRelFP, CA.XmlCat.AbsFP()))
 		}
-		println("==> Catalog:", pCA.XmlCat.RelFilePath)
-		if pCA.XmlCat.AbsFilePath.S() != pCA.XmlCat.RelFilePath {
-			println("     --> i.e. ", FU.Tilded(pCA.XmlCat.AbsFilePath.S()))
+		println("==> Catalog:", sXmlCatRelFP)
+		if pCA.XmlCat.AbsFP() != sXmlCatRelFP {
+			println("     --> i.e. ", FU.Tilded(pCA.XmlCat.AbsFP()))
 		}
 	}
 	if gotS { // -s
-		// pCA.XmlCatSearch.ProcessFilePathArg(pCA.XmlCatSearch.ArgFilePath)
-		pCA.XmlCatSearch = *FU.NewBasicPath(CA.XmlCatSearch.RelFilePath)
+		pCA.XmlCatSearch = *FU.NewPathInfo(sXmlCatSearchRelFP)
 		if !pCA.XmlCatSearch.IsOkayDir() {
 			return errors.New("mcfile.ConfArgs.ProcCatalArgs: cannot open XML catalog directory: " +
-				pCA.XmlCatSearch.AbsFilePath.S())
+				pCA.XmlCatSearch.AbsFP())
 		}
 	}
 	var e error
 	if gotS { // -s and not -c
-		println("==> Schema(s):", pCA.XmlCatSearch.RelFilePath)
-		// pCA.XmlCatSearch.ProcessFilePathArg(CA.XmlCatSearch.ArgFilePath)
-		pCA.XmlCatSearch = *FU.NewBasicPath(CA.XmlCatSearch.RelFilePath)
-		if CA.XmlCatSearch.AbsFilePath.S() != pCA.XmlCatSearch.RelFilePath {
-			println("     --> i.e. ", FU.Tilded(pCA.XmlCatSearch.AbsFilePath.S()))
+		println("==> Schema(s):", sXmlCatSearchRelFP)
+		pCA.XmlCatSearch = *FU.NewPathInfo(sXmlCatSearchRelFP)
+		if CA.XmlCatSearch.AbsFP() != sXmlCatSearchRelFP {
+			println("     --> i.e. ", FU.Tilded(pCA.XmlCatSearch.AbsFP()))
 		}
 		if !pCA.XmlCatSearch.IsOkayDir() {
 			println("==> ERROR: Schema path is not a readable directory: " +
-				FU.Tilded(pCA.XmlCatSearch.AbsFilePath.S()))
+				FU.Tilded(pCA.XmlCatSearch.AbsFP()))
 			return fmt.Errorf("mcfile.ConfArgs.ProcCatalArgs.abs<%s>: %w",
-				pCA.XmlCatSearch.AbsFilePath, e)
+				pCA.XmlCatSearch.AbsFP(), e)
 		}
 	}
 	// println(" ")
@@ -283,29 +292,30 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 
 	// IF user asked for a single catalog file
 	if gotC && !gotS {
-		CA.XmlCatalog, e = gparse.NewXmlCatalogFromFile(CA.XmlCat.RelFilePath)
+		CA.XmlCatalogRecord, e = gparse.NewXmlCatalogRecordFromFile(sXmlCatRelFP)
 		if e != nil {
-			println("==> ERROR: Can't find or process catalog file:", CA.XmlCat.RelFilePath)
+			println("==> ERROR: Can't find or process catalog file:", sXmlCatRelFP)
 			println("    Error was:", e.Error())
-			CA.XmlCatalog = nil
-			return fmt.Errorf("gxml.Confargs.NewXmlCatalogFromFile<%s>: %w", CA.XmlCat.RelFilePath, e)
+			CA.XmlCatalogRecord = nil
+			return fmt.Errorf("gxml.Confargs.NewXmlCatalogFromFile<%s>: %w", sXmlCatRelFP, e)
 		}
-		if CA.XmlCatalog == nil || len(CA.XmlCatalog.XmlPublicIDs) == 0 {
-			println("==> No valid entries in catalog file:", CA.XmlCat.RelFilePath)
-			CA.XmlCatalog = nil
+		if CA.XmlCatalogRecord == nil ||
+		   len(CA.XmlCatalogRecord.XmlPublicIDsubrecords) == 0 {
+			println("==> No valid entries in catalog file:", sXmlCatRelFP)
+			CA.XmlCatalogRecord = nil
 		}
 		return nil
 	}
 	// IF user asked for a directory scan of schema files
 	if gotS && !gotC {
-		xmlCatalogs = make([]*gparse.XmlCatalog, 0)
+		xmlCatalogRecords = make([]*gparse.XmlCatalogRecord, 0)
 		fileNameToUse := "catalog.xml"
-		if CA.XmlCat.RelFilePath != "" {
-			fileNameToUse = CA.XmlCat.RelFilePath
+		if sXmlCatRelFP != "" {
+			fileNameToUse = sXmlCatRelFP
 		}
 		filePathToUse := FU.AbsFilePath(".")
-		if CA.XmlCatSearch.RelFilePath != "" {
-			filePathToUse = CA.XmlCatSearch.AbsFilePath
+		if sXmlCatRelFP!= "" {
+			filePathToUse = FU.AbsFilePath(CA.XmlCatSearch.AbsFP()) 
 		}
 		fileNameList, e := filePathToUse.GatherNamedFiles(fileNameToUse)
 		if e != nil {
@@ -317,48 +327,51 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 		}
 		// For every catalog file (usually just one)
 		for _, filePathToUse = range fileNameList {
-			var xmlCat *gparse.XmlCatalog
-			xmlCat, e = gparse.NewXmlCatalogFromFile(filePathToUse.S())
+			var xmlCat *gparse.XmlCatalogRecord
+			xmlCat, e = gparse.NewXmlCatalogRecordFromFile(filePathToUse.S())
 			if e != nil {
 				println("==> ERROR: Can't find or process catalog file:", filePathToUse)
 				println("    Error was:", e.Error())
 				continue
 			}
-			if xmlCat == nil || len(xmlCat.XmlPublicIDs) == 0 {
+			if xmlCat == nil || len(xmlCat.XmlPublicIDsubrecords) == 0 {
 				println("==> No valid entries in catalog file:", filePathToUse)
 				continue
 			}
-			xmlCatalogs = append(xmlCatalogs, xmlCat)
+			xmlCatalogRecords = append(xmlCatalogRecords, xmlCat)
 		}
-		switch len(xmlCatalogs) {
+		switch len(xmlCatalogRecords) {
 		case 0:
 			fmt.Printf("==> ERROR: No files named <%s> found in+under <%s>:",
 				fileNameToUse, filePathToUse)
-			CA.XmlCatalog = nil
+			CA.XmlCatalogRecord = nil
 			return fmt.Errorf("gxml.Confargs.XmlCatalogs<%s:%s>: %w",
 				fileNameToUse, filePathToUse, e)
 		case 1:
-			CA.XmlCatalog = xmlCatalogs[0]
+			CA.XmlCatalogRecord = xmlCatalogRecords[0]
 		default:
 			// MERGE THEM ALL
-			var xmlCat *gparse.XmlCatalog
-			CA.XmlCatalog = new(gparse.XmlCatalog)
-			CA.XmlCatalog.XmlPublicIDs = make([]gparse.XmlPublicID, 0)
-			for _, xmlCat = range xmlCatalogs {
-				CA.XmlCatalog.XmlPublicIDs =
-					append(CA.XmlCatalog.XmlPublicIDs, xmlCat.XmlPublicIDs...)
+			var xmlCat *gparse.XmlCatalogRecord
+			CA.XmlCatalogRecord = new(gparse.XmlCatalogRecord)
+			CA.XmlCatalogRecord.XmlPublicIDsubrecords = make([]XM.XmlPublicIDcatalogRecord, 0)
+			for _, xmlCat = range xmlCatalogRecords {
+				CA.XmlCatalogRecord.XmlPublicIDsubrecords =
+					append(CA.XmlCatalogRecord.XmlPublicIDsubrecords,
+						 xmlCat.XmlPublicIDsubrecords...)
 			}
 		}
 	}
-	if CA.XmlCatalog == nil || CA.XmlCatalog.XmlPublicIDs == nil || len(CA.XmlCatalog.XmlPublicIDs) == 0 {
-		CA.XmlCatalog = nil
+	if CA.XmlCatalogRecord == nil ||
+		 CA.XmlCatalogRecord.XmlPublicIDsubrecords == nil ||
+		 len(CA.XmlCatalogRecord.XmlPublicIDsubrecords) == 0 {
+		CA.XmlCatalogRecord = nil
 		println("==> No valid catalog entries")
 		return errors.New("gxml.Confargs.XmlCatalogs")
 	}
 	// println("==> Contents of XML catalog(s):")
 	// print(CA.XmlCatalog.DString())
 	fmt.Printf("==> XML catalog(s) yielded %d valid entries \n",
-		len(CA.XmlCatalog.XmlPublicIDs))
+		len(CA.XmlCatalogRecord.XmlPublicIDsubrecords))
 
 	// TODO:470 If import, create batch info ?
 	return nil

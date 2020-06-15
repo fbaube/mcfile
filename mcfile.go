@@ -5,12 +5,11 @@ package mcfile
 import (
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/fbaube/db"
 	FU "github.com/fbaube/fileutils"
 	MU "github.com/fbaube/miscutils"
-	// SU "github.com/fbaube/stringutils"
+	XM "github.com/fbaube/xmlmodels"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 	// "github.com/pkg/errors"
@@ -63,7 +62,7 @@ type MCFile struct {
 	Text_raw   string
 
 	// File-format-specific ptr to additional data - XML, HTML, MKDN
-	FFSdataP interface{}
+	// FFSdataP interface{}
 
 	// Data stuctures and conversions ("FFS" = file-format-specific):
 	// 1) CCT = Concrete Content Tree = FFS-nodes [not available for XML]
@@ -106,13 +105,15 @@ type MCFile struct {
 
 	// FU.OutputFiles // NOTE Does this belong here ? Not sure.
 
-	*GLinkSet
+	*GLinks
 
+	XM.XmlInfo
+	TypeXml
 	// DitaInfo is two enums (so far): Markup language & Content type.
 	// ML: "1.2", "1.3", "XDITA", "HDITA", "MDATA".
 	// CT: "Map", "Bookmap", "Topic", "Task", "Concept", "Reference",
   // "Dita", "Glossary", "Conrefs", "LwMap", "LwTopic"
-	*DitaInfo
+	XM.DitaInfo
 }
 
 // The terms "header" and "metadata" are used interchangeably.
@@ -156,7 +157,8 @@ func NewMCFile(pCC *FU.CheckedContent) *MCFile {
 		pCC.SetError(fmt.Errorf("NewMCFile <%s>: %w", pCC.AbsFilePath, pCC.GetError()))
 		return pMF
 	}
-	pMF.GLinkSet = new(GLinkSet)
+	pMF.GLinks = new(GLinks)
+	println("NewMCFile:", pCC.MType, pCC.AbsFilePath)
 	return pMF
 }
 
@@ -165,7 +167,7 @@ func NewMCFile(pCC *FU.CheckedContent) *MCFile {
 // and also sets `MCFile.MType[..]`.
 func NewMCFileFromPath(path string) *MCFile {
 	// FIRST we work with a new CheckedPath
-	pBP := FU.NewBasicPath(path)
+	pBP := FU.NewPathInfo(path)
 	if pBP.GetError() != nil || !pBP.IsOkayFile() {
 		pBP.SetError(fmt.Errorf("NewMCFileFromPath.BP <%s>: %w", path, pBP.GetError()))
 		return nil
@@ -175,10 +177,13 @@ func NewMCFileFromPath(path string) *MCFile {
 		litter.Dump(*pCP)
 		println("====")
 	*/
-	pCC := pBP.ReadContent()
-	pCC.InspectFile()
-	pCC.SetFileMtype()
-	println("--> MType:", pCC.Mstring())
+	pCC := FU.NewCheckedContent(pBP) // new(FU.CheckedContent)
+	/*
+	pCC.BasicPath    =  pBP
+	pCC.BasicContent = *pBP.FetchContent()
+	pCC.BasicAnalysis.AnalyzeFileContent(pCC.Raw)
+	*/
+	println("--> MType:", pCC.MType) // Mstring())
 	/*
 		println("====")
 		litter.Dump(*pCP)
@@ -193,6 +198,8 @@ func NewMCFileFromPath(path string) *MCFile {
 	}
 	return pMF
 }
+
+/*
 
 // TheXml is a convenience function.
 func (p *MCFile) TheXml() *TypeXml {
@@ -216,6 +223,8 @@ func (p *MCFile) TheHtml() *TypeHtml {
 	return (p.FFSdataP).(*TypeHtml)
 }
 
+*/
+
 // At the top level (i.e. in main()), we don't wrap errors
 // and return them. We just complain and die. Simple!
 func (p *MCFile) Errorbarf(e error, s string) bool {
@@ -228,7 +237,7 @@ func (p *MCFile) Errorbarf(e error, s string) bool {
 	p.SetError(e)
 	// elog.Printf("%s failed: %s \n", myAppName, e.Error())
 	fmt.Fprintf(os.Stderr, "%s failed: %s \n\t error was: %s \n",
-		p.BasicPath.RelFilePath, s, e.Error())
+		p.PathInfo.AbsFP(), s, e.Error())
 	// os.Exit(1)
 	println("==> DUMP OF FAILING MCFILE:")
 	println(p.String())
@@ -236,12 +245,8 @@ func (p *MCFile) Errorbarf(e error, s string) bool {
 }
 
 func (p *MCFile) Lengths() string {
-	var hed string = "nil"
-	// if p.Header != nil {
-		hed = strconv.Itoa(len(p.Meta_raw))
-	// }
-	return fmt.Sprintf("raw.text<%d> hdr.props.meta<%d> cnt.body.text<%d>",
-		len(p.CheckedContent.Raw), len(hed), len(p.Text_raw))
+	return fmt.Sprintf("len.raw.file<%d> len.meta.hdr.props<%d> len.text.body.content<%d>",
+		len(p.Raw), len(p.Meta_raw), len(p.Text_raw))
 }
 
 // String is developer output. Hafta dump:
@@ -252,7 +257,7 @@ func (p MCFile) String() string {
 
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("(DD:GFILE)||%s||OtFiles|ss||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		p.BasicPath.String(), /* p.OutputFiles.String(), */ p.GTree.String(),
+		p.PathInfo.AbsFP(), /* p.OutputFiles.String(), */ p.GTree.String(),
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {
@@ -271,9 +276,9 @@ func (p MCFile) String() string {
 		// FIXME s += fmt.Sprintf("DElms|%s||", p.DElms.String())
 	}
 	== */
-	if p.DitaInfo != nil {
+	// if p.DitaInfo != nil {
 		s += fmt.Sprintf("DitaInfo|%s||", p.DitaInfo.String())
-	}
+	// }
 
 	p.PopBigFields(BF)
 	return s

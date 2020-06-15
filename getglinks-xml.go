@@ -116,10 +116,10 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 			*/
 			pGL.Att = XA.Name.Local
 			pGL.Tag = theTag
-			p.Raw = XA.Value
+			pGL.Link_raw  = XA.Value
 			// Is it HTTP, FTP, etc. ?
-			if i := S.Index(p.Raw, "://"); i > 0 {
-				pGL.AddressMode = p.Raw[:i]
+			if i := S.Index(pGL.Link_raw , "://"); i > 0 {
+				pGL.AddressMode = pGL.Link_raw [:i]
 				pGL.Resolved = true
 				if pGL.Att != "href" {
 					panic("Non-@href http:://!")
@@ -128,36 +128,36 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 				pGL.AbsFP = "/"
 			} else if S.Contains(pGL.Att, "key") {
 				pGL.AddressMode = "key"
-				if i := S.Index(p.Raw, "#"); i != -1 {
-					pGL.FragID = p.Raw[i+1:]
-					pGL.RelFP = p.Raw[:i]
+				if i := S.Index(pGL.Link_raw , "#"); i != -1 {
+					pGL.FragID = pGL.Link_raw [i+1:]
+					pGL.RelFP = pGL.Link_raw [:i]
 				} else {
-					pGL.RelFP = p.Raw
+					pGL.RelFP = pGL.Link_raw
 				}
 				println("KEY:", pGL.RelFP, "#", pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
-				s, _ := FP.Abs(FP.Join(p.BasicPath.AbsFilePathParts.Echo(), pGL.RelFP))
+				s, _ := FP.Abs(FP.Join(p.PathInfo.AbsFilePathParts.Echo(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
 				println("2. AbsFP:", pGL.AbsFP)
 			} else if S.HasPrefix(pGL.Att, "idref") {
 				pGL.AddressMode = "idref"
-				if i := S.Index(p.Raw, "#"); i != -1 {
+				if i := S.Index(pGL.Link_raw , "#"); i != -1 {
 					panic("IDREF has fragment ID")
 				}
-				println("IDREF:", p.Raw)
+				println("IDREF:", pGL.Link_raw )
 			} else {
 				pGL.AddressMode = "uri"
-				if i := S.Index(p.Raw, "#"); i != -1 {
-					pGL.FragID = p.Raw[i+1:]
-					pGL.RelFP = p.Raw[:i]
+				if i := S.Index(pGL.Link_raw , "#"); i != -1 {
+					pGL.FragID = pGL.Link_raw [i+1:]
+					pGL.RelFP =  pGL.Link_raw [:i]
 				} else {
-					pGL.RelFP = p.Raw
+					pGL.RelFP = pGL.Link_raw
 				}
 				println("URI:", pGL.RelFP, "#", pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
-				s, _ := FP.Abs(FP.Join(p.BasicPath.AbsFilePathParts.Echo(), pGL.RelFP))
+				s, _ := FP.Abs(FP.Join(p.PathInfo.AbsFilePathParts.Echo(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
 				println("URI AbsFP:", FU.Tilded(pGL.AbsFP.S()))
 			}

@@ -33,9 +33,9 @@ func (f Flags) String() string {
 	return deff + "," + intl + "," + ltyp + "," + resd
 }
 
-// GLinkSet is used for (1) intra-file ref resolution,
+// GLinks is used for (1) intra-file ref resolution,
 // (2) inter-file ptr resolution, (3) ToC generation.
-type GLinkSet struct {
+type GLinks struct {
 	// OwnerP points back to the owning struct, so that
 	// `GLink`s can be processed easily as simple data structures.
 	OwnerP     interface{}
@@ -66,7 +66,7 @@ type GLink struct {
 	// the tag that has this link-related attribute of interest
 	Tag string
 	// as redd in during parsing
-	Raw string
+	Link_raw string
 	// RelFP can be a URI or the resolution of a keyref.
 	// "" if target is in same file; NOTE This is relative to the
 	// sourcing file, NOT to the current working directory during parsing!

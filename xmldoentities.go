@@ -1,7 +1,7 @@
 package mcfile
 
 func (p *MCFile) ProcessEntities_() error {
-	pX := p.TheXml()
+	// pX := p.TheXml()
 	// p := new(XmlItems)
 	// var pXI *XmlItems
 	// pXI = new(XmlItems)
@@ -11,7 +11,7 @@ func (p *MCFile) ProcessEntities_() error {
 
 	// PASS 5
 	// Fully process ENTITY declarations and build lists
-	pX.GEnts, e = p.NewEntitiesList()
+	p.TypeXml.GEnts, e = p.NewEntitiesList()
 	if e != nil {
 		panic("Pass 5: ENTITY processing failed")
 	}
@@ -27,7 +27,7 @@ func (p *MCFile) ProcessEntities_() error {
 	// PASS 6
 	// Entity substitutions, recursively.
 	// We do this before ELEMENTs and ATTLISTs are processed.
-	// TODO 
+	// TODO
 	e = p.SubstituteEntities()
 	if e != nil {
 		panic("Pass 6: Recursive ENTITY substitution failed: " + e.Error())

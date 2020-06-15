@@ -5,15 +5,16 @@ import (
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 	SU "github.com/fbaube/stringutils"
+	XM "github.com/fbaube/xmlmodels"
 	"github.com/pkg/errors"
 )
 
 // ProcessMetaGetDoctype can safely assume that the file is XML. We scan
 // the file, from the beginning, just far enough to provide the data we seek.
-// TODO This should return DOCTYPE Micodo too, cos it 
+// TODO This should return DOCTYPE Micodo too, cos it
 // is even more valid than the results of analysis.
 func (p *MCFile) ProcessMetaGetDoctype() error {
-	pX := p.TheXml()
+	// pX := p.TheXml()
 
 	var pTag *gtree.GTag
 	// var pXFM *gparse.XmlFileMeta
@@ -38,7 +39,7 @@ func (p *MCFile) ProcessMetaGetDoctype() error {
 	if pTag.TTType == "PI" && pTag.Keyword == "xml" {
 		// pXI.GotXmlPreamble = true
 		// ilog.Printf("Pass 3: Got XML preamble |%s|%s|", RT.string1, RT.string2)
-		pp, e := gparse.NewXmlPreamble(pTag.Otherwords)
+		pp, e := XM.NewXmlPreambleFields(pTag.Otherwords)
 		// If this failed, there's somethign seriously wrong, so fail.
 		if e != nil {
 			return errors.Wrapf(e, "fx.procfmdt.newpreamble<%s>", pTag.Otherwords)
@@ -46,7 +47,7 @@ func (p *MCFile) ProcessMetaGetDoctype() error {
 		if gparse.ExtraInfo {
 			println("    --> XML preamble processed OK")
 		}
-		pX.XmlPreamble = pp
+		p.XmlPreambleFields = pp
 	}
 
 	// =============================
@@ -58,7 +59,7 @@ func (p *MCFile) ProcessMetaGetDoctype() error {
 	var i int
 	for i, pTag = range p.GTags {
 
-		if i == 0 && nil != pX.XmlPreamble {
+		if i == 0 && nil != p.XmlPreambleFields {
 			continue
 		}
 		// if RT.rtType == "CD" { fmt.Printf("CDataDebug|%+v| \n", RT) }
@@ -72,7 +73,7 @@ func (p *MCFile) ProcessMetaGetDoctype() error {
 			// TODO These next two stmts are redundant and can instead be sanity checks
 			// pXI.GotRootTag = true
 			// pXI.RootTagIndex = i
-			if nil == pX.XmlDoctype {
+			if nil == p.XmlDoctypeFields {
 				println("    --> No DOCTYPE declaration found")
 			}
 			// panic("doXmlFileMeta weirdness")
@@ -88,15 +89,18 @@ func (p *MCFile) ProcessMetaGetDoctype() error {
 		// ====================
 		//  DOCTYPE PROCESSING
 		// ====================
-		pDT, e := gparse.NewXmlDoctypeInclMtype(pTag.Otherwords)
+		pDT, e := XM.NewXmlDoctypeFieldsInclMType(pTag.Otherwords)
+		if e == nil {
+			p.XmlDoctype = XM.XmlDoctype(pTag.Otherwords)
+		}
 
 		// println("\t Got doctype")
 
 		if e != nil {
 			return errors.Wrapf(e, "XFM.NewXmlDoctype<%s>", pTag.Otherwords)
 		}
-		pX.DoctypeIsDeclared = true
-		pX.XmlDoctype = pDT
+		p.DoctypeIsDeclared = true
+		p.XmlDoctypeFields   = pDT
 
 		return nil
 	}

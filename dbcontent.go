@@ -38,18 +38,19 @@ func (p *MCFile) AsDBContent() (pC *db.Content, e error) {
   // BaseInfo
   pC.RelFilePath = p.CheckedContent.RelFilePath
   pC.AbsFilePath = p.CheckedContent.AbsFilePath
-  // pC.Creatime =
   // As-is
   pC.Meta_raw = p.Meta_raw
   pC.Text_raw = p.Text_raw
   // Analysis
-  // pC.MimeType    =
-  // pC.Mtype          = p.MType.String()
+  pC.Analysis.MimeType = p.MimeType
+  pC.Analysis.MType    = p.MType // string()
   // pC.RootTag     =
   // pC.RootAtts    =
-  // pC.XmlContype  =
-  // pC.XmlDoctype  =
+  // // // // // println("Root:", p.RootTag, p.RootAtts)
+  pC.Analysis.XmlContype = p.XmlContype
+  pC.Analysis.XmlDoctype = p.XmlDoctype
   // pC.DitaContype = p.DitaInfo.
+  println("Cntp: xml(", p.XmlContype, ") dita(", p.DitaContype, ")")
 
   return pC, nil
 }
