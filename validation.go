@@ -32,7 +32,7 @@ func (p *MCFile) DoValidation() (dtdS string, docS string, errS string) {
 	// validation will fail if the SYSTEM ID can't be found.
 	stdOut, stdErr, err := MU.RunCommand(
 		"xmllint", "--noout", "--nowarning", "--nonet", "--dtdvalid",
-		"file://"+string(val.AbsFilePath), p.AbsFilePathParts.String())
+		"file://"+string(val.AbsFilePath), string(p.AbsFilePath))
 	// NOTE:1060 that the return value "err" is dumb:
 	// it contains stuff like "exit status 3".
 	if S.TrimSpace(stdErr) == "" {

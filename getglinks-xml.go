@@ -137,7 +137,7 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 				println("KEY:", pGL.RelFP, "#", pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
-				s, _ := FP.Abs(FP.Join(p.PathInfo.AbsFilePathParts.Echo(), pGL.RelFP))
+				s, _ := FP.Abs(FP.Join(p.PathInfo.AbsFP(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
 				println("2. AbsFP:", pGL.AbsFP)
 			} else if S.HasPrefix(pGL.Att, "idref") {
@@ -157,7 +157,7 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 				println("URI:", pGL.RelFP, "#", pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
-				s, _ := FP.Abs(FP.Join(p.PathInfo.AbsFilePathParts.Echo(), pGL.RelFP))
+				s, _ := FP.Abs(FP.Join(p.PathInfo.AbsFP(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
 				println("URI AbsFP:", FU.Tilded(pGL.AbsFP.S()))
 			}
