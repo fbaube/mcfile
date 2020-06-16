@@ -31,17 +31,17 @@ func (p *MCFile) st0a_SanityCheck() *MCFile {
 	// println("Init:", p.FileType())
 	switch p.FileType() {
 	case "XML":
-		if 0 == p.IsXml {
+		if !p.IsXML() {
 			panic("Init error: is XML but:!XML?!")
 		}
 		// p.FFSdataP = new(TypeXml)
 	case "MKDN":
-		if 0 != p.IsXml {
+		if p.IsXML() {
 			panic("Init error: is Mkdn but:XML?!")
 		}
 		// p.FFSdataP = new(TypeMkdn)
 	case "HTML":
-		if 0 == p.IsXml {
+		if !p.IsXML() {
 			panic("Init error: is HTML but:!XML?!")
 		}
 		 // p.FFSdataP = new(TypeHtml)

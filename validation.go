@@ -8,7 +8,7 @@ import (
 // TODO If no DOCTYPE, make a guess based on Filext but it can't be fatal.
 func (p *MCFile) DoValidation() (dtdS string, docS string, errS string) {
 	errS = ""
-	if 0 == p.IsXml {
+	if !p.IsXML() {
 		panic("DoValidation !IsXML")
 	}
 	if p.XmlDoctypeFields == nil {

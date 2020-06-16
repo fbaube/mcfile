@@ -115,7 +115,7 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 		// == Figure out what CLI name we were called as ==
 		osex, _ := os.Executable()
 		// The call to FP.Clean(..) is needed (!!)
-		println("==> Running:", FU.Tilded(FP.Clean(osex)))
+		println("==> Running:", FU.Enhomed(FP.Clean(osex)))
 		// == Locate xmllint for doing XML validations ==
 		xl, e := exec.LookPath("xmllint")
 		if e != nil {
@@ -175,7 +175,7 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 		CA.In = *FU.NewPathInfo(flag.Args()[0])
 		// If the absolute path does not match the argument provided, inform the user.
 		if CA.In.AbsFP() != flag.Args()[0] { // CA.In.RelFilePath { // CA.In.ArgFilePath {
-			println("==> Input:" /* FU.NiceFP */, FU.Tilded(CA.In.AbsFP()))
+			println("==> Input:", FU.Enhomed(CA.In.AbsFP()))
 		}
 		if CA.In.IsOkayDir() {
 			println("    --> The input is a directory and will be processed recursively.")
@@ -221,7 +221,7 @@ func (pCA *ConfigurationArguments) ProcessDatabaseArgs() error {
 	if e != nil {
 		return fmt.Errorf("DB setup failure: %w", e)
 	}
-	theDBexists = CA.DBhandle.PathInfo.Exists
+	theDBexists = CA.DBhandle.PathInfo.Exists()
 	var s = "exists"
 	if !theDBexists {
 		s = "does not exist"
@@ -253,14 +253,14 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 	if gotC { // -c
 		// pCA.XmlCat.ProcessFilePathArg(CA.XmlCat.ArgFilePath)
 		CA.XmlCat = *FU.NewPathInfo(sXmlCatRelFP)
-		if !(pCA.XmlCat.IsOkayFile() && pCA.XmlCat.Size > 0) {
+		if !(pCA.XmlCat.IsOkayFile() && pCA.XmlCat.Size() > 0) {
 			println("==> ERROR: XML catalog filepath is not file: " + pCA.XmlCat.AbsFP())
 			return errors.New(fmt.Sprintf("mcfile.ConfArgs.ProcCatalArgs<%s:%s>",
 				sXmlCatRelFP, CA.XmlCat.AbsFP()))
 		}
 		println("==> Catalog:", sXmlCatRelFP)
 		if pCA.XmlCat.AbsFP() != sXmlCatRelFP {
-			println("     --> i.e. ", FU.Tilded(pCA.XmlCat.AbsFP()))
+			println("     --> i.e. ", FU.Enhomed(pCA.XmlCat.AbsFP()))
 		}
 	}
 	if gotS { // -s
@@ -275,11 +275,11 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 		println("==> Schema(s):", sXmlCatSearchRelFP)
 		pCA.XmlCatSearch = *FU.NewPathInfo(sXmlCatSearchRelFP)
 		if CA.XmlCatSearch.AbsFP() != sXmlCatSearchRelFP {
-			println("     --> i.e. ", FU.Tilded(pCA.XmlCatSearch.AbsFP()))
+			println("     --> i.e. ", FU.Enhomed(pCA.XmlCatSearch.AbsFP()))
 		}
 		if !pCA.XmlCatSearch.IsOkayDir() {
 			println("==> ERROR: Schema path is not a readable directory: " +
-				FU.Tilded(pCA.XmlCatSearch.AbsFP()))
+				FU.Enhomed(pCA.XmlCatSearch.AbsFP()))
 			return fmt.Errorf("mcfile.ConfArgs.ProcCatalArgs.abs<%s>: %w",
 				pCA.XmlCatSearch.AbsFP(), e)
 		}
@@ -315,7 +315,7 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 		}
 		filePathToUse := FU.AbsFilePath(".")
 		if sXmlCatRelFP!= "" {
-			filePathToUse = FU.AbsFilePath(CA.XmlCatSearch.AbsFP()) 
+			filePathToUse = FU.AbsFilePath(CA.XmlCatSearch.AbsFP())
 		}
 		fileNameList, e := filePathToUse.GatherNamedFiles(fileNameToUse)
 		if e != nil {
