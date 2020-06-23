@@ -14,7 +14,7 @@ func (p *MCFile) DoValidation() (dtdS string, docS string, errS string) {
 	if p.XmlDoctypeFields == nil {
 		return "No_DcTp", "valid??", ""
 	}
-	var ppid = p.XmlInfo.XmlDoctypeFields.XmlPublicIDcatalogRecord
+	var ppid = p.XmlInfo.XmlDoctypeFields.PIDSIDcatalogFileRecord
 	// print("\t" + ppid.PTDesc + " --> ")
 	val := CA.XmlCatalogRecord.GetByPublicID(ppid.String())
 	if val == nil {

@@ -353,7 +353,8 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 			// MERGE THEM ALL
 			var xmlCat *gparse.XmlCatalogRecord
 			CA.XmlCatalogRecord = new(gparse.XmlCatalogRecord)
-			CA.XmlCatalogRecord.XmlPublicIDsubrecords = make([]XM.XmlPublicIDcatalogRecord, 0)
+			CA.XmlCatalogRecord.XmlPublicIDsubrecords =
+				make([]XM.PIDSIDcatalogFileRecord, 0)
 			for _, xmlCat = range xmlCatalogRecords {
 				CA.XmlCatalogRecord.XmlPublicIDsubrecords =
 					append(CA.XmlCatalogRecord.XmlPublicIDsubrecords,
