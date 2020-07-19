@@ -2,21 +2,23 @@ package mcfile
 
 import (
 	// "flag"
-	flag "github.com/spf13/pflag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	FP "path/filepath"
 
+	flag "github.com/spf13/pflag"
+
+	"errors"
+
 	"github.com/fbaube/db"
-	"github.com/fbaube/gparse"
 	FU "github.com/fbaube/fileutils"
-	SU "github.com/fbaube/stringutils"
+	"github.com/fbaube/gparse"
 	MU "github.com/fbaube/miscutils"
+	SU "github.com/fbaube/stringutils"
 	WU "github.com/fbaube/wasmutils"
 	XM "github.com/fbaube/xmlmodels"
-	"errors"
 )
 
 // Using this messes up the default Usage(), so **avoid** `flag.FlagSet`
@@ -26,11 +28,11 @@ var sOutRelFP, sXmlCatRelFP, sXmlCatSearchRelFP string
 
 // ConfigurationArguments can probably be used with various 3rd-party utilities.
 type ConfigurationArguments struct {
-	AppName   string
-	DBdirPath string
-	DBhandle  *db.MmmcDB
+	AppName                       string
+	DBdirPath                     string
+	DBhandle                      *db.MmmcDB
 	In, Out, XmlCat, XmlCatSearch FU.PathInfo // NOT ptr! Barfs at startup.
-	RestPort int
+	RestPort                      int
 	// CLI flags
 	FollowSymLinks, Pritt, DBdoImport, Help, Debug, GroupGenerated, Validate, DBdoZeroOut bool
 	// Result of processing CLI arg for input file(s)
@@ -44,6 +46,7 @@ var xmlCatalogRecords []*gparse.XmlCatalogRecord
 
 // CA maybe should not be exported.
 var CA ConfigurationArguments
+
 // var rootNode, currentNode *gtree.GTag
 
 func myUsage() {
@@ -81,7 +84,7 @@ func initVars() {
 	flag.BoolVar(&CA.GroupGenerated, "g", false,
 		"Group all generated files in same-named folder \n"+
 			"(e.g. ./Filnam.xml maps to ./Filenam.xml_gxml/Filenam.*)")
-	flag.BoolVar(&CA.Validate, "v", true,
+	flag.BoolVar(&CA.Validate, "v", false,
 		"Validate input file(s)? (using xmllint) (with flag \"-c\" or \"-s\")")
 	flag.BoolVar(&CA.DBdoZeroOut, "z", false,
 		"Zero out the database")
@@ -155,9 +158,9 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 			checkbarf(e, "Cannot Stat() Stdin")
 			if (stat.Mode() & os.ModeCharDevice) != 0 {
 				println("==> Reading from Stdin; press ^D right after a newline to end")
-				} else {
-					println("==> Reading Stdin from a file or pipe")
-				}
+			} else {
+				println("==> Reading Stdin from a file or pipe")
+			}
 		}
 		// bb, e := ioutil.ReadAll(os.Stdin)
 		stdIn := FU.GetStringFromStdin()
@@ -179,14 +182,14 @@ func ProcessArgs(appName string, osArgs []string) (*ConfigurationArguments, erro
 		}
 		if CA.In.IsOkayDir() {
 			println("    --> The input is a directory and will be processed recursively.")
-			} else if CA.In.IsOkayFile() {
-				println("    --> The input is a single file: extra info will be listed here.")
-				CA.SingleFile = true
-			} else {
-				println("    --> The input is a type not understood.")
-				return nil, fmt.Errorf("Bad type for input: " + CA.In.AbsFP())
-			}
+		} else if CA.In.IsOkayFile() {
+			println("    --> The input is a single file: extra info will be listed here.")
+			CA.SingleFile = true
+		} else {
+			println("    --> The input is a type not understood.")
+			return nil, fmt.Errorf("Bad type for input: " + CA.In.AbsFP())
 		}
+	}
 
 	// ===========================================
 	//   PROCESS ARGUMENTS to get complete info
@@ -300,7 +303,7 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 			return fmt.Errorf("gxml.Confargs.NewXmlCatalogFromFile<%s>: %w", sXmlCatRelFP, e)
 		}
 		if CA.XmlCatalogRecord == nil ||
-		   len(CA.XmlCatalogRecord.XmlPublicIDsubrecords) == 0 {
+			len(CA.XmlCatalogRecord.XmlPublicIDsubrecords) == 0 {
 			println("==> No valid entries in catalog file:", sXmlCatRelFP)
 			CA.XmlCatalogRecord = nil
 		}
@@ -314,7 +317,7 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 			fileNameToUse = sXmlCatRelFP
 		}
 		filePathToUse := FU.AbsFilePath(".")
-		if sXmlCatRelFP!= "" {
+		if sXmlCatRelFP != "" {
 			filePathToUse = FU.AbsFilePath(CA.XmlCatSearch.AbsFP())
 		}
 		fileNameList, e := filePathToUse.GatherNamedFiles(fileNameToUse)
@@ -358,13 +361,13 @@ func (pCA *ConfigurationArguments) ProcessCatalogArgs() error {
 			for _, xmlCat = range xmlCatalogRecords {
 				CA.XmlCatalogRecord.XmlPublicIDsubrecords =
 					append(CA.XmlCatalogRecord.XmlPublicIDsubrecords,
-						 xmlCat.XmlPublicIDsubrecords...)
+						xmlCat.XmlPublicIDsubrecords...)
 			}
 		}
 	}
 	if CA.XmlCatalogRecord == nil ||
-		 CA.XmlCatalogRecord.XmlPublicIDsubrecords == nil ||
-		 len(CA.XmlCatalogRecord.XmlPublicIDsubrecords) == 0 {
+		CA.XmlCatalogRecord.XmlPublicIDsubrecords == nil ||
+		len(CA.XmlCatalogRecord.XmlPublicIDsubrecords) == 0 {
 		CA.XmlCatalogRecord = nil
 		println("==> No valid catalog entries")
 		return errors.New("gxml.Confargs.XmlCatalogs")
