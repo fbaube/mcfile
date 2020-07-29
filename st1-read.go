@@ -1,10 +1,12 @@
 package mcfile
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
+
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
+	XM "github.com/fbaube/xmlmodels"
 )
 
 // - "XML"
@@ -70,7 +72,7 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 	switch p.FileType() {
 	case "MKDN":
 		var pPR *PU.ConcreteParseResults_mkdn
-		pPR, e = PU.GetParseResults_mkdn(p.Raw)
+		pPR, e = PU.GetConcreteParseResults_mkdn(p.Raw)
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
 			p.Blare(p.OLP + e.Error())
@@ -83,7 +85,7 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 		return p
 	case "HTML":
 		var pPR *PU.ConcreteParseResults_html
-		pPR, e = PU.GetParseResults_html(p.Raw)
+		pPR, e = PU.GetConcreteParseResults_html(p.Raw)
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
 			p.Blare(p.OLP + e.Error())
@@ -95,8 +97,8 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 		// p.TallyTags()
 		return p
 	case "XML":
-		var pPR *PU.ConcreteParseResults_xml
-		pPR, e := PU.GetParseResults_xml(p.Raw)
+		var pPR *XM.ConcreteParseResults_xml
+		pPR, e := XM.GetConcreteParseResults_xml(p.Raw)
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
 		}
@@ -109,7 +111,6 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 	return p
 }
 
-
 // st1c_MakeAFLfromCFL is Step 1d:
 // Make Abstract Flat List from Concrete Flat List
 func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
@@ -120,38 +121,38 @@ func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
 	var errmsg string
 	var GTs []*gtoken.GToken
 
-		switch p.FileType() {
-		case "MKDN":
-			GTs, e = gtoken.DoGTokens_mkdn(p.CPR.(*PU.ConcreteParseResults_mkdn))
-			if e != nil {
-				p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
-			}
-			p.GTokens = GTs
-		case "HTML":
-			GTs, e = gtoken.DoGTokens_html(p.CPR.(*PU.ConcreteParseResults_html))
-			if e != nil {
-				p.SetError(fmt.Errorf("st1d: html.GTs: %w", e))
-			}
-			p.GTokens = GTs
-		case "XML":
-			GTs, e = gtoken.DoGTokens_xml(p.CPR.(*PU.ConcreteParseResults_xml))
-			if e != nil {
-				e = fmt.Errorf("GToken-ization failed: %w", e)
-			}
-			if e != nil {
-				errmsg = "st[1f] " + e.Error()
-				p.Blare(p.OLP + errmsg)
-				p.SetError(e)
-				return p
-			}
-			p.TallyTags()
-			// fmt.Printf("==> Tags: %v \n", pGF.TagTally)
-			// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
-			p.GTokens = GTs
+	switch p.FileType() {
+	case "MKDN":
+		GTs, e = gtoken.DoGTokens_mkdn(p.CPR.(*PU.ConcreteParseResults_mkdn))
+		if e != nil {
+			p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
 		}
-		// fmt.Printf("st1c_MakeAFLfromCFL: nGTokens: %d %d \n", len(p.GTokens), len(GTs))
-		return p
+		p.GTokens = GTs
+	case "HTML":
+		GTs, e = gtoken.DoGTokens_html(p.CPR.(*PU.ConcreteParseResults_html))
+		if e != nil {
+			p.SetError(fmt.Errorf("st1d: html.GTs: %w", e))
+		}
+		p.GTokens = GTs
+	case "XML":
+		GTs, e = gtoken.DoGTokens_xml(p.CPR.(*XM.ConcreteParseResults_xml))
+		if e != nil {
+			e = fmt.Errorf("GToken-ization failed: %w", e)
+		}
+		if e != nil {
+			errmsg = "st[1f] " + e.Error()
+			p.Blare(p.OLP + errmsg)
+			p.SetError(e)
+			return p
+		}
+		p.TallyTags()
+		// fmt.Printf("==> Tags: %v \n", pGF.TagTally)
+		// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
+		p.GTokens = GTs
 	}
+	// fmt.Printf("st1c_MakeAFLfromCFL: nGTokens: %d %d \n", len(p.GTokens), len(GTs))
+	return p
+}
 
 // st1d_PostMeta_notmkdn is Step 1c (XML,HTML): XML per format; HTML <head>
 func (p *MCFile) st1d_PostMeta_notmkdn() *MCFile {
@@ -160,9 +161,9 @@ func (p *MCFile) st1d_PostMeta_notmkdn() *MCFile {
 		// Markdown YAML metadata was processed in step st1a
 		return p
 	case "HTML": /*
-		var pPR *PU.ConcreteParseResults_html
-		pPR = p.CPR.(*PU.ConcreteParseResults_html)
-		z := pPR. */
+			var pPR *PU.ConcreteParseResults_html
+			pPR = p.CPR.(*PU.ConcreteParseResults_html)
+			z := pPR. */
 		// Inside <head>: <meta> <title> <base> <link> <style>
 		// See also: https://gist.github.com/lancejpollard/1978404
 		return p

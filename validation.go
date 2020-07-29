@@ -1,12 +1,14 @@
 package mcfile
 
 import (
-	S  "strings"
+	S "strings"
+
 	MU "github.com/fbaube/miscutils"
+	XM "github.com/fbaube/xmlmodels"
 )
 
 // TODO If no DOCTYPE, make a guess based on Filext but it can't be fatal.
-func (p *MCFile) DoValidation() (dtdS string, docS string, errS string) {
+func (p *MCFile) DoValidation(pXCF *XM.XmlCatalogFile) (dtdS string, docS string, errS string) {
 	errS = ""
 	if !p.IsXML() {
 		panic("DoValidation !IsXML")
@@ -16,7 +18,7 @@ func (p *MCFile) DoValidation() (dtdS string, docS string, errS string) {
 	}
 	var ppid = p.XmlInfo.XmlDoctypeFields.PIDSIDcatalogFileRecord
 	// print("\t" + ppid.PTDesc + " --> ")
-	val := CA.XmlCatalogRecord.GetByPublicID(ppid.String())
+	val := pXCF.GetByPublicID(ppid.String())
 	if val == nil {
 		// println("DTD NOT FOUND")
 		return "DTD_Unk", "valid??", ""
