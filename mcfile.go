@@ -9,10 +9,12 @@ import (
 	"github.com/fbaube/db"
 	FU "github.com/fbaube/fileutils"
 	MU "github.com/fbaube/miscutils"
+
 	// XM "github.com/fbaube/xmlmodels"
-	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gparse"
+	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
+
 	// "github.com/pkg/errors"
 	_ "github.com/sanity-io/litter"
 )
@@ -131,20 +133,22 @@ func (p *MCFile) Blare(s string) {
 // Whine is used for non-fatal errors, i.e. strong warnings.
 func (p *MCFile) Whine(s string) {
 	p.LogIt(s)
-	fmt.Fprintf(os.Stdout, "--> " + s)
+	fmt.Fprintf(os.Stdout, "--> "+s)
 }
 
 // NewMCFile // also sets `MCFile.MType[..]`.
 func NewMCFile(pCC *FU.CheckedContent) *MCFile {
 	pMF := new(MCFile)
-	// pMF.CheckedContent = *pCC
 	pMF.PathInfo = pCC.PathInfo
+	pMF.AnalysisRecord = pCC.AnalysisRecord
+	// println("COPY MORE!")
 	if pCC.GetError() != nil {
-		pCC.SetError(fmt.Errorf("NewMCFile <%s>: %w", pCC.AbsFilePath, pCC.GetError()))
+		pCC.SetError(fmt.Errorf("NewMCFile <%s>: %w",
+			pCC.AbsFilePath, pCC.GetError()))
 		return pMF
 	}
 	pMF.GLinks = new(GLinks)
-	println("NewMCFile:", pCC.MType, pCC.AbsFilePath)
+	println("NewMCFile:", pCC.MType, pCC.AbsFP())
 	return pMF
 }
 
@@ -164,9 +168,9 @@ func NewMCFileFromPath(path string) *MCFile {
 	*/
 	pCC := FU.NewCheckedContent(pBP) // new(FU.CheckedContent)
 	/*
-	pCC.BasicPath    =  pBP
-	pCC.BasicContent = *pBP.FetchContent()
-	pCC.BasicAnalysis.AnalyzeFileContent(pCC.Raw)
+		pCC.BasicPath    =  pBP
+		pCC.BasicContent = *pBP.FetchContent()
+		pCC.BasicAnalysis.AnalyzeFileContent(pCC.Raw)
 	*/
 	println("--> MType:", pCC.MType) // Mstring())
 	/*
@@ -217,7 +221,7 @@ func (p MCFile) String() string {
 
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("(DD:GFILE)||%s||OtFiles|ss||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		p.PathInfo.AbsFP(), /* p.OutputFiles.String(), */ p.GTree.String(),
+		p.PathInfo.AbsFP() /* p.OutputFiles.String(), */, p.GTree.String(),
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {
@@ -237,7 +241,7 @@ func (p MCFile) String() string {
 	}
 	== */
 	// if p.DitaInfo != nil {
-		s += fmt.Sprintf("DitaInfo|%s||", p.DitaInfo.String())
+	s += fmt.Sprintf("DitaInfo|%s||", p.DitaInfo.String())
 	// }
 
 	p.PopBigFields(BF)
@@ -249,12 +253,12 @@ func (p MCFile) String() string {
 func (p *MCFile) ConfigureOutputFiles(dirSuffix string) error {
 	println("mcfile.CfgOutputFiles OMITTED")
 	/*
-	pOF, e := p.CheckedContent.NewOutputFiles(dirSuffix)
-	if e != nil {
-		return errors.Wrapf(e,
-			"mcfile.ConfigureOutputFiles<%s>", p.BasicPath.AbsFilePathParts.String())
-	}
-	p.OutputFiles = *pOF
+		pOF, e := p.CheckedContent.NewOutputFiles(dirSuffix)
+		if e != nil {
+			return errors.Wrapf(e,
+				"mcfile.ConfigureOutputFiles<%s>", p.BasicPath.AbsFilePathParts.String())
+		}
+		p.OutputFiles = *pOF
 	*/
 	return nil
 }
