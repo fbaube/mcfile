@@ -51,8 +51,8 @@ type CCTnode interface{}
 // this is a logical place to store a GTokenization and a GTree.
 type MCFile struct {
 	MU.GCtx
-	db.Times
-	FU.PathInfo
+	// db.Times
+	FU.PathProps
 	db.ContentRecord // embeds FU.AnalysisRecord
 
 	// Data stuctures and conversions ("FFS" = file-format-specific):
@@ -137,18 +137,16 @@ func (p *MCFile) Whine(s string) {
 }
 
 // NewMCFile // also sets `MCFile.MType[..]`.
-func NewMCFile(pCC *FU.CheckedContent) *MCFile {
+func NewMCFile(pCC *db.ContentRecord) *MCFile {
 	pMF := new(MCFile)
-	pMF.PathInfo = pCC.PathInfo
-	pMF.AnalysisRecord = pCC.AnalysisRecord
-	// println("COPY MORE!")
+	pMF.ContentRecord = *pCC
 	if pCC.GetError() != nil {
 		pCC.SetError(fmt.Errorf("NewMCFile <%s>: %w",
 			pCC.AbsFilePath, pCC.GetError()))
 		return pMF
 	}
 	pMF.GLinks = new(GLinks)
-	println("NewMCFile:", pCC.MType, pCC.AbsFP())
+	println("NewMCFile:", pMF.MType, pMF.AbsFP())
 	return pMF
 }
 
@@ -156,32 +154,18 @@ func NewMCFile(pCC *FU.CheckedContent) *MCFile {
 // and also sets `MCFile.MType[..]`.
 func NewMCFileFromPath(path string) *MCFile {
 	// FIRST we work with a new CheckedPath
-	pBP := FU.NewPathInfo(path)
+	pBP := FU.NewPathProps(path)
 	if pBP.GetError() != nil || !pBP.IsOkayFile() {
 		pBP.SetError(fmt.Errorf("NewMCFileFromPath.BP <%s>: %w", path, pBP.GetError()))
 		return nil
 	}
-	/*
-		println("====")
-		litter.Dump(*pCP)
-		println("====")
-	*/
-	pCC := FU.NewCheckedContent(pBP) // new(FU.CheckedContent)
-	/*
-		pCC.BasicPath    =  pBP
-		pCC.BasicContent = *pBP.FetchContent()
-		pCC.BasicAnalysis.AnalyzeFileContent(pCC.Raw)
-	*/
+	pCC := db.NewContentRecord(pBP)  // NewCheckedContent(pBP) // new(FU.CheckedContent)
 	println("--> MType:", pCC.MType) // Mstring())
-	/*
-		println("====")
-		litter.Dump(*pCP)
-		println("====")
-	*/
 	// Create the MCFile
 	pMF := new(MCFile)
 	// pMF.CheckedContent = *pCC
-	pMF.PathInfo = pCC.PathInfo
+	// .PathProps = pCC.PathProps
+	pMF.ContentRecord = *pCC
 	if pCC.GetError() != nil {
 		pCC.SetError(fmt.Errorf("NewMCFileFromPath.CC <%s>: %w", path, pCC.GetError()))
 		return pMF
@@ -201,7 +185,7 @@ func (p *MCFile) Errorbarf(e error, s string) bool {
 	p.SetError(e)
 	// elog.Printf("%s failed: %s \n", myAppName, e.Error())
 	fmt.Fprintf(os.Stderr, "%s failed: %s \n\t error was: %s \n",
-		p.PathInfo.AbsFP(), s, e.Error())
+		p.PathProps.AbsFP(), s, e.Error())
 	// os.Exit(1)
 	println("==> DUMP OF FAILING MCFILE:")
 	println(p.String())
@@ -221,7 +205,7 @@ func (p MCFile) String() string {
 
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("(DD:GFILE)||%s||OtFiles|ss||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		p.PathInfo.AbsFP() /* p.OutputFiles.String(), */, p.GTree.String(),
+		p.PathProps.AbsFP() /* p.OutputFiles.String(), */, p.GTree.String(),
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {
@@ -261,4 +245,33 @@ func (p *MCFile) ConfigureOutputFiles(dirSuffix string) error {
 		p.OutputFiles = *pOF
 	*/
 	return nil
+}
+
+// === Implement interface Errable
+
+func (p *MCFile) HasError() bool {
+	return p.ContentRecord.HasError() || p.PathProps.HasError()
+}
+
+// GetError is necessary cos "Error()"" dusnt tell you whether "error"
+// is "nil", which is the indication of no error. Therefore we need
+// this function, which can actually return the telltale "nil".
+func (p *MCFile) GetError() error {
+	if p.PathProps.HasError() {
+		return p.PathProps.GetError()
+	}
+	return p.ContentRecord.GetError()
+}
+
+// Error satisfies interface "error", but the
+// weird thing is that "error" can be nil.
+func (p *MCFile) Error() string {
+	if p.PathProps.HasError() {
+		return p.PathProps.Error()
+	}
+	return p.ContentRecord.Error()
+}
+
+func (p *MCFile) SetError(e error) {
+	p.ContentRecord.SetError(e)
 }

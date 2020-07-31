@@ -85,7 +85,9 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 	// ## // ## // var Dir FU.AbsFilePath = pGF.InputFile.FileFullName.DirPath
 	// Iterate over all GTokens.
 	for _, GT := range p.GTokens {
-		if GT == nil { continue }
+		if GT == nil {
+			continue
+		}
 		// If it's not a Start Element, skip it
 		if GT.TTType != "SE" {
 			continue
@@ -116,10 +118,10 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 			*/
 			pGL.Att = XA.Name.Local
 			pGL.Tag = theTag
-			pGL.Link_raw  = XA.Value
+			pGL.Link_raw = XA.Value
 			// Is it HTTP, FTP, etc. ?
-			if i := S.Index(pGL.Link_raw , "://"); i > 0 {
-				pGL.AddressMode = pGL.Link_raw [:i]
+			if i := S.Index(pGL.Link_raw, "://"); i > 0 {
+				pGL.AddressMode = pGL.Link_raw[:i]
 				pGL.Resolved = true
 				if pGL.Att != "href" {
 					panic("Non-@href http:://!")
@@ -128,36 +130,36 @@ func (p *MCFile) GatherXmlGLinks() *MCFile {
 				pGL.AbsFP = "/"
 			} else if S.Contains(pGL.Att, "key") {
 				pGL.AddressMode = "key"
-				if i := S.Index(pGL.Link_raw , "#"); i != -1 {
-					pGL.FragID = pGL.Link_raw [i+1:]
-					pGL.RelFP = pGL.Link_raw [:i]
+				if i := S.Index(pGL.Link_raw, "#"); i != -1 {
+					pGL.FragID = pGL.Link_raw[i+1:]
+					pGL.RelFP = pGL.Link_raw[:i]
 				} else {
 					pGL.RelFP = pGL.Link_raw
 				}
 				println("KEY:", pGL.RelFP, "#", pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
-				s, _ := FP.Abs(FP.Join(p.PathInfo.AbsFP(), pGL.RelFP))
+				s, _ := FP.Abs(FP.Join(p.PathProps.AbsFP(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
 				println("2. AbsFP:", pGL.AbsFP)
 			} else if S.HasPrefix(pGL.Att, "idref") {
 				pGL.AddressMode = "idref"
-				if i := S.Index(pGL.Link_raw , "#"); i != -1 {
+				if i := S.Index(pGL.Link_raw, "#"); i != -1 {
 					panic("IDREF has fragment ID")
 				}
-				println("IDREF:", pGL.Link_raw )
+				println("IDREF:", pGL.Link_raw)
 			} else {
 				pGL.AddressMode = "uri"
-				if i := S.Index(pGL.Link_raw , "#"); i != -1 {
-					pGL.FragID = pGL.Link_raw [i+1:]
-					pGL.RelFP =  pGL.Link_raw [:i]
+				if i := S.Index(pGL.Link_raw, "#"); i != -1 {
+					pGL.FragID = pGL.Link_raw[i+1:]
+					pGL.RelFP = pGL.Link_raw[:i]
 				} else {
 					pGL.RelFP = pGL.Link_raw
 				}
 				println("URI:", pGL.RelFP, "#", pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
-				s, _ := FP.Abs(FP.Join(p.PathInfo.AbsFP(), pGL.RelFP))
+				s, _ := FP.Abs(FP.Join(p.PathProps.AbsFP(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
 				println("URI AbsFP:", FU.Enhomed(pGL.AbsFP.S()))
 			}
