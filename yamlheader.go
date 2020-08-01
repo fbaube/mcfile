@@ -1,8 +1,9 @@
 package mcfile
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
+
 	SU "github.com/fbaube/stringutils"
 )
 
@@ -30,9 +31,9 @@ func (p *MCFile) GetYamlHeader() *MCFile {
 		return p
 	}
 	// if p.Header != nil {
-		println("--> YAML header reallocated!")
-		p.SetError(errors.New("YAML header reallocated"))
-		return p
+	println("--> YAML header reallocated!")
+	p.SetError(errors.New("YAML header reallocated"))
+	return p
 	// }
 	// p.Header = new(Header)
 	p.MetaFormat = "yaml"
@@ -44,18 +45,18 @@ func (p *MCFile) GetYamlHeader() *MCFile {
 		println("ERR: Yaml left no MCFile Raw")
 	}
 	/*
-	m := ymb.AsMap()
-		if p.Props == nil {
-			p.Props = m
-		} else {
-			for k, v := range m {
-    	p.Props[k] = v
-		}
+			m := ymb.AsMap()
+				if p.Props == nil {
+					p.Props = m
+				} else {
+					for k, v := range m {
+		    	p.Props[k] = v
+				}
 
-		println("mcfile got YAML. TODO:80 Add it to MCFile.")
-* 		fmt.Printf("YAML: %+v \n", *ymb)
-* 	}
-* 	}
+				println("mcfile got YAML. TODO:80 Add it to MCFile.")
+		* 		fmt.Printf("YAML: %+v \n", *ymb)
+		* 	}
+		* 	}
 	*/
 	return p
 }

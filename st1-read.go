@@ -34,9 +34,10 @@ func (p *MCFile) st1_Read() *MCFile {
 		return p
 	}
 	println("--> (1) Read")
-	fmt.Printf("--> FileType<%s> MType<%v> \n", p.FileType(), p.MType)
+	fmt.Printf("    --> FileType<%s> MType<%v> \n", p.FileType(), p.MType)
 	return p.
 		st1a_PreMeta().
+		st1aa_SPLIT().
 		st1b_GetCPR().
 		st1c_MakeAFLfromCFL().
 		st1d_PostMeta_notmkdn() // XML per format; HTML <head>
@@ -46,7 +47,7 @@ func (p *MCFile) st1_Read() *MCFile {
 // separated from content, e.g. YAML frontmatter in MDITA-XP.
 //
 func (p *MCFile) st1a_PreMeta() *MCFile {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	switch p.FileType() {
@@ -59,13 +60,30 @@ func (p *MCFile) st1a_PreMeta() *MCFile {
 	return p
 }
 
-// st1b_GetCPR is Step 1b: Get ContreteParseResults
+func (p *MCFile) st1aa_SPLIT() *MCFile {
+	if p.HasError() {
+		return p
+	}
+	switch p.FileType() {
+	case "XML", "HTML":
+		println("st1aa_PreMeta: XML/HTML...")
+		// HTML, XHTML: Look for <html>, <head>, <body>
+		//  XML (DITA): Look for...
+		// topic: (title, shortdesc?, prolog?, body?)
+		//   map: (topicmeta?, (topicref|keydef)*)
+	case "MKDN":
+		println("st1aa_PreMeta: MD nil OK")
+	}
+	return p
+}
+
+// st1b_GetCPR is Step 1b: Get ConcreteParseResults
 func (p *MCFile) st1b_GetCPR() *MCFile {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	if len(p.Raw) == 0 {
-		p.Whine(p.OLP + "st[1b] " + "Zero-length content")
+		p.Whine(p.OwnLogPfx + "st[1b] " + "Zero-length content")
 		return p
 	}
 	var e error
@@ -75,7 +93,7 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 		pPR, e = PU.GetConcreteParseResults_mkdn(p.Raw)
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
-			p.Blare(p.OLP + e.Error())
+			p.Blare(p.OwnLogPfx + e.Error())
 			p.SetError(e)
 			return p
 		}
@@ -88,7 +106,7 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 		pPR, e = PU.GetConcreteParseResults_html(p.Raw)
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
-			p.Blare(p.OLP + e.Error())
+			p.Blare(p.OwnLogPfx + e.Error())
 			p.SetError(e)
 			return p
 		}
@@ -141,7 +159,7 @@ func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
 		}
 		if e != nil {
 			errmsg = "st[1f] " + e.Error()
-			p.Blare(p.OLP + errmsg)
+			p.Blare(p.OwnLogPfx + errmsg)
 			p.SetError(e)
 			return p
 		}

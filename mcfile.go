@@ -116,8 +116,8 @@ type MCFile struct {
 // the command line using Sqlite (and other nifty) tools.
 
 func (p *MCFile) LogIt(s string) {
-	if p.Log != nil {
-		p.Log.Printf(s)
+	if p.OwnLog != nil {
+		p.OwnLog.Printf(s)
 	} else {
 		p.SsnLog.Printf(s)
 	}
@@ -146,7 +146,7 @@ func NewMCFile(pCC *db.ContentRecord) *MCFile {
 		return pMF
 	}
 	pMF.GLinks = new(GLinks)
-	println("NewMCFile:", pMF.MType, pMF.AbsFP())
+	// println("D=> NewMCFile:", pMF.MType, pMF.AbsFP())
 	return pMF
 }
 
@@ -245,6 +245,43 @@ func (p *MCFile) ConfigureOutputFiles(dirSuffix string) error {
 		p.OutputFiles = *pOF
 	*/
 	return nil
+}
+
+func (pMCF *MCFile) GatherGLinksInto(pGL *GLinks) {
+	var aGL *GLink
+
+	if len(pMCF.OutgoingKeys) > 0 || len(pMCF.IncomableKeys) > 0 {
+
+		// Dir := pCF.CheckedPath.AbsFilePathParts.DirPath
+		// println("### KEY GLinks:", Dir)
+		if len(pMCF.OutgoingKeys) > 0 {
+			pGL.OutgoingKeys = append(pGL.OutgoingKeys, pMCF.OutgoingKeys...)
+			for _, aGL = range pMCF.OutgoingKeys {
+				fmt.Printf("Outgng: %s@%s: %s \n", aGL.Tag, aGL.Att, aGL.Link_raw)
+			}
+		}
+		if len(pMCF.IncomableKeys) > 0 {
+			pGL.IncomableKeys = append(pGL.IncomableKeys, pMCF.IncomableKeys...)
+			for _, aGL = range pMCF.IncomableKeys {
+				fmt.Printf("Incmbl: %s@%s: %s \n", aGL.Tag, aGL.Att, aGL.Link_raw)
+			}
+		}
+	}
+	if len(pMCF.OutgoingURIs) > 0 || len(pMCF.IncomableURIs) > 0 {
+		// !! println("### URI GLinks:", Dir)
+		if len(pMCF.OutgoingURIs) > 0 {
+			pGL.OutgoingURIs = append(pGL.OutgoingURIs, pMCF.OutgoingURIs...)
+			for _, aGL = range pMCF.OutgoingURIs {
+				fmt.Printf("###  # Outgng: %s@%s: %s \n", aGL.Tag, aGL.Att, aGL.Link_raw)
+			}
+		}
+		if len(pMCF.IncomableURIs) > 0 {
+			pGL.IncomableURIs = append(pGL.IncomableURIs, pMCF.IncomableURIs...)
+			for _, aGL = range pMCF.IncomableURIs {
+				fmt.Printf("Incmbl: %s@%s: %s \n", aGL.Tag, aGL.Att, aGL.Link_raw)
+			}
+		}
+	}
 }
 
 // === Implement interface Errable
