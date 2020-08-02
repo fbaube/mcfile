@@ -6,6 +6,7 @@ import (
 
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
+	SU "github.com/fbaube/stringutils"
 	XM "github.com/fbaube/xmlmodels"
 )
 
@@ -36,18 +37,66 @@ func (p *MCFile) st1_Read() *MCFile {
 	println("--> (1) Read")
 	fmt.Printf("    --> FileType<%s> MType<%v> \n", p.FileType(), p.MType)
 	return p.
-		st1a_PreMeta().
-		st1aa_SPLIT().
-		st1b_GetCPR().
-		st1c_MakeAFLfromCFL().
-		st1d_PostMeta_notmkdn() // XML per format; HTML <head>
+		st1a_Split().
+		st1b_ProcessMetadata().
+		st1c_GetCPR().
+		st1d_MakeAFLfromCFL().
+		st1e_PostMeta_notmkdn() // XML per format; HTML <head>
 }
 
-// st1a_PreMeta is Step 1a: used when metadata can easily be
-// separated from content, e.g. YAML frontmatter in MDITA-XP.
+/*
+type ContentitySections struct {
+	Raw string // The entire input file
+	// Text_raw + Meta_raw = Raw (maybe plus surrounding tags)
+	Text_raw   string
+	Meta_raw   string
+	MetaFormat string
+	MetaProps  SU.PropSet
+}
+*/
+// st1a_Split is Step 1a: used to split the file into two parts -
+// (header) meta and (body) text.
 //
-func (p *MCFile) st1a_PreMeta() *MCFile {
+func (p *MCFile) st1a_Split() *MCFile {
 	if p.HasError() {
+		return p
+	}
+	switch p.FileType() {
+	case "MKDN":
+		i, e := SU.YamlMetadataHeaderLength(p.Raw)
+		if e != nil {
+			p.SetError(fmt.Errorf("yaml metadata header: %w", e))
+			return p
+		}
+		if i == 0 {
+			p.Text_raw = p.Raw
+		} else {
+			p.Meta_raw = p.Raw[:i]
+			p.Text_raw = p.Raw[i:]
+			/*
+				println(
+					"D=> === META ===\n", p.Meta_raw,
+					"D=> === TEXT === \n", p.Text_raw,
+					"D=> === End ===")
+			*/
+		}
+	case "XML", "HTML":
+		println("st1aa_PreMeta: XML/HTML...")
+		// HTML, XHTML: Look for <html>, <head>, <body>
+		//  XML (DITA): Look for...
+		// topic: (title, shortdesc?, prolog?, body?)
+		//   map: (topicmeta?, (topicref|keydef)*)
+	}
+	return p
+}
+
+// st1b_ProcessMetadata is Step 1b: used to process metadata.
+//
+func (p *MCFile) st1b_ProcessMetadata() *MCFile {
+	if p.HasError() {
+		return p
+	}
+	if p.Meta_raw == "" {
 		return p
 	}
 	switch p.FileType() {
@@ -55,30 +104,18 @@ func (p *MCFile) st1a_PreMeta() *MCFile {
 		// return p.TryXmlPreamble()
 		println("st1a_PreMeta: XML/HTML TBS")
 	case "MKDN":
-		return p.GetYamlHeader()
+		ps, e := SU.GetYamlMetadataAsPropSet(SU.TrimYamlMetadataDelimiters(p.Meta_raw))
+		if e != nil {
+			p.SetError(fmt.Errorf("yaml metadata: %w", e))
+			return p
+		}
+		p.MetaProps = ps
 	}
 	return p
 }
 
-func (p *MCFile) st1aa_SPLIT() *MCFile {
-	if p.HasError() {
-		return p
-	}
-	switch p.FileType() {
-	case "XML", "HTML":
-		println("st1aa_PreMeta: XML/HTML...")
-		// HTML, XHTML: Look for <html>, <head>, <body>
-		//  XML (DITA): Look for...
-		// topic: (title, shortdesc?, prolog?, body?)
-		//   map: (topicmeta?, (topicref|keydef)*)
-	case "MKDN":
-		println("st1aa_PreMeta: MD nil OK")
-	}
-	return p
-}
-
-// st1b_GetCPR is Step 1b: Get ConcreteParseResults
-func (p *MCFile) st1b_GetCPR() *MCFile {
+// st1c_GetCPR is Step 1c: Get ConcreteParseResults
+func (p *MCFile) st1c_GetCPR() *MCFile {
 	if p.HasError() {
 		return p
 	}
@@ -129,9 +166,9 @@ func (p *MCFile) st1b_GetCPR() *MCFile {
 	return p
 }
 
-// st1c_MakeAFLfromCFL is Step 1d:
+// st1d_MakeAFLfromCFL is Step 1d:
 // Make Abstract Flat List from Concrete Flat List
-func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
+func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 	if p.GetError() != nil {
 		return p
 	}
@@ -172,8 +209,8 @@ func (p *MCFile) st1c_MakeAFLfromCFL() *MCFile {
 	return p
 }
 
-// st1d_PostMeta_notmkdn is Step 1c (XML,HTML): XML per format; HTML <head>
-func (p *MCFile) st1d_PostMeta_notmkdn() *MCFile {
+// st1e_PostMeta_notmkdn is Step 1e (XML,HTML): XML per format; HTML <head>
+func (p *MCFile) st1e_PostMeta_notmkdn() *MCFile {
 	switch p.FileType() {
 	case "MKDN":
 		// Markdown YAML metadata was processed in step st1a
