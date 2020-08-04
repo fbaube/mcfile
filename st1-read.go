@@ -81,7 +81,7 @@ func (p *MCFile) st1a_Split() *MCFile {
 			*/
 		}
 	case "XML", "HTML":
-		println("st1aa_PreMeta: XML/HTML...")
+		println("st1a_Split: XML/HTML...")
 		// HTML, XHTML: Look for <html>, <head>, <body>
 		//  XML (DITA): Look for...
 		// topic: (title, shortdesc?, prolog?, body?)
@@ -104,7 +104,8 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 		// return p.TryXmlPreamble()
 		println("st1a_PreMeta: XML/HTML TBS")
 	case "MKDN":
-		ps, e := SU.GetYamlMetadataAsPropSet(SU.TrimYamlMetadataDelimiters(p.Meta_raw))
+		ps, e := SU.GetYamlMetadataAsPropSet(
+			SU.TrimYamlMetadataDelimiters(p.Meta_raw))
 		if e != nil {
 			p.SetError(fmt.Errorf("yaml metadata: %w", e))
 			return p
@@ -129,7 +130,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 		var pPR *PU.ConcreteParseResults_mkdn
 		pPR, e = PU.GetConcreteParseResults_mkdn(p.Raw)
 		if e != nil {
-			e = errors.New("st[1b] " + e.Error())
+			e = errors.New("st[1c] " + e.Error())
 			p.Blare(p.OwnLogPfx + e.Error())
 			p.SetError(e)
 			return p
@@ -182,7 +183,14 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 		if e != nil {
 			p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
 		}
-		p.GTokens = GTs
+		// p.GTokens = GTs
+		// Compress out nil GTokens ?
+		p.GTokens = make([]*gtoken.GToken, 0)
+		for _, GT := range GTs {
+			if GT != nil {
+				p.GTokens = append(p.GTokens, GT)
+			}
+		}
 	case "HTML":
 		GTs, e = gtoken.DoGTokens_html(p.CPR.(*PU.ConcreteParseResults_html))
 		if e != nil {

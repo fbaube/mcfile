@@ -3,31 +3,35 @@ package mcfile
 import (
 	"os"
 	// "fmt"
-	"github.com/fbaube/gtree"
 	"github.com/fbaube/gtoken"
+	"github.com/fbaube/gtree"
 )
 
 // st2_Tree takes the output of st1_Read - which at a minimum
 // is a complete set of `GToken`s - and creates a `GTree`.
-// Note that st1_Read might have generated an CST (MKDN and
-// HHTML do this) but in such cases, st1_Read also prepared
+// Note that st1_Read might have generated a CST (MKDN and
+// HTML do this) but in such cases, st1_Read also prepared
 // the list of corresponding `GToken`s.
 // - PrepareToTree() // e.g. GTags
 // - ParseIntoTree()
 // - PostTreeMeta()
 // - NormalizeTree()
 func (p *MCFile) st2_Tree() *MCFile {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	println("--> (2) Tree")
-	return p.st2a_PrepareToTree().st2b_ParseIntoTree().st2c_PostTreeMeta().st2d_NormalizeTree()
+	return p.
+		st2a_PrepareToTree().
+		st2b_ParseIntoTree().
+		st2c_PostTreeMeta().
+		st2d_NormalizeTree()
 }
 
 // PrepareToTree is Step 2a. <br/>
 // This is used when there is some preparation specific to building the tree.
 func (p *MCFile) st2a_PrepareToTree() *MCFile {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	var e error
@@ -58,12 +62,12 @@ func (p *MCFile) st2a_PrepareToTree() *MCFile {
 
 // ParseIntoTree is Step 2b.
 func (p *MCFile) st2b_ParseIntoTree() *MCFile {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	var e error
 	// fmt.Printf("==> mcfl.st2b: FileType<%s> nGTags<%d> \n",
-		// p.FileType(),len(p.GTags))
+	// p.FileType(),len(p.GTags))
 	p.GTree, e = gtree.NewGTreeFromGTags(p.GTags)
 	if e != nil {
 		p.SetError(e)
