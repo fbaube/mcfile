@@ -3,6 +3,7 @@ package mcfile
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
@@ -101,7 +102,6 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 	}
 	switch p.FileType() {
 	case "XML", "HTML":
-		// return p.TryXmlPreamble()
 		println("st1a_PreMeta: XML/HTML TBS")
 	case "MKDN":
 		ps, e := SU.GetYamlMetadataAsPropSet(
@@ -179,6 +179,13 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 
 	switch p.FileType() {
 	case "MKDN":
+		var pCPRMD *PU.ConcreteParseResults_mkdn
+		pCPRMD = p.CPR.(*PU.ConcreteParseResults_mkdn)
+		if p.GTokensOutput != nil {
+			pCPRMD.DumpDest = p.GTokensOutput
+		} else {
+			pCPRMD.DumpDest = os.Stdout
+		}
 		GTs, e = gtoken.DoGTokens_mkdn(p.CPR.(*PU.ConcreteParseResults_mkdn))
 		if e != nil {
 			p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))

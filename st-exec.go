@@ -4,9 +4,18 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
-	SU "github.com/fbaube/stringutils"
+
 	"github.com/fatih/color"
+	SU "github.com/fbaube/stringutils"
 )
+
+/*
+var stagesXmlConfiguration *CFU.XmlAppConfiguration
+
+func SetStagesXmlConfiguration(pXAC *CFU.XmlAppConfiguration) {
+	stagesXmlConfiguration = pXAC
+}
+*/
 
 // ExecuteStages runs an `MCFile` to completion in an isolated thread, and
 // can eaily be converted to run as a goroutine. An interesting question
@@ -23,11 +32,11 @@ func (p *MCFile) ExecuteStages() *MCFile {
 	defer func() {
 		if r := recover(); r != nil {
 			/*
-				fmt.Fprintf(w, SU.Rfg(SU.Ybg(" ** ERROR ** ")))
-				color.Set(color.FgHiRed)
-				fmt.Fprintf(w, "\n" + e.Error() + "\n")
-				color.Unset()
-			}
+					fmt.Fprintf(w, SU.Rfg(SU.Ybg(" ** ERROR ** ")))
+					color.Set(color.FgHiRed)
+					fmt.Fprintf(w, "\n" + e.Error() + "\n")
+					color.Unset()
+				}
 			*/
 			var sRecovered string
 			var eRecovered error

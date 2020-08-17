@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"os"
 
+	CFU "github.com/fbaube/cliflagutils"
 	"github.com/fbaube/db"
 	FU "github.com/fbaube/fileutils"
-	MU "github.com/fbaube/miscutils"
 
 	// XM "github.com/fbaube/xmlmodels"
 	"github.com/fbaube/gparse"
@@ -50,7 +50,7 @@ type CCTnode interface{}
 // NOTE We always create an MCFile for every input file, so
 // this is a logical place to store a GTokenization and a GTree.
 type MCFile struct {
-	MU.GCtx
+	CFU.GCtx
 	// db.Times
 	FU.PathProps
 	db.ContentRecord // embeds FU.AnalysisRecord

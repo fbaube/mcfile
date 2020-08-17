@@ -1,7 +1,9 @@
 package mcfile
 
 import (
+	"fmt"
 	"os"
+
 	// "fmt"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
@@ -29,7 +31,8 @@ func (p *MCFile) st2_Tree() *MCFile {
 }
 
 // PrepareToTree is Step 2a. <br/>
-// This is used when there is some preparation specific to building the tree.
+// This is used when there is some preparation specific to building
+// the tree. Like making GTags out of a bunch of GTokens.
 func (p *MCFile) st2a_PrepareToTree() *MCFile {
 	if p.HasError() {
 		return p
@@ -37,24 +40,22 @@ func (p *MCFile) st2a_PrepareToTree() *MCFile {
 	var e error
 	switch p.FileType() {
 	case "XML":
-		// G-Tag-ify PRE-TREE
-		// pX := p.TheXml()
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
-			p.SetError(e)
-			return p // errors.Wrap(e, "MakeGTagsFromGTokens")
+			p.SetError(fmt.Errorf("st2a gtree: can't make gtags from xml: %w", e))
+			return p
 		}
 	case "MKDN":
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
-			p.SetError(e)
-			return p // errors.Wrap(e, "MakeGTagsFromGTokens")
+			p.SetError(fmt.Errorf("st2a gtree: can't make gtags from mkdn: %w", e))
+			return p
 		}
 	case "HTML":
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
-			p.SetError(e)
-			return p // errors.Wrap(e, "MakeGTagsFromGTokens")
+			p.SetError(fmt.Errorf("st2a gtree: can't make gtags from html: %w", e))
+			return p
 		}
 	}
 	return p
@@ -66,19 +67,21 @@ func (p *MCFile) st2b_ParseIntoTree() *MCFile {
 		return p
 	}
 	var e error
-	// fmt.Printf("==> mcfl.st2b: FileType<%s> nGTags<%d> \n",
-	// p.FileType(),len(p.GTags))
 	p.GTree, e = gtree.NewGTreeFromGTags(p.GTags)
 	if e != nil {
 		p.SetError(e)
 		println("==> mcfl.st2b: Error!:", e)
-		return p // errors.Wrap(e, "NewGTreeFromGTags")
+		return p
 	}
 	if p.GTree == nil {
 		println("==> mcfl.st2b: NIL Gtree !!")
 	}
 	if p.GTree != nil {
-		gtoken.DumpTo(p.GTokens, os.Stdout)
+		if p.XmlAppConfiguration.GTreeOutput != nil {
+			gtoken.DumpTo(p.GTokens, p.XmlAppConfiguration.GTreeOutput)
+		} else {
+			gtoken.DumpTo(p.GTokens, os.Stdout)
+		}
 	}
 	return p
 }
