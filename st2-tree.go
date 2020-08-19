@@ -77,8 +77,8 @@ func (p *MCFile) st2b_ParseIntoTree() *MCFile {
 		println("==> mcfl.st2b: NIL Gtree !!")
 	}
 	if p.GTree != nil {
-		if p.XmlAppConfiguration.GTreeOutput != nil {
-			gtoken.DumpTo(p.GTokens, p.XmlAppConfiguration.GTreeOutput)
+		if p.GTreeOutput != nil {
+			gtoken.DumpTo(p.GTokens, p.GTreeOutput)
 		} else {
 			gtoken.DumpTo(p.GTokens, os.Stdout)
 		}

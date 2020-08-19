@@ -4,11 +4,11 @@ package mcfile
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	CFU "github.com/fbaube/cliflagutils"
 	"github.com/fbaube/db"
-	FU "github.com/fbaube/fileutils"
 
 	// XM "github.com/fbaube/xmlmodels"
 	"github.com/fbaube/gparse"
@@ -52,7 +52,7 @@ type CCTnode interface{}
 type MCFile struct {
 	CFU.GCtx
 	// db.Times
-	FU.PathProps
+	// FU.PathProps
 	db.ContentRecord // embeds FU.AnalysisRecord
 
 	// Data stuctures and conversions ("FFS" = file-format-specific):
@@ -73,6 +73,8 @@ type MCFile struct {
 	GTags []*gtree.GTag
 	// ACT
 	*gtree.GTree // maybe not need GRootTag or RootOfASTp
+
+	GTokensOutput, GTreeOutput io.Writer
 
 	// []GTokens are Generalized tokens, converted from the precursor
 	// tokens (or, nodes) emitted by format-specific parsers.
@@ -137,19 +139,20 @@ func (p *MCFile) Whine(s string) {
 }
 
 // NewMCFile // also sets `MCFile.MType[..]`.
-func NewMCFile(pCC *db.ContentRecord) *MCFile {
-	pMF := new(MCFile)
-	pMF.ContentRecord = *pCC
-	if pCC.GetError() != nil {
-		pCC.SetError(fmt.Errorf("NewMCFile <%s>: %w",
-			pCC.AbsFilePath, pCC.GetError()))
-		return pMF
+func NewMCFile(pCR *db.ContentRecord) *MCFile {
+	p := new(MCFile)
+	p.ContentRecord = *pCR
+	if pCR.GetError() != nil {
+		pCR.SetError(fmt.Errorf("newMCF<%s> failed: %w",
+			pCR.AbsFilePath, pCR.GetError()))
+		return p
 	}
-	pMF.GLinks = new(GLinks)
-	// println("D=> NewMCFile:", pMF.MType, pMF.AbsFP())
-	return pMF
+	p.GLinks = new(GLinks)
+	println("D=> (C:NewMCF)", p.String()) // p.MType, p.AbsFP())
+	return p
 }
 
+/*
 // NewMCFileFromPath checks that the path is actually a file,
 // and also sets `MCFile.MType[..]`.
 func NewMCFileFromPath(path string) *MCFile {
@@ -172,6 +175,7 @@ func NewMCFileFromPath(path string) *MCFile {
 	}
 	return pMF
 }
+*/
 
 // At the top level (i.e. in main()), we don't wrap errors
 // and return them. We just complain and die. Simple!
@@ -203,9 +207,13 @@ func (p *MCFile) Lengths() string {
 func (p MCFile) String() string {
 	var BF BigFields = p.PushBigFields()
 
+	var sGTree string
+	if p.GTree != nil {
+		sGTree = p.GTree.String()
+	}
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("(DD:GFILE)||%s||OtFiles|ss||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		p.PathProps.AbsFP() /* p.OutputFiles.String(), */, p.GTree.String(),
+		p.PathProps.AbsFP() /* p.OutputFiles.String(), */, sGTree,
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {
