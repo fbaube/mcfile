@@ -9,6 +9,7 @@ import (
 
 	CFU "github.com/fbaube/cliflagutils"
 	"github.com/fbaube/db"
+	FU "github.com/fbaube/fileutils"
 
 	// XM "github.com/fbaube/xmlmodels"
 	"github.com/fbaube/gparse"
@@ -142,6 +143,8 @@ func (p *MCFile) Whine(s string) {
 func NewMCFile(pCR *db.ContentRecord) *MCFile {
 	p := new(MCFile)
 	p.ContentRecord = *pCR
+	// println("ZORK3:", pCR.Error())
+	// println("ZORK2:", pCR.GetError().Error())
 	if pCR.GetError() != nil {
 		pCR.SetError(fmt.Errorf("newMCF<%s> failed: %w",
 			pCR.AbsFilePath, pCR.GetError()))
@@ -212,8 +215,8 @@ func (p MCFile) String() string {
 		sGTree = p.GTree.String()
 	}
 	// s := fmt.Sprintf("[len:%d]", p.Size())
-	s := fmt.Sprintf("(DD:GFILE)||%s||OtFiles|ss||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		p.PathProps.AbsFP() /* p.OutputFiles.String(), */, sGTree,
+	s := fmt.Sprintf("||%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
+		FU.Tildotted(p.PathProps.AbsFP()) /* p.OutputFiles.String(), */, sGTree,
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {

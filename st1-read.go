@@ -179,14 +179,14 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 
 	switch p.FileType() {
 	case "MKDN":
-		var pCPRMD *PU.ConcreteParseResults_mkdn
-		pCPRMD = p.CPR.(*PU.ConcreteParseResults_mkdn)
+		var pCPR_M *PU.ConcreteParseResults_mkdn
+		pCPR_M = p.CPR.(*PU.ConcreteParseResults_mkdn)
 		if p.GTokensOutput != nil {
-			pCPRMD.DumpDest = p.GTokensOutput
+			pCPR_M.DumpDest = p.GTokensOutput
 		} else {
-			pCPRMD.DumpDest = os.Stdout
+			pCPR_M.DumpDest = os.Stdout
 		}
-		GTs, e = gtoken.DoGTokens_mkdn(p.CPR.(*PU.ConcreteParseResults_mkdn))
+		GTs, e = gtoken.DoGTokens_mkdn(pCPR_M)
 		if e != nil {
 			p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
 		}
@@ -199,13 +199,27 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 			}
 		}
 	case "HTML":
-		GTs, e = gtoken.DoGTokens_html(p.CPR.(*PU.ConcreteParseResults_html))
+		var pCPR_H *PU.ConcreteParseResults_html
+		pCPR_H = p.CPR.(*PU.ConcreteParseResults_html)
+		if p.GTokensOutput != nil {
+			pCPR_H.DumpDest = p.GTokensOutput
+		} else {
+			pCPR_H.DumpDest = os.Stdout
+		}
+		GTs, e = gtoken.DoGTokens_html(pCPR_H)
 		if e != nil {
 			p.SetError(fmt.Errorf("st1d: html.GTs: %w", e))
 		}
 		p.GTokens = GTs
 	case "XML":
-		GTs, e = gtoken.DoGTokens_xml(p.CPR.(*XM.ConcreteParseResults_xml))
+		var pCPR_X *XM.ConcreteParseResults_xml
+		pCPR_X = p.CPR.(*XM.ConcreteParseResults_xml)
+		if p.GTokensOutput != nil {
+			pCPR_X.DumpDest = p.GTokensOutput
+		} else {
+			pCPR_X.DumpDest = os.Stdout
+		}
+		GTs, e = gtoken.DoGTokens_xml(pCPR_X)
 		if e != nil {
 			e = fmt.Errorf("GToken-ization failed: %w", e)
 		}

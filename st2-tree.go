@@ -74,14 +74,12 @@ func (p *MCFile) st2b_ParseIntoTree() *MCFile {
 		return p
 	}
 	if p.GTree == nil {
-		println("==> mcfl.st2b: NIL Gtree !!")
+		println("==> mcfl.st2b: got nil Gtree: %s", e.Error())
 	}
-	if p.GTree != nil {
-		if p.GTreeOutput != nil {
-			gtoken.DumpTo(p.GTokens, p.GTreeOutput)
-		} else {
-			gtoken.DumpTo(p.GTokens, os.Stdout)
-		}
+	if p.GTree != nil && p.GTreeOutput != nil {
+		gtoken.DumpTo(p.GTokens, p.GTreeOutput)
+	} else {
+		gtoken.DumpTo(p.GTokens, os.Stdout)
 	}
 	return p
 }
