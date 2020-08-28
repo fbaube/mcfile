@@ -13,10 +13,10 @@ func (p *MCFile) DoValidation(pXCF *XM.XmlCatalogFile) (dtdS string, docS string
 	if !p.IsXML() {
 		panic("DoValidation !IsXML")
 	}
-	if p.XmlDoctypeFields == nil {
+	if p.DoctypeFields == nil {
 		return "No_DcTp", "valid??", ""
 	}
-	var ppid = p.XmlInfo.XmlDoctypeFields.PIDSIDcatalogFileRecord
+	var ppid = p.XmlInfo.DoctypeFields.PIDSIDcatalogFileRecord
 	// print("\t" + ppid.PTDesc + " --> ")
 	val := pXCF.GetByPublicID(ppid.String())
 	if val == nil {
