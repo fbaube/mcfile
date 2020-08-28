@@ -9,14 +9,6 @@ import (
 	SU "github.com/fbaube/stringutils"
 )
 
-/*
-var stagesXmlConfiguration *CFU.XmlAppConfiguration
-
-func SetStagesXmlConfiguration(pXAC *CFU.XmlAppConfiguration) {
-	stagesXmlConfiguration = pXAC
-}
-*/
-
 // ExecuteStages runs an `MCFile` to completion in an isolated thread, and
 // can eaily be converted to run as a goroutine. An interesting question
 // is, how is an error indicated and a thread terminated prematurely ?

@@ -155,31 +155,6 @@ func NewMCFile(pCR *db.ContentRecord) *MCFile {
 	return p
 }
 
-/*
-// NewMCFileFromPath checks that the path is actually a file,
-// and also sets `MCFile.MType[..]`.
-func NewMCFileFromPath(path string) *MCFile {
-	// FIRST we work with a new CheckedPath
-	pBP := FU.NewPathProps(path)
-	if pBP.GetError() != nil || !pBP.IsOkayFile() {
-		pBP.SetError(fmt.Errorf("NewMCFileFromPath.BP <%s>: %w", path, pBP.GetError()))
-		return nil
-	}
-	pCC := db.NewContentRecord(pBP)  // NewCheckedContent(pBP) // new(FU.CheckedContent)
-	println("--> MType:", pCC.MType) // Mstring())
-	// Create the MCFile
-	pMF := new(MCFile)
-	// pMF.CheckedContent = *pCC
-	// .PathProps = pCC.PathProps
-	pMF.ContentRecord = *pCC
-	if pCC.GetError() != nil {
-		pCC.SetError(fmt.Errorf("NewMCFileFromPath.CC <%s>: %w", path, pCC.GetError()))
-		return pMF
-	}
-	return pMF
-}
-*/
-
 // At the top level (i.e. in main()), we don't wrap errors
 // and return them. We just complain and die. Simple!
 func (p *MCFile) Errorbarf(e error, s string) bool {
