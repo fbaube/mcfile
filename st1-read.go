@@ -38,7 +38,7 @@ func (p *MCFile) st1_Read() *MCFile {
 	println("--> (1) Read")
 	fmt.Printf("    --> FileType<%s> MType<%v> \n", p.FileType(), p.MType)
 	return p.
-		st1a_Split().
+		st1a_Split_mkdn().
 		st1b_ProcessMetadata().
 		st1c_GetCPR().
 		st1d_MakeAFLfromCFL().
@@ -46,7 +46,7 @@ func (p *MCFile) st1_Read() *MCFile {
 }
 
 /*
-type ContentitySections struct {
+type ContentitySections is struct {
 	Raw string // The entire input file
 	// Text_raw + Meta_raw = Raw (maybe plus surrounding tags)
 	Text_raw   string
@@ -55,10 +55,11 @@ type ContentitySections struct {
 	MetaProps  SU.PropSet
 }
 */
-// st1a_Split is Step 1a: used to split the file into two parts -
-// (header) meta and (body) text.
+// st1a_Split is Step 1a: used to split the file into two parts
+// - (header/"hed") meta and (body/"bod") text. However for XML
+// and HTML, this has already been done in Peek.
 //
-func (p *MCFile) st1a_Split() *MCFile {
+func (p *MCFile) st1a_Split_mkdn() *MCFile {
 	if p.HasError() {
 		return p
 	}
@@ -69,24 +70,16 @@ func (p *MCFile) st1a_Split() *MCFile {
 			p.SetError(fmt.Errorf("yaml metadata header: %w", e))
 			return p
 		}
-		if i == 0 {
-			p.Text_raw = p.Raw
-		} else {
+		p.Text_raw = p.Raw
+		if i != 0 {
 			p.Meta_raw = p.Raw[:i]
 			p.Text_raw = p.Raw[i:]
-			/*
-				println(
-					"D=> === META ===\n", p.Meta_raw,
-					"D=> === TEXT === \n", p.Text_raw,
-					"D=> === End ===")
-			*/
+			println(
+				"D=> === BODY ===\n", p.Raw,
+				"D=> === META ===\n", p.Meta_raw,
+				"D=> === TEXT === \n", p.Text_raw,
+				"D=> === End ===")
 		}
-	case "XML", "HTML":
-		println("st1a_Split: XML/HTML...")
-		// HTML, XHTML: Look for <html>, <head>, <body>
-		//  XML (DITA): Look for...
-		// topic: (title, shortdesc?, prolog?, body?)
-		//   map: (topicmeta?, (topicref|keydef)*)
 	}
 	return p
 }
@@ -98,11 +91,22 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 		return p
 	}
 	if p.Meta_raw == "" {
+		println("--> st1b: No metadata encountered")
 		return p
 	}
 	switch p.FileType() {
 	case "XML", "HTML":
-		println("st1a_PreMeta: XML/HTML TBS")
+		if p.MetaElm.BegPos.Pos != 0 {
+			println("st1a_PreMeta: XML/HTML...")
+			var pPR *XM.ConcreteParseResults_xml
+			pPR, e := XM.GetConcreteParseResults_xml(p.Meta_raw)
+			if e != nil {
+				e = fmt.Errorf("XML tokenization failed: %w", e)
+			}
+			p.CPR = pPR
+			fmt.Printf("==> XMLtokens: got %d \n", len(pPR.NodeList))
+			return p
+		}
 	case "MKDN":
 		ps, e := SU.GetYamlMetadataAsPropSet(
 			SU.TrimYamlMetadataDelimiters(p.Meta_raw))
@@ -176,6 +180,8 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 	var e error
 	var errmsg string
 	var GTs []*gtoken.GToken
+
+	fmt.Printf("D=> ConcreteParseResults_mkdn %T %T \n", p.CPR)
 
 	switch p.FileType() {
 	case "MKDN":
