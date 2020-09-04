@@ -90,21 +90,24 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 	if p.HasError() {
 		return p
 	}
-	if p.Meta_raw == "" {
+	if p.Meta_raw == "" && p.MetaElm.BegPos.Pos == 0 {
 		println("--> st1b: No metadata encountered")
 		return p
 	}
 	switch p.FileType() {
 	case "XML", "HTML":
+		panic("FIX ME - SPLIT XML & HTML")
+		fmt.Printf("--> st1b: MetaPos:%d Meta_raw: %s \n",
+			p.MetaElm.BegPos.Pos, p.Meta_raw)
 		if p.MetaElm.BegPos.Pos != 0 {
-			println("st1a_PreMeta: XML/HTML...")
-			var pPR *XM.ConcreteParseResults_xml
-			pPR, e := XM.GetConcreteParseResults_xml(p.Meta_raw)
+			println("st1b_PreMeta: doing XML/HTML...")
+			var pPR *PU.ConcreteParseResults_html
+			pPR, e := PU.GetConcreteParseResults_html(p.Meta_raw)
 			if e != nil {
-				e = fmt.Errorf("XML tokenization failed: %w", e)
+				e = fmt.Errorf("HTML tokenization failed: %w", e)
 			}
 			p.CPR = pPR
-			fmt.Printf("==> XMLtokens: got %d \n", len(pPR.NodeList))
+			fmt.Printf("==> HTMLtokens: got %d \n", len(pPR.NodeList))
 			return p
 		}
 	case "MKDN":
