@@ -96,18 +96,30 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 	}
 	switch p.FileType() {
 	case "XML", "HTML":
-		panic("FIX ME - SPLIT XML & HTML")
+		ft := p.FileType()
 		fmt.Printf("--> st1b: MetaPos:%d Meta_raw: %s \n",
 			p.MetaElm.BegPos.Pos, p.Meta_raw)
 		if p.MetaElm.BegPos.Pos != 0 {
-			println("st1b_PreMeta: doing XML/HTML...")
-			var pPR *PU.ConcreteParseResults_html
-			pPR, e := PU.GetConcreteParseResults_html(p.Meta_raw)
-			if e != nil {
-				e = fmt.Errorf("HTML tokenization failed: %w", e)
+			var e error
+			var ct int
+			println("st1b_PreMeta: doing", ft)
+			if ft == "HTML" {
+				var pPR *PU.ConcreteParseResults_html
+				pPR, e = PU.GetConcreteParseResults_html(p.Meta_raw)
+				ct = len(pPR.NodeList)
+				p.CPR = pPR
 			}
-			p.CPR = pPR
-			fmt.Printf("==> HTMLtokens: got %d \n", len(pPR.NodeList))
+			if ft == "XML" {
+				var pPR *XM.ConcreteParseResults_xml
+				pPR, e = XM.GetConcreteParseResults_xml(p.Meta_raw)
+				ct = len(pPR.NodeList)
+				p.CPR = pPR
+			}
+			if e != nil {
+				e = fmt.Errorf("%s tokenization failed: %w", ft, e)
+				p.CPR = nil
+			}
+			fmt.Printf("==> %stokens: got %d \n", ft, ct)
 			return p
 		}
 	case "MKDN":
@@ -128,14 +140,14 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 		return p
 	}
 	if len(p.Raw) == 0 {
-		p.Whine(p.OwnLogPfx + "st[1b] " + "Zero-length content")
+		p.Whine(p.OwnLogPfx + "st[1c] " + "Zero-length content")
 		return p
 	}
 	var e error
 	switch p.FileType() {
 	case "MKDN":
 		var pPR *PU.ConcreteParseResults_mkdn
-		pPR, e = PU.GetConcreteParseResults_mkdn(p.Raw)
+		pPR, e = PU.GetConcreteParseResults_mkdn(p.Text_raw)
 		if e != nil {
 			e = errors.New("st[1c] " + e.Error())
 			p.Blare(p.OwnLogPfx + e.Error())
@@ -148,7 +160,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 		return p
 	case "HTML":
 		var pPR *PU.ConcreteParseResults_html
-		pPR, e = PU.GetConcreteParseResults_html(p.Raw)
+		pPR, e = PU.GetConcreteParseResults_html(p.Text_raw)
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
 			p.Blare(p.OwnLogPfx + e.Error())
@@ -161,7 +173,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 		return p
 	case "XML":
 		var pPR *XM.ConcreteParseResults_xml
-		pPR, e := XM.GetConcreteParseResults_xml(p.Raw)
+		pPR, e := XM.GetConcreteParseResults_xml(p.Text_raw)
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
 		}
@@ -184,7 +196,7 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 	var errmsg string
 	var GTs []*gtoken.GToken
 
-	fmt.Printf("D=> ConcreteParseResults_mkdn %T %T \n", p.CPR)
+	fmt.Printf("D=> st1d: ConcreteParseResults: %T \n", p.CPR)
 
 	switch p.FileType() {
 	case "MKDN":
