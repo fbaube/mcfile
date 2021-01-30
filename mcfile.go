@@ -136,7 +136,7 @@ func (p *MCFile) Blare(s string) {
 // Whine is used for non-fatal errors, i.e. strong warnings.
 func (p *MCFile) Whine(s string) {
 	p.LogIt(s)
-	fmt.Fprintf(os.Stdout, "--> "+s)
+	fmt.Fprintf(os.Stdout, "--> "+s+"\n")
 }
 
 // NewMCFile // also sets `MCFile.MType[..]`.
@@ -211,7 +211,7 @@ func (p MCFile) String() string {
 	}
 	== */
 	// if p.DitaInfo != nil {
-	s += fmt.Sprintf("DitaInfo|%s||", p.DitaInfo.String())
+	s += fmt.Sprintf("DitaInfo|ML:%s|Cntp:%s|", p.DitaMarkupLg, p.DitaContype)
 	// }
 
 	p.PopBigFields(BF)

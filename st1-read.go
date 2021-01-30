@@ -129,6 +129,9 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 			p.SetError(fmt.Errorf("yaml metadata: %w", e))
 			return p
 		}
+		if len(p.Text_raw) == 0 {
+			println("NO MKDN in st1b")
+		}
 		p.MetaProps = ps
 	}
 	return p
@@ -139,7 +142,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 	if p.HasError() {
 		return p
 	}
-	if len(p.Raw) == 0 {
+	if len(p.Text_raw) == 0 {
 		p.Whine(p.OwnLogPfx + "st[1c] " + "Zero-length content")
 		return p
 	}
@@ -152,6 +155,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 			e = errors.New("st[1c] " + e.Error())
 			p.Blare(p.OwnLogPfx + e.Error())
 			p.SetError(e)
+			println("MKDN BARFED")
 			return p
 		}
 		p.CPR = pPR
