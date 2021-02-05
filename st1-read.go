@@ -104,15 +104,15 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 			var ct int
 			println("st1b_PreMeta: doing", ft)
 			if ft == "HTML" {
-				var pPR *PU.ConcreteParseResults_html
-				pPR, e = PU.GetConcreteParseResults_html(p.Meta_raw)
-				ct = len(pPR.NodeList)
+				var pPR *PU.ParserResults_html
+				pPR, e = PU.GenerateParserResults_html(p.Meta_raw)
+				ct = len(pPR.NodeSlice)
 				p.CPR = pPR
 			}
 			if ft == "XML" {
-				var pPR *XM.ConcreteParseResults_xml
-				pPR, e = XM.GetConcreteParseResults_xml(p.Meta_raw)
-				ct = len(pPR.NodeList)
+				var pPR *XM.ParserResults_xml
+				pPR, e = XM.GenerateParserResults_xml(p.Meta_raw)
+				ct = len(pPR.NodeSlice)
 				p.CPR = pPR
 			}
 			if e != nil {
@@ -137,7 +137,7 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 	return p
 }
 
-// st1c_GetCPR is Step 1c: Get ConcreteParseResults
+// st1c_GetCPR is Step 1c: Generate ParserResults
 func (p *MCFile) st1c_GetCPR() *MCFile {
 	if p.HasError() {
 		return p
@@ -149,8 +149,8 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 	var e error
 	switch p.FileType() {
 	case "MKDN":
-		var pPR *PU.ConcreteParseResults_mkdn
-		pPR, e = PU.GetConcreteParseResults_mkdn(p.Text_raw)
+		var pPR *PU.ParserResults_mkdn
+		pPR, e = PU.GenerateParserResults_mkdn(p.Text_raw)
 		if e != nil {
 			e = errors.New("st[1c] " + e.Error())
 			p.Blare(p.OwnLogPfx + e.Error())
@@ -159,12 +159,12 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 			return p
 		}
 		p.CPR = pPR
-		fmt.Printf("==> MKDNtokens: got %d \n", len(pPR.NodeList))
+		fmt.Printf("==> MKDNtokens: got %d \n", len(pPR.NodeSlice))
 		// p.TallyTags()
 		return p
 	case "HTML":
-		var pPR *PU.ConcreteParseResults_html
-		pPR, e = PU.GetConcreteParseResults_html(p.Text_raw)
+		var pPR *PU.ParserResults_html
+		pPR, e = PU.GenerateParserResults_html(p.Text_raw)
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
 			p.Blare(p.OwnLogPfx + e.Error())
@@ -172,17 +172,17 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 			return p
 		}
 		p.CPR = pPR
-		fmt.Printf("==> HTMLtokens: got %d \n", len(pPR.NodeList))
+		fmt.Printf("==> HTMLtokens: got %d \n", len(pPR.NodeSlice))
 		// p.TallyTags()
 		return p
 	case "XML":
-		var pPR *XM.ConcreteParseResults_xml
-		pPR, e := XM.GetConcreteParseResults_xml(p.Text_raw)
+		var pPR *XM.ParserResults_xml
+		pPR, e := XM.GenerateParserResults_xml(p.Text_raw)
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
 		}
 		p.CPR = pPR
-		fmt.Printf("==> XMLtokens: got %d \n", len(pPR.NodeList))
+		fmt.Printf("==> XMLtokens: got %d \n", len(pPR.NodeSlice))
 		return p
 	default:
 		println("ERROR st1b_GetCPR: bad file type:", p.FileType())
@@ -200,12 +200,12 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 	var errmsg string
 	var GTs []*gtoken.GToken
 
-	fmt.Printf("D=> st1d: ConcreteParseResults: %T \n", p.CPR)
+	fmt.Printf("D=> st1d: ParserResults: %T \n", p.CPR)
 
 	switch p.FileType() {
 	case "MKDN":
-		var pCPR_M *PU.ConcreteParseResults_mkdn
-		pCPR_M = p.CPR.(*PU.ConcreteParseResults_mkdn)
+		var pCPR_M *PU.ParserResults_mkdn
+		pCPR_M = p.CPR.(*PU.ParserResults_mkdn)
 		if p.GTokensOutput != nil {
 			pCPR_M.DumpDest = p.GTokensOutput
 		} else {
@@ -224,8 +224,8 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 			}
 		}
 	case "HTML":
-		var pCPR_H *PU.ConcreteParseResults_html
-		pCPR_H = p.CPR.(*PU.ConcreteParseResults_html)
+		var pCPR_H *PU.ParserResults_html
+		pCPR_H = p.CPR.(*PU.ParserResults_html)
 		if p.GTokensOutput != nil {
 			pCPR_H.DumpDest = p.GTokensOutput
 		} else {
@@ -237,8 +237,8 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 		}
 		p.GTokens = GTs
 	case "XML":
-		var pCPR_X *XM.ConcreteParseResults_xml
-		pCPR_X = p.CPR.(*XM.ConcreteParseResults_xml)
+		var pCPR_X *XM.ParserResults_xml
+		pCPR_X = p.CPR.(*XM.ParserResults_xml)
 		if p.GTokensOutput != nil {
 			pCPR_X.DumpDest = p.GTokensOutput
 		} else {
@@ -270,8 +270,8 @@ func (p *MCFile) st1e_PostMeta_notmkdn() *MCFile {
 		// Markdown YAML metadata was processed in step st1a
 		return p
 	case "HTML": /*
-			var pPR *PU.ConcreteParseResults_html
-			pPR = p.CPR.(*PU.ConcreteParseResults_html)
+			var pPR *PU.ParserResults_html
+			pPR = p.CPR.(*PU.ParserResults_html)
 			z := pPR. */
 		// Inside <head>: <meta> <title> <base> <link> <style>
 		// See also: https://gist.github.com/lancejpollard/1978404

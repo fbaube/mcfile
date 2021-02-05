@@ -65,7 +65,7 @@ type MCFile struct {
 	// CCT is the root of the CTT (tree); note that the type of the root
 	// node is normally the same as the type of the other nodes in the tree.
 
-	// CPR is ConcreteParseResults (i.e. parseutils.ParseResults_ffs)
+	// CPR is ParserResults (i.e. parseutils.ParserResults[_ffs])
 	// and it includes CCT and CFL.
 	CPR interface{}
 	// AFL
