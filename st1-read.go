@@ -107,17 +107,17 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 				var pPR *PU.ParserResults_html
 				pPR, e = PU.GenerateParserResults_html(p.Meta_raw)
 				ct = len(pPR.NodeSlice)
-				p.CPR = pPR
+				p.ParserResults = pPR
 			}
 			if ft == "XML" {
 				var pPR *XM.ParserResults_xml
 				pPR, e = XM.GenerateParserResults_xml(p.Meta_raw)
 				ct = len(pPR.NodeSlice)
-				p.CPR = pPR
+				p.ParserResults = pPR
 			}
 			if e != nil {
 				e = fmt.Errorf("%s tokenization failed: %w", ft, e)
-				p.CPR = nil
+				p.ParserResults = nil
 			}
 			fmt.Printf("==> %stokens: got %d \n", ft, ct)
 			return p
@@ -158,7 +158,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 			println("MKDN BARFED")
 			return p
 		}
-		p.CPR = pPR
+		p.ParserResults = pPR
 		fmt.Printf("==> MKDNtokens: got %d \n", len(pPR.NodeSlice))
 		// p.TallyTags()
 		return p
@@ -171,7 +171,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 			p.SetError(e)
 			return p
 		}
-		p.CPR = pPR
+		p.ParserResults = pPR
 		fmt.Printf("==> HTMLtokens: got %d \n", len(pPR.NodeSlice))
 		// p.TallyTags()
 		return p
@@ -181,7 +181,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
 		}
-		p.CPR = pPR
+		p.ParserResults = pPR
 		fmt.Printf("==> XMLtokens: got %d \n", len(pPR.NodeSlice))
 		return p
 	default:
@@ -200,12 +200,17 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 	var errmsg string
 	var GTs []*gtoken.GToken
 
-	fmt.Printf("D=> st1d: ParserResults: %T \n", p.CPR)
+	fmt.Printf("D=> st1d: ParserResults: %T \n", p.ParserResults)
 
 	switch p.FileType() {
 	case "MKDN":
 		var pCPR_M *PU.ParserResults_mkdn
-		pCPR_M = p.CPR.(*PU.ParserResults_mkdn)
+		println("BEFORE BARF")
+		if nil == p.ParserResults {
+			println("BARF ON NIL")
+		}
+		pCPR_M = p.ParserResults.(*PU.ParserResults_mkdn)
+		println("!AFTER BARF")
 		if p.GTokensOutput != nil {
 			pCPR_M.DumpDest = p.GTokensOutput
 		} else {
@@ -225,7 +230,7 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 		}
 	case "HTML":
 		var pCPR_H *PU.ParserResults_html
-		pCPR_H = p.CPR.(*PU.ParserResults_html)
+		pCPR_H = p.ParserResults.(*PU.ParserResults_html)
 		if p.GTokensOutput != nil {
 			pCPR_H.DumpDest = p.GTokensOutput
 		} else {
@@ -238,7 +243,7 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 		p.GTokens = GTs
 	case "XML":
 		var pCPR_X *XM.ParserResults_xml
-		pCPR_X = p.CPR.(*XM.ParserResults_xml)
+		pCPR_X = p.ParserResults.(*XM.ParserResults_xml)
 		if p.GTokensOutput != nil {
 			pCPR_X.DumpDest = p.GTokensOutput
 		} else {

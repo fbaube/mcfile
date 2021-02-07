@@ -25,24 +25,19 @@ import (
 // `(*CheckedPath)` funcs `Error() string` and `GetError() error`.
 type MCFileProcessor = func(*MCFile) *MCFile
 
-// CCTnode is a node in a CCT, which is a parse tree of HTML or Markdown-
-type CCTnode interface{}
+// The data structure food chain (TODO update this):
 
-// The data structure food chain:
 // - CLI arg
 // - RelFilePath
 // - AbsFilePath
 // - BasicPath
 // - CheckedContent
-// - MCFile
+// - MCFile (TODO ContentityNord)
 // - - TypeXml OR TypeHtml OR TypeMkdn
 // - CCT (Concrete Content Tree)
 // - ACT (Abstract Content Tree) (GTree embedded in MCFile)
 // - ForesTree (with x-refs etc) (TBD)
 // - Grove (?)
-
-// NOTE We always create an MCFile for every input file, so
-// it is a logical place to store a GTokenization and a GTree.
 
 // MCFile contains an input file (i.e. its raw UTF-8 content),
 // its deduced (i.e. guessed) properties (MIME, XML, DITA),
@@ -65,9 +60,8 @@ type MCFile struct {
 	// CCT is the root of the CTT (tree); note that the type of the root
 	// node is normally the same as the type of the other nodes in the tree.
 
-	// CPR is ParserResults (i.e. parseutils.ParserResults[_ffs])
-	// and it includes CCT and CFL.
-	CPR interface{}
+	// ParserResults is parseutils.ParserResults_ffs and includes CCT and CFL.
+	ParserResults interface{}
 	// AFL
 	GTokens []*gtoken.GToken
 	// AFL

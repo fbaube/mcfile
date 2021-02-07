@@ -20,8 +20,8 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	pCFS.BaseFS = *(fss.NewBaseFS(path))
 	println("fss.newContentityFS:", pCFS.BaseFS.RootAbsPath())
 	// Initialize slice & map
-	pCFS.asSlice = make([]*ContentityNord, 0)
-	pCFS.asMap = make(map[string]*ContentityNord)
+	pCFS.asSlice = make([]*Contentity, 0)
+	pCFS.asMap = make(map[string]*Contentity)
 
 	// FIRST PASS
 	// Load slice & map
@@ -40,11 +40,10 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 		// Is child of root ?
 		if !S.Contains(n.Path(), FU.PathSep) {
 			pCFS.rootNord.AddKid(n)
-			// ON.AddKid2(pFTFS.rootNord, n)
 		} else {
 			itsDir := FP.Dir(n.Path())
 			// println(n.Path, "|cnex2|", itsDir)
-			var par *ContentityNord
+			var par *Contentity
 			var ok bool
 			if par, ok = pCFS.asMap[itsDir]; !ok {
 				panic(n.Path)

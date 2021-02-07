@@ -9,14 +9,22 @@ import (
 
 type ContentityFS struct {
 	fss.BaseFS
-	rootNord *ContentityNord
-	asSlice  []*ContentityNord
-	asMap    map[string]*ContentityNord // string is Rel.Path
+	rootNord *Contentity
+	asSlice  []*Contentity
+	asMap    map[string]*Contentity // string is Rel.Path
 }
 
 // Open is a dummy function, just here to satisfy an interface.
 func (p *ContentityFS) Open(path string) (fs.File, error) {
 	return p. /*inputFS. */ Open(path)
+}
+
+func (p *ContentityFS) Size() int {
+	return len(p.asSlice)
+}
+
+func (p *ContentityFS) RootContentity() *Contentity {
+	return p.rootNord
 }
 
 func mustInitRoot() bool {
@@ -32,7 +40,7 @@ func mustInitRoot() bool {
 // wfnBuildContentityTree is
 // type WalkDirFunc func(path string, d DirEntry, err error) error
 func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
-	var p *ContentityNord
+	var p *Contentity
 	// ROOT NODE ?
 	if mustInitRoot() {
 		if path != "." {
@@ -51,7 +59,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 			}
 			return nil
 		}
-		p = NewContentityNord(path)
+		p = NewContentity(path)
 	}
 	pCFS.asSlice = append(pCFS.asSlice, p)
 	pCFS.asMap[path] = p
