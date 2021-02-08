@@ -18,7 +18,7 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	pCFS = new(ContentityFS)
 	// Initialize embedded baseFS
 	pCFS.BaseFS = *(fss.NewBaseFS(path))
-	println("fss.newContentityFS:", pCFS.BaseFS.RootAbsPath())
+	println("fss.newContentityFS:", FU.Tildotted(pCFS.BaseFS.RootAbsPath()))
 	// Initialize slice & map
 	pCFS.asSlice = make([]*Contentity, 0)
 	pCFS.asMap = make(map[string]*Contentity)
@@ -46,6 +46,7 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 			var par *Contentity
 			var ok bool
 			if par, ok = pCFS.asMap[itsDir]; !ok {
+				println("findParInMap: failed for:", itsDir, "of", n.Path())
 				panic(n.Path)
 			}
 			if itsDir != par.Path() {

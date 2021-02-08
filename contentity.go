@@ -39,11 +39,26 @@ type norderCreationState struct {
 
 var pNCS *norderCreationState = new(norderCreationState)
 
-func NewRootContentityNord(rootPath string /*,smryFunc StringFunc*/) *Contentity {
+// NewRootContentityNord needs aRootPath to be an absolute filepath.
+func NewRootContentityNord(aRootPath string /*,smryFunc StringFunc*/) *Contentity {
 	p := new(Contentity)
-	p.Nord = *ON.NewRootNord(rootPath, nil)
-
-	println("NewRootContentityNord:", p.AbsFP())
+	pNCS.rootPath = aRootPath
+	pPP := FU.NewPathProps(aRootPath)
+	// This also does content fetching & analysis !
+	pCR := db.NewContentRecord(pPP)
+	if pCR.GetError() != nil {
+		pCR.SetError(fmt.Errorf("newRootCty<%s> failed: %w",
+			pCR.AbsFilePath, pCR.GetError()))
+		return nil
+	}
+	// Now fill in the Contentity, using code taken from NewMCFile(..)
+	p.ContentRecord = *pCR
+	p.GLinks = *new(GLinks)
+	// println("D=> NewContentity:", p.String()) // p.MType, p.AbsFP())
+	// fmt.Printf("D=> NewContentity: %s / %s \n", p.MType, p.AbsFP())
+	p.Nord = *ON.NewRootNord(aRootPath, nil)
+	println("NewRootContentityNord:", FU.Tildotted(p.AbsFP()))
+	// fmt.Printf("\t RootNord seqID %d \n", p.SeqID())
 	return p
 }
 
@@ -52,7 +67,7 @@ func NewContentity(aPath string) *Contentity {
 		println("NewContentity: missing path")
 		return nil
 	}
-	pPP := FU.NewPathProps(aPath)
+	pPP := FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
 	// This also does content fetching & analysis !
 	pCR := db.NewContentRecord(pPP)
 	if pCR.GetError() != nil {
@@ -67,6 +82,7 @@ func NewContentity(aPath string) *Contentity {
 	// println("D=> NewContentity:", p.String()) // p.MType, p.AbsFP())
 	// fmt.Printf("D=> NewContentity: %s / %s \n", p.MType, p.AbsFP())
 	p.Nord = *ON.NewNord(aPath)
+	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
 	return p
 }
 

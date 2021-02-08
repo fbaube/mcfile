@@ -48,21 +48,25 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		}
 		p = NewRootContentityNord(pCFS.RootAbsPath())
 		pCFS.rootNord = p
-		println("wfnBuildContentityTree: root node abs.FP:", p.AbsFP())
-	} else {
-		// Filter out hidden (esp'ly .git) and emacs backup.
-		// Note that "/" is assumed, not os.Sep
-		if S.HasPrefix(path, ".") || S.Contains(path, "/.") ||
-			S.HasSuffix(path, "~") || S.Contains(path, "/.git/") {
-			if !S.Contains(path, "/.git/") {
-				println("Path rejected:", path)
-			}
-			return nil
-		}
-		p = NewContentity(path)
+		println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
+		pCFS.asSlice = append(pCFS.asSlice, p)
+		pCFS.asMap[path] = p
+		// println("ADDED TO MAP:", path)
+		return nil
 	}
+	// Filter out hidden (esp'ly .git) and emacs backup.
+	// Note that "/" is assumed, not os.Sep
+	if S.Contains(path, "/.git/") {
+		return nil
+	}
+	if S.HasPrefix(path, ".") || S.Contains(path, "/.") || S.HasSuffix(path, "~") {
+		println("Path rejected:", path)
+		return nil
+	}
+	p = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))
 	pCFS.asSlice = append(pCFS.asSlice, p)
 	pCFS.asMap[path] = p
+	// println("ADDED TO MAP:", path)
 	// println("Path OK:", pN.AbsFilePath)
 	return nil
 }
