@@ -25,6 +25,9 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 
 	// FIRST PASS
 	// Load slice & map
+	if nil == pCFS.InputFS() {
+		panic("OH SHIT")
+	}
 	e := fs.WalkDir(pCFS.InputFS(), ".", wfnBuildContentityTree)
 	if e != nil {
 		panic("fss.newContentityFS: " + e.Error())

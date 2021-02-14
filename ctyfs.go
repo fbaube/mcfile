@@ -48,7 +48,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		}
 		p = NewRootContentityNord(pCFS.RootAbsPath())
 		pCFS.rootNord = p
-		println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
+		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
 		pCFS.asSlice = append(pCFS.asSlice, p)
 		pCFS.asMap[path] = p
 		// println("ADDED TO MAP:", path)

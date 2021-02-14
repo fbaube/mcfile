@@ -48,9 +48,9 @@ func (p *MCFile) st1_Read() *MCFile {
 /*
 type ContentitySections is struct {
 	Raw string // The entire input file
-	// Text_raw + Meta_raw = Raw (maybe plus surrounding tags)
-	Text_raw   string
-	Meta_raw   string
+	// TextRaw() + MetaRaw() = Raw (maybe plus surrounding tags)
+	TextRaw()   string
+	MetaRaw()   string
 	MetaFormat string
 	MetaProps  SU.PropSet
 }
@@ -65,21 +65,24 @@ func (p *MCFile) st1a_Split_mkdn() *MCFile {
 	}
 	switch p.FileType() {
 	case "MKDN":
-		i, e := SU.YamlMetadataHeaderLength(p.Raw)
+		_, e := SU.YamlMetadataHeaderLength(p.Raw)
 		if e != nil {
 			p.SetError(fmt.Errorf("yaml metadata header: %w", e))
 			return p
 		}
-		p.Text_raw = p.Raw
-		if i != 0 {
-			p.Meta_raw = p.Raw[:i]
-			p.Text_raw = p.Raw[i:]
-			println(
-				"D=> === BODY ===\n", p.Raw,
-				"D=> === META ===\n", p.Meta_raw,
-				"D=> === TEXT === \n", p.Text_raw,
-				"D=> === End ===")
-		}
+		panic("FIXME")
+		/*
+			p.TextRaw() = p.Raw
+			if i != 0 {
+				p.MetaRaw() = p.Raw[:i]
+				p.TextRaw() = p.Raw[i:]
+				println(
+					"D=> === BODY ===\n", p.Raw,
+					"D=> === META ===\n", p.MetaRaw(),
+					"D=> === TEXT === \n", p.TextRaw(),
+					"D=> === End ===")
+			}
+		*/
 	}
 	return p
 }
@@ -90,28 +93,28 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 	if p.HasError() {
 		return p
 	}
-	if p.Meta_raw == "" && p.MetaElm.BegPos.Pos == 0 {
+	if p.MetaRaw() == "" && p.Meta.Beg.Pos == 0 {
 		println("--> st1b: No metadata encountered")
 		return p
 	}
 	switch p.FileType() {
 	case "XML", "HTML":
 		ft := p.FileType()
-		fmt.Printf("--> st1b: MetaPos:%d Meta_raw: %s \n",
-			p.MetaElm.BegPos.Pos, p.Meta_raw)
-		if p.MetaElm.BegPos.Pos != 0 {
+		fmt.Printf("--> st1b: MetaPos:%d MetaRaw(): %s \n",
+			p.Meta.Beg.Pos, p.MetaRaw())
+		if p.Meta.Beg.Pos != 0 {
 			var e error
 			var ct int
 			println("st1b_PreMeta: doing", ft)
 			if ft == "HTML" {
 				var pPR *PU.ParserResults_html
-				pPR, e = PU.GenerateParserResults_html(p.Meta_raw)
+				pPR, e = PU.GenerateParserResults_html(p.MetaRaw())
 				ct = len(pPR.NodeSlice)
 				p.ParserResults = pPR
 			}
 			if ft == "XML" {
 				var pPR *XM.ParserResults_xml
-				pPR, e = XM.GenerateParserResults_xml(p.Meta_raw)
+				pPR, e = XM.GenerateParserResults_xml(p.MetaRaw())
 				ct = len(pPR.NodeSlice)
 				p.ParserResults = pPR
 			}
@@ -124,12 +127,12 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 		}
 	case "MKDN":
 		ps, e := SU.GetYamlMetadataAsPropSet(
-			SU.TrimYamlMetadataDelimiters(p.Meta_raw))
+			SU.TrimYamlMetadataDelimiters(p.MetaRaw()))
 		if e != nil {
 			p.SetError(fmt.Errorf("yaml metadata: %w", e))
 			return p
 		}
-		if len(p.Text_raw) == 0 {
+		if len(p.TextRaw()) == 0 {
 			println("NO MKDN in st1b")
 		}
 		p.MetaProps = ps
@@ -142,7 +145,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 	if p.HasError() {
 		return p
 	}
-	if len(p.Text_raw) == 0 {
+	if len(p.TextRaw()) == 0 {
 		p.Whine(p.OwnLogPfx + "st[1c] " + "Zero-length content")
 		return p
 	}
@@ -150,7 +153,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 	switch p.FileType() {
 	case "MKDN":
 		var pPR *PU.ParserResults_mkdn
-		pPR, e = PU.GenerateParserResults_mkdn(p.Text_raw)
+		pPR, e = PU.GenerateParserResults_mkdn(p.TextRaw())
 		if e != nil {
 			e = errors.New("st[1c] " + e.Error())
 			p.Blare(p.OwnLogPfx + e.Error())
@@ -164,7 +167,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 		return p
 	case "HTML":
 		var pPR *PU.ParserResults_html
-		pPR, e = PU.GenerateParserResults_html(p.Text_raw)
+		pPR, e = PU.GenerateParserResults_html(p.TextRaw())
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
 			p.Blare(p.OwnLogPfx + e.Error())
@@ -177,7 +180,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 		return p
 	case "XML":
 		var pPR *XM.ParserResults_xml
-		pPR, e := XM.GenerateParserResults_xml(p.Text_raw)
+		pPR, e := XM.GenerateParserResults_xml(p.TextRaw())
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
 		}

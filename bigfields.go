@@ -12,23 +12,25 @@ type BigFields struct {
 	// gtags []*gtree.GTag
 }
 
+/*
 func (p *MCFile) PushBigFields() BigFields {
 	bf := new(BigFields)
-	bf.hed = p.Meta_raw
-	bf.bod = p.Text_raw 
+	bf.hed = p.MetaRaw()
+	bf.bod = p.TextRaw()
 	// bf.gtox = p.GTokens
 	// bf.gtags = p.GTags
 	// p.Header = new(Header)
-	p.Meta_raw = "[raw.header]"
-	p.Text_raw = "[raw.text]"
+	p.MetaRaw() = "[raw.header]"
+	p.TextRaw() = "[raw.text]"
 	// ?? p.Raw = "[et.raw]"
 	// p.GTags = nil
 	return *bf
 }
 
 func (p *MCFile) PopBigFields(BF BigFields) {
-	p.Meta_raw = BF.hed
-	p.Text_raw = BF.bod
+	p.MetaRaw() = BF.hed
+	p.TextRaw() = BF.bod
 	// p.gparses = BF.gtox
 	// p.GTags = BF.gtags
 }
+*/

@@ -170,14 +170,14 @@ func (p *MCFile) Errorbarf(e error, s string) bool {
 
 func (p *MCFile) Lengths() string {
 	return fmt.Sprintf("len.raw.file<%d> len.meta.hdr.props<%d> len.text.body.content<%d>",
-		len(p.Raw), len(p.Meta_raw), len(p.Text_raw))
+		len(p.Raw), len(p.MetaRaw()), len(p.TextRaw()))
 }
 
 // String is developer output. Hafta dump:
 // FU.InputFile, FU.OutputFiles, GTree,
 // GRefs, *XmlFileMeta, *XmlItems, *DitaInfo
 func (p MCFile) String() string {
-	var BF BigFields = p.PushBigFields()
+	// !! // var BF BigFields = p.PushBigFields()
 
 	var sGTree string
 	if p.GTree != nil {
@@ -208,7 +208,7 @@ func (p MCFile) String() string {
 	s += fmt.Sprintf("DitaInfo|ML:%s|Cntp:%s|", p.DitaMarkupLg, p.DitaContype)
 	// }
 
-	p.PopBigFields(BF)
+	// !! // p.PopBigFields(BF)
 	return s
 }
 
