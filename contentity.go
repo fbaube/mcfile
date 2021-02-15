@@ -44,8 +44,14 @@ func NewRootContentityNord(aRootPath string /*,smryFunc StringFunc*/) *Contentit
 	p := new(Contentity)
 	pNCS.rootPath = aRootPath
 	pPP := FU.NewPathProps(aRootPath)
+	if pPP == nil {
+		panic("NewRootContentityNord FAILED on pPP")
+	}
 	// This also does content fetching & analysis !
 	pCR := db.NewContentRecord(pPP)
+	if pCR == nil {
+		panic("NewRootContentityNord FAILED on pCR")
+	}
 	if pCR.GetError() != nil {
 		pCR.SetError(fmt.Errorf("newRootCty<%s> failed: %w",
 			pCR.AbsFilePath, pCR.GetError()))

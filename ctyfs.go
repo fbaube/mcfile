@@ -46,6 +46,9 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		if path != "." {
 			println("wfnBuildContentityTree: root path is not dot but instead:", path)
 		}
+		if pCFS.RootAbsPath() == "" {
+			panic("wfnBuildContentityTree: nil ROOT")
+		}
 		p = NewRootContentityNord(pCFS.RootAbsPath())
 		pCFS.rootNord = p
 		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
