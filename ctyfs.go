@@ -1,6 +1,7 @@
 package mcfile
 
 import (
+	"fmt"
 	"io/fs"
 	S "strings"
 
@@ -50,6 +51,10 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 			panic("wfnBuildContentityTree: nil ROOT")
 		}
 		p = NewRootContentityNord(pCFS.RootAbsPath())
+		fmt.Printf("RootContentity: %p \n", p)
+		if p == nil {
+			panic("wfnBuildContentityTree mustInitRoot NewRootContentityNord FAILED")
+		}
 		pCFS.rootNord = p
 		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
 		pCFS.asSlice = append(pCFS.asSlice, p)

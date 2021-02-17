@@ -27,6 +27,7 @@ var LwDitaAttsForGLinks = []string{
 	"data-keyref", // SOURCE, hdita
 }
 
+// LinkInfos is:
 // @conref to reuse block-level content,
 // @keyref to reuse phrase-level content.
 // TODO Each type of link (i.e. elm/att where it occurs) has to be categorised.
@@ -75,6 +76,7 @@ type LinkInfo struct {
 // XmlFileMeta is non-nil IFF it is an XML file (incl. DTD types).
 // // *gparse.XmlFileMeta
 
+// GatherXmlGLinks is:
 // XmlItems is (DOCS) IDs & IDREFs, (DTDs) Elm defs (incl. Att defs) & Ent defs
 // *xmlfile.XmlItems
 // // *IDinfo

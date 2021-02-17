@@ -40,8 +40,9 @@ type norderCreationState struct {
 var pNCS *norderCreationState = new(norderCreationState)
 
 // NewRootContentityNord needs aRootPath to be an absolute filepath.
-func NewRootContentityNord(aRootPath string /*,smryFunc StringFunc*/) *Contentity {
+func NewRootContentityNord(aRootPath string) *Contentity {
 	p := new(Contentity)
+	fmt.Printf("NewRootContentityNord: got: %p \n", p)
 	pNCS.rootPath = aRootPath
 	pPP := FU.NewPathProps(aRootPath)
 	if pPP == nil {
@@ -53,10 +54,12 @@ func NewRootContentityNord(aRootPath string /*,smryFunc StringFunc*/) *Contentit
 		panic("NewRootContentityNord FAILED on pCR")
 	}
 	if pCR.GetError() != nil {
+		println("newRootCty failed:", pCR.GetError().Error())
 		pCR.SetError(fmt.Errorf("newRootCty<%s> failed: %w",
-			pCR.AbsFilePath, pCR.GetError()))
+			pCR.AbsFP(), pCR.GetError()))
 		return nil
 	}
+	fmt.Printf("NewRootContentityNord: returning: %p \n", p)
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
 	p.ContentRecord = *pCR
 	p.GLinks = *new(GLinks)

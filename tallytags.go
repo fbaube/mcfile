@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 	S "strings"
+
 	"github.com/fbaube/gtoken"
 )
 
@@ -27,7 +28,7 @@ func (p *MCFile) TallyTags() {
 		}
 		AddInGName(p.TagTally, p.AttTally, pGT)
 		AddInGName(GlobalTagTally, GlobalAttTally, pGT)
-		GlobalTagCount += 1
+		GlobalTagCount++
 		GlobalAttCount += len(pGT.GAtts)
 	}
 }

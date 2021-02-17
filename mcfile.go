@@ -149,8 +149,8 @@ func NewMCFile(pCR *db.ContentRecord) *MCFile {
 	return p
 }
 
-// At the top level (i.e. in main()), we don't wrap errors
-// and return them. We just complain and die. Simple!
+// Errorbarf just complains and dies. At the top level
+// (i.e. in main()), we don't wrap errors and return them.
 func (p *MCFile) Errorbarf(e error, s string) bool {
 	if e == nil {
 		return false

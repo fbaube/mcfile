@@ -1,5 +1,6 @@
 package mcfile
 
+// GatherLinks is:
 // @conref to reuse block-level content,
 // @keyref to reuse phrase-level content.
 // TODO Each type of link (i.e. elm/att where it occurs) has to be categorised.

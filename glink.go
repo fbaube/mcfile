@@ -8,16 +8,17 @@ import (
 type Flags int
 
 const (
-    IsRef Flags = 1 << iota // 1 << 0 i.e. 0000 0001
-    IsExtl     // 1 << 1 i.e. 0000 0010
-    IsUri      // 1 << 2 i.e. 0000 0100
-		IsKey      // 1 << 3 i.e. 0000 1000
-		IsResolved // 1 << 4 i.e. 0001 0000
+	IsRef      Flags = 1 << iota // 1 << 0 i.e. 0000 0001
+	IsExtl                       // 1 << 1 i.e. 0000 0010
+	IsURI                        // 1 << 2 i.e. 0000 0100
+	IsKey                        // 1 << 3 i.e. 0000 1000
+	IsResolved                   // 1 << 4 i.e. 0001 0000
 )
 
-func (b Flags) Set  (flag Flags) Flags { return b |  flag }
+func (b Flags) Set(flag Flags) Flags   { return b | flag }
 func (b Flags) Reset(flag Flags) Flags { return b & ^flag }
-func (b Flags) IsSet(flag Flags) bool  { return b &  flag  != 0 }
+func (b Flags) IsSet(flag Flags) bool  { return b&flag != 0 }
+
 // func Toggle(b, flag Flags) Flags { return b ^ flag }
 
 func (f Flags) String() string {
@@ -25,11 +26,21 @@ func (f Flags) String() string {
 	var intl = "Intl"
 	var ltyp = "N/A"
 	var resd = "unReslvd"
-	if f.IsSet(IsRef)  { deff = "Ref" }
-	if f.IsSet(IsExtl) { intl = "Extl" }
-	if f.IsSet(IsUri)  { ltyp = "Uri" }
-	if f.IsSet(IsKey)  { ltyp = "Key" }
-	if f.IsSet(IsResolved) { resd = "Resolved"}
+	if f.IsSet(IsRef) {
+		deff = "Ref"
+	}
+	if f.IsSet(IsExtl) {
+		intl = "Extl"
+	}
+	if f.IsSet(IsURI) {
+		ltyp = "Uri"
+	}
+	if f.IsSet(IsKey) {
+		ltyp = "Key"
+	}
+	if f.IsSet(IsResolved) {
+		resd = "Resolved"
+	}
 	return deff + "," + intl + "," + ltyp + "," + resd
 }
 
@@ -38,14 +49,14 @@ func (f Flags) String() string {
 type GLinks struct {
 	// OwnerP points back to the owning struct, so that
 	// `GLink`s can be processed easily as simple data structures.
-	OwnerP     interface{}
+	OwnerP interface{}
 	// OutgoingKeys are outgoing key-based links/references
-	OutgoingKeys  []*GLink // (Extl|Intl)KeyRefs
+	OutgoingKeys []*GLink // (Extl|Intl)KeyRefs
 	// IncomableKeys are unique key-based definitions that are possible
 	// resolution targets (of same or other files' `OutgoingKeys`)
 	IncomableKeys []*GLink // (Extl|Intl)KeyDefs
 	// OutgoingURIs are outgoing URI-based links/references
-	OutgoingURIs  []*GLink // (Extl|Intl)UriRefs
+	OutgoingURIs []*GLink // (Extl|Intl)UriRefs
 	// IncomableURIs are unique URI-based definitions that are possible
 	// resolution targets (of same or other files' `OutgoingURIs`)
 	IncomableURIs []*GLink // (Extl|Intl)UriDefs
