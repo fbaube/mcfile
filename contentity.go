@@ -11,7 +11,8 @@ import (
 	ON "github.com/fbaube/orderednodes"
 )
 
-// Ignore https://godoc.org/golang.org/x/net/html#Node
+// For the record, ignore the API of
+// https://godoc.org/golang.org/x/net/html#Node
 
 // Contentity is awesome.
 type Contentity struct {
@@ -28,6 +29,10 @@ type Contentity struct {
 	GLinks
 }
 
+func (p *Contentity) IsDir() bool {
+	return p.ContentRecord.PathProps.IsOkayDir()
+}
+
 // RootContentityNord is available to make assignments to/from root node explicit.
 type RootContentityNord Contentity
 
@@ -42,7 +47,6 @@ var pNCS *norderCreationState = new(norderCreationState)
 // NewRootContentityNord needs aRootPath to be an absolute filepath.
 func NewRootContentityNord(aRootPath string) *Contentity {
 	p := new(Contentity)
-	fmt.Printf("NewRootContentityNord: got: %p \n", p)
 	pNCS.rootPath = aRootPath
 	pPP := FU.NewPathProps(aRootPath)
 	if pPP == nil {
@@ -53,13 +57,15 @@ func NewRootContentityNord(aRootPath string) *Contentity {
 	if pCR == nil {
 		panic("NewRootContentityNord FAILED on pCR")
 	}
-	if pCR.GetError() != nil {
+	// This block should not happen. And anyways for a directory,
+	// we don't need to worry about any error. Unless maybe there's
+	// some weird permissions problem.
+	if pCR.GetError() != nil && !pPP.IsOkayDir() {
 		println("newRootCty failed:", pCR.GetError().Error())
 		pCR.SetError(fmt.Errorf("newRootCty<%s> failed: %w",
 			pCR.AbsFP(), pCR.GetError()))
 		return nil
 	}
-	fmt.Printf("NewRootContentityNord: returning: %p \n", p)
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
 	p.ContentRecord = *pCR
 	p.GLinks = *new(GLinks)
@@ -76,7 +82,16 @@ func NewContentity(aPath string) *Contentity {
 		println("NewContentity: missing path")
 		return nil
 	}
+	p := new(Contentity)
+	p.Nord = *ON.NewNord(aPath)
+	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
+
 	pPP := FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
+	if pPP.IsOkayDir() {
+		println("--> Contentity is a directory:", FU.Tildotted(pPP.AbsFP()))
+		p.ContentRecord.PathProps = *pPP
+		return p
+	}
 	// This also does content fetching & analysis !
 	pCR := db.NewContentRecord(pPP)
 	if pCR.GetError() != nil {
@@ -84,14 +99,11 @@ func NewContentity(aPath string) *Contentity {
 			pCR.AbsFilePath, pCR.GetError()))
 		return nil
 	}
-	// Now make the Contentity, using code taken from NewMCFile(..)
-	p := new(Contentity)
+	// Now fill in the Contentity, using code taken from NewMCFile(..)
 	p.ContentRecord = *pCR
 	p.GLinks = *new(GLinks)
 	// println("D=> NewContentity:", p.String()) // p.MType, p.AbsFP())
 	// fmt.Printf("D=> NewContentity: %s / %s \n", p.MType, p.AbsFP())
-	p.Nord = *ON.NewNord(aPath)
-	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
 	return p
 }
 

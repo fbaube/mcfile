@@ -9,6 +9,7 @@ import (
 
 	FU "github.com/fbaube/fileutils"
 	"github.com/fbaube/fss"
+	SU "github.com/fbaube/stringutils"
 )
 
 var pCFS *ContentityFS
@@ -92,7 +93,7 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 			fmt.Printf("%s\t:: %s %s \n", k, v.LinePrefixString(), v.LineSummaryString())
 		}
 	*/
-	println("=== TREE ===")
+	println(SU.Gbg("=== TREE ==="))
 	pCFS.rootNord.PrintAll(os.Stdout)
 	return pCFS
 }
