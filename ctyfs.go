@@ -9,18 +9,27 @@ import (
 
 type ContentityFS struct {
 	fss.BaseFS
-	rootNord *Contentity
-	asSlice  []*Contentity
-	asMap    map[string]*Contentity // string is Rel.Path
+	rootNord      *Contentity
+	asSlice       []*Contentity
+	asMap         map[string]*Contentity // string is Rel.Path
+	nFiles, nDirs int
 }
 
-// Open is a dummy function, just here to satisfy an interface.
+/* Open is a dummy function, just here to satisfy an interface.
 func (p *ContentityFS) Open(path string) (fs.File, error) {
-	return p. /*inputFS. */ Open(path)
-}
+	return p. /*inputFS. * / Open(path)
+} */
 
 func (p *ContentityFS) Size() int {
 	return len(p.asSlice)
+}
+
+func (p *ContentityFS) DirCount() int {
+	return p.nDirs
+}
+
+func (p *ContentityFS) FileCount() int {
+	return p.nFiles
 }
 
 func (p *ContentityFS) RootContentity() *Contentity {
@@ -58,6 +67,8 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		pCFS.asSlice = append(pCFS.asSlice, p)
 		pCFS.asMap[path] = p
 		// println("ADDED TO MAP:", path)
+		pCFS.nDirs = 1
+		pCFS.nFiles = 0
 		return nil
 	}
 	// Filter out hidden (esp'ly .git) and emacs backup.
@@ -72,6 +83,11 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	p = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))
 	pCFS.asSlice = append(pCFS.asSlice, p)
 	pCFS.asMap[path] = p
+	if p.IsDir() {
+		pCFS.nDirs++
+	} else {
+		pCFS.nFiles++
+	}
 	// println("ADDED TO MAP:", path)
 	// println("Path OK:", pN.AbsFilePath)
 	return nil

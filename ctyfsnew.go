@@ -24,6 +24,8 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	pCFS.asSlice = make([]*Contentity, 0)
 	pCFS.asMap = make(map[string]*Contentity)
 
+	// IF path IS A FILE, THIS WILL ALL FAIL !!!!
+
 	// FIRST PASS
 	// Load slice & map
 	if nil == pCFS.InputFS() {
