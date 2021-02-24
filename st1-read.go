@@ -58,7 +58,8 @@ type ContentitySections is struct {
 */
 // st1a_Split is Step 1a: used to split the file into two parts
 // - (header/"hed") meta and (body/"bod") text. However for XML
-// and HTML, this has already been done in Peek.
+// and HTML, this has already been done in Peek, so this stage
+// is for Markdown only.
 //
 // func (p *MCFile) st1a_Split_mkdn() *MCFile {
 func (p *Contentity) st1a_Split_mkdn() *Contentity {

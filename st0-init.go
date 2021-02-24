@@ -1,13 +1,12 @@
 package mcfile
 
 // st0_Init does pre-processing prep.
-// Input: A bare-bones `MCFile` made from a `FU.CheckedContent` made from
-// a `FU.BasicPath` made from a `FU.AbsFilePath` made from a CLI argument.
+// Input: A bare-bones `Contentity`.
 //
-// For `Init()` to work, the `MCFile` *must* refer to a readable
-// file, and the field `MCFile.MType` *must* already be set.
+// For `Init()` to work, the `Contentity` *must* refer to a readable
+// file, and the field `Contentity.MType` *must* already be set.
 //
-// Output: An `MCFile` that is in-memory and analyzed (shallowly)
+// Output: An `Contentity` that is in-memory and analyzed (shallowly)
 // as `XML` or `MKDN` (Markdown) or `HTML`.
 // - SetTypeSpecific()
 // - SanityCheck()
@@ -46,6 +45,7 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 		// p.FFSdataP = new(TypeHtml)
 	default:
 		println("==> Init ERROR: file type:", p.FileType())
+		panic("st0a_SanityCheck")
 	}
 	return p
 }
