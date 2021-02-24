@@ -23,7 +23,9 @@ import (
 // MCFileProcessor is here for reference, altho the name is not really used.
 // It signals an error by setting the embedded field `error`; see
 // `(*CheckedPath)` funcs `Error() string` and `GetError() error`.
-type MCFileProcessor = func(*MCFile) *MCFile
+type MCFileProcessor func(*MCFile) *MCFile
+
+type ContentityStage func(*Contentity) *Contentity
 
 // The data structure food chain (TODO update this):
 

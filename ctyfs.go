@@ -36,6 +36,12 @@ func (p *ContentityFS) RootContentity() *Contentity {
 	return p.rootNord
 }
 
+func (p *ContentityFS) AsSlice() []*Contentity {
+	var z []*Contentity
+	z = p.asSlice
+	return z // p.AsSlice
+}
+
 func mustInitRoot() bool {
 	var needsInit, didDoInit bool
 	needsInit = (len(pCFS.asSlice) == 0 && len(pCFS.asMap) == 0)
@@ -44,6 +50,10 @@ func mustInitRoot() bool {
 		panic("mustInitRoot: illegal state")
 	}
 	return needsInit
+}
+
+func (p *ContentityFS) DoForEvery(stgprocsr ContentityStage) {
+
 }
 
 // wfnBuildContentityTree is

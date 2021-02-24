@@ -27,6 +27,9 @@ type Contentity struct {
 
 	GTokensOutput, GTreeOutput io.Writer
 	GLinks
+
+	TagTally StringTally
+	AttTally StringTally
 }
 
 func (p *Contentity) IsDir() bool {

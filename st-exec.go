@@ -2,10 +2,8 @@ package mcfile
 
 import (
 	"fmt"
-	"os"
 	"runtime/debug"
 
-	"github.com/fatih/color"
 	SU "github.com/fbaube/stringutils"
 )
 
@@ -17,7 +15,8 @@ import (
 // way might be to pass in a `Context` and use its cancellation capability.
 // Yet another way might be to `panic(..)``, and so this function already
 // has code to catch a panic.
-func (p *MCFile) ExecuteStages() *MCFile {
+// func (p *MCFile) ExecuteStages() *MCFile {
+func (p *Contentity) ExecuteStages() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
@@ -42,12 +41,16 @@ func (p *MCFile) ExecuteStages() *MCFile {
 			if sRecovered == "" {
 				sRecovered = eRecovered.Error()
 			}
-			fmt.Fprintf(os.Stderr, SU.Rfg(SU.Ybg("\n=== PANICKED ===")))
+			println(SU.Rfg(SU.Ybg("\n=== PANICKED ===")))
+			println("Recovered in MCFile.ExecuteStages():", sRecovered)
+			println("Stacktrace from panic: \n", string(debug.Stack()))
+			/* // //
 			p.LogIt("\n\t=== PANICKED ===")
 			color.Set(color.FgHiRed)
 			p.Blare("\nRecovered in MCFile.ExecuteStages(): " + sRecovered + "\n")
 			p.Blare("Stacktrace from panic: \n" + string(debug.Stack()))
 			color.Unset()
+			*/
 		}
 	}()
 	// Execute stages/steps

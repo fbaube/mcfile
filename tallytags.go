@@ -19,7 +19,7 @@ func init() {
 	GlobalAttTally = make(map[string]int)
 }
 
-func (p *MCFile) TallyTags() {
+func (p *Contentity) TallyTags() {
 	p.TagTally = make(map[string]int)
 	p.AttTally = make(map[string]int)
 	for _, pGT := range p.GTokens {

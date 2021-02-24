@@ -81,7 +81,8 @@ type LinkInfo struct {
 // *xmlfile.XmlItems
 // // *IDinfo
 //
-func (p *MCFile) GatherXmlGLinks() *MCFile {
+// func (p *MCFile) GatherXmlGLinks() *MCFile {
+func (p *Contentity) GatherXmlGLinks() *Contentity {
 	// pX := p.TheXml()
 	// Establish the directory of the GFile.
 	// ## // ## // var Dir FU.AbsFilePath = pGF.InputFile.FileFullName.DirPath

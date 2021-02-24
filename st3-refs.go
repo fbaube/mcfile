@@ -5,7 +5,8 @@ package mcfile
 // - DoBlockList()
 // - DoGLinks()
 // - DoTableOfContents()
-func (p *MCFile) st3_Refs() *MCFile {
+// func (p *MCFile) st3_Refs() *MCFile {
+func (p *Contentity) st3_Refs() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
@@ -14,7 +15,8 @@ func (p *MCFile) st3_Refs() *MCFile {
 }
 
 // DoBlockList is Step 3a
-func (p *MCFile) DoBlockList() *MCFile {
+// func (p *MCFile) DoBlockList() *MCFile {
+func (p *Contentity) DoBlockList() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
@@ -30,7 +32,8 @@ func (p *MCFile) DoBlockList() *MCFile {
 }
 
 // DoGLinks is Step 3b
-func (p *MCFile) DoGLinks() *MCFile {
+// func (p *MCFile) DoGLinks() *MCFile {
+func (p *Contentity) DoGLinks() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
@@ -46,7 +49,8 @@ func (p *MCFile) DoGLinks() *MCFile {
 }
 
 // DoTableOfContents is Step 3c
-func (p *MCFile) DoTableOfContents() *MCFile {
+// func (p *MCFile) DoTableOfContents() *MCFile {
+func (p *Contentity) DoTableOfContents() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}

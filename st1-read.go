@@ -31,7 +31,8 @@ import (
 // - DoPreMeta()
 // - DoTokenize()
 // // - DoPostMeta()
-func (p *MCFile) st1_Read() *MCFile {
+// func (p *MCFile) st1_Read() *MCFile {
+func (p *Contentity) st1_Read() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
@@ -59,7 +60,8 @@ type ContentitySections is struct {
 // - (header/"hed") meta and (body/"bod") text. However for XML
 // and HTML, this has already been done in Peek.
 //
-func (p *MCFile) st1a_Split_mkdn() *MCFile {
+// func (p *MCFile) st1a_Split_mkdn() *MCFile {
+func (p *Contentity) st1a_Split_mkdn() *Contentity {
 	if p.HasError() {
 		return p
 	}
@@ -70,7 +72,7 @@ func (p *MCFile) st1a_Split_mkdn() *MCFile {
 			p.SetError(fmt.Errorf("yaml metadata header: %w", e))
 			return p
 		}
-		panic("FIXME")
+		println(">>>> st1a_Split_mkdn() FIXME")
 		/*
 			p.TextRaw() = p.Raw
 			if i != 0 {
@@ -89,7 +91,8 @@ func (p *MCFile) st1a_Split_mkdn() *MCFile {
 
 // st1b_ProcessMetadata is Step 1b: used to process metadata.
 //
-func (p *MCFile) st1b_ProcessMetadata() *MCFile {
+// func (p *MCFile) st1b_ProcessMetadata() *MCFile {
+func (p *Contentity) st1b_ProcessMetadata() *Contentity {
 	if p.HasError() {
 		return p
 	}
@@ -141,12 +144,13 @@ func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 }
 
 // st1c_GetCPR is Step 1c: Generate ParserResults
-func (p *MCFile) st1c_GetCPR() *MCFile {
+// func (p *MCFile) st1c_GetCPR() *MCFile {
+func (p *Contentity) st1c_GetCPR() *Contentity {
 	if p.HasError() {
 		return p
 	}
 	if len(p.TextRaw()) == 0 {
-		p.Whine(p.OwnLogPfx + "st[1c] " + "Zero-length content")
+		// // p.Whine(p.OwnLogPfx + "st[1c] " + "Zero-length content")
 		return p
 	}
 	var e error
@@ -156,7 +160,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 		pPR, e = PU.GenerateParserResults_mkdn(p.TextRaw())
 		if e != nil {
 			e = errors.New("st[1c] " + e.Error())
-			p.Blare(p.OwnLogPfx + e.Error())
+			// // p.Blare(p.OwnLogPfx + e.Error())
 			p.SetError(e)
 			println("MKDN BARFED")
 			return p
@@ -170,7 +174,7 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 		pPR, e = PU.GenerateParserResults_html(p.TextRaw())
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
-			p.Blare(p.OwnLogPfx + e.Error())
+			// p.Blare(p.OwnLogPfx + e.Error())
 			p.SetError(e)
 			return p
 		}
@@ -195,12 +199,13 @@ func (p *MCFile) st1c_GetCPR() *MCFile {
 
 // st1d_MakeAFLfromCFL is Step 1d:
 // Make Abstract Flat List from Concrete Flat List
-func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
+// func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
+func (p *Contentity) st1d_MakeAFLfromCFL() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
 	var e error
-	var errmsg string
+	// var errmsg string
 	var GTs []*gtoken.GToken
 
 	fmt.Printf("D=> st1d: ParserResults: %T \n", p.ParserResults)
@@ -257,8 +262,8 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 			e = fmt.Errorf("GToken-ization failed: %w", e)
 		}
 		if e != nil {
-			errmsg = "st[1f] " + e.Error()
-			p.Blare(p.OwnLogPfx + errmsg)
+			// errmsg = "st[1f] " + e.Error()
+			// p.Blare(p.OwnLogPfx + errmsg)
 			p.SetError(e)
 			return p
 		}
@@ -272,7 +277,8 @@ func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
 }
 
 // st1e_PostMeta_notmkdn is Step 1e (XML,HTML): XML per format; HTML <head>
-func (p *MCFile) st1e_PostMeta_notmkdn() *MCFile {
+// func (p *MCFile) st1e_PostMeta_notmkdn() *MCFile {
+func (p *Contentity) st1e_PostMeta_notmkdn() *Contentity {
 	switch p.FileType() {
 	case "MKDN":
 		// Markdown YAML metadata was processed in step st1a
