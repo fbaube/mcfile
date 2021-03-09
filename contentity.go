@@ -77,7 +77,7 @@ func NewRootContentityNord(aRootPath string) *Contentity {
 	// println("D=> NewContentity:", p.String()) // p.MType, p.AbsFP())
 	// fmt.Printf("D=> NewContentity: %s / %s \n", p.MType, p.AbsFP())
 	p.Nord = *ON.NewRootNord(aRootPath, nil)
-	println("NewRootContentityNord:", FU.Tildotted(p.AbsFP()))
+	// println("NewRootContentityNord:", FU.Tildotted(p.AbsFP()))
 	// fmt.Printf("\t RootNord seqID %d \n", p.SeqID())
 	return p
 }
@@ -97,7 +97,7 @@ func NewContentity(aPath string) *Contentity {
 		p.ContentRecord.PathProps = *pPP
 		return p
 	}
-	L.L.Success(SU.Gbg("==>") + " " + SU.Gfg(pPP.String()))
+	L.L.Success(SU.Gbg(SU.Yfg("==>")) + " " + SU.Gfg(pPP.String()))
 	// This also does content fetching & analysis !
 	pCR := db.NewContentRecord(pPP)
 	if pCR.GetError() != nil {

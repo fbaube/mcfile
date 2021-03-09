@@ -1,7 +1,6 @@
 package mcfile
 
 import (
-	"fmt"
 	"io/fs"
 	"os"
 	FP "path/filepath"
@@ -9,6 +8,7 @@ import (
 
 	FU "github.com/fbaube/fileutils"
 	"github.com/fbaube/fss"
+	L "github.com/fbaube/mlog"
 	SU "github.com/fbaube/stringutils"
 )
 
@@ -33,9 +33,9 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	}
 	e := fs.WalkDir(pCFS.InputFS(), ".", wfnBuildContentityTree)
 	if e != nil {
-		panic("fss.newContentityFS: " + e.Error())
+		panic("mcfile.newContentityFS: " + e.Error())
 	}
-	fmt.Printf("fss.newContentityFS: got %d nords \n", len(pCFS.asSlice))
+	L.L.Info("mcfile.newContentityFS: got %d nords \n", len(pCFS.asSlice))
 
 	// SECOND PASS
 	// Go down slice to identify parent nords and link together.
