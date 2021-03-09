@@ -114,6 +114,7 @@ type MCFile struct {
 // (TODO) when it is stored as JSON K/V pairs, it can be accessed from
 // the command line using Sqlite (and other nifty) tools.
 
+/*
 func (p *MCFile) LogIt(s string) {
 	if p.OwnLog != nil {
 		p.OwnLog.Printf(s)
@@ -134,6 +135,7 @@ func (p *MCFile) Whine(s string) {
 	p.LogIt(s)
 	fmt.Fprintf(os.Stdout, "--> "+s+"\n")
 }
+*/
 
 // NewMCFile // also sets `MCFile.MType[..]`.
 func NewMCFile(pCR *db.ContentRecord) *MCFile {

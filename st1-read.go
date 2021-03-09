@@ -68,12 +68,14 @@ func (p *Contentity) st1a_Split_mkdn() *Contentity {
 	}
 	switch p.FileType() {
 	case "MKDN":
-		_, e := SU.YamlMetadataHeaderLength(p.Raw)
+		fmt.Printf("D=> MkdnSxns: len<%d> root<%s> meta<%s> text<%s> \n",
+			len(p.ContentityStructure.Raw), p.Root.String(), p.Meta.String(), p.Text.String())
+		ln, e := SU.YamlMetadataHeaderLength(p.Raw)
 		if e != nil {
 			p.SetError(fmt.Errorf("yaml metadata header: %w", e))
 			return p
 		}
-		println(">>>> st1a_Split_mkdn() FIXME")
+		fmt.Printf(">>>> st1a_Split_mkdn() hdr-len %d FIXME \n", ln)
 		/*
 			p.TextRaw() = p.Raw
 			if i != 0 {

@@ -8,7 +8,9 @@ import (
 	FU "github.com/fbaube/fileutils"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
+	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
+	SU "github.com/fbaube/stringutils"
 )
 
 // For the record, ignore the API of
@@ -91,10 +93,11 @@ func NewContentity(aPath string) *Contentity {
 
 	pPP := FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
 	if pPP.IsOkayDir() {
-		println("--> Contentity is a directory:", FU.Tildotted(pPP.AbsFP()))
+		L.L.Warning(SU.Ybg("Directory") + ": " + FU.Tildotted(pPP.AbsFP()))
 		p.ContentRecord.PathProps = *pPP
 		return p
 	}
+	L.L.Success(SU.Gbg("==>") + " " + SU.Gfg(pPP.String()))
 	// This also does content fetching & analysis !
 	pCR := db.NewContentRecord(pPP)
 	if pCR.GetError() != nil {

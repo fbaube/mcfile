@@ -19,7 +19,7 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	pCFS = new(ContentityFS)
 	// Initialize embedded baseFS
 	pCFS.BaseFS = *(fss.NewBaseFS(path))
-	println("fss.newContentityFS:", FU.Tildotted(pCFS.BaseFS.RootAbsPath()))
+	// println("fss.newContentityFS:", FU.Tildotted(pCFS.BaseFS.RootAbsPath()))
 	// Initialize slice & map
 	pCFS.asSlice = make([]*Contentity, 0)
 	pCFS.asMap = make(map[string]*Contentity)

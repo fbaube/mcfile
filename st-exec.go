@@ -54,6 +54,11 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		}
 	}()
 	// Execute stages/steps
+	if p.IsDir() {
+		println("==> Is a dir: skipping all stages")
+		return p
+	}
+	// println("--> DOING STAGES FOR:", p.AbsFP())
 	return p.
 		st0_Init().
 		st1_Read().
