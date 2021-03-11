@@ -1,5 +1,7 @@
 package mcfile
 
+import L "github.com/fbaube/mlog"
+
 // st0_Init does pre-processing prep.
 // Input: A bare-bones `Contentity`.
 //
@@ -16,7 +18,7 @@ func (p *Contentity) st0_Init() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
-	println("--> (0) Init")
+	L.L.Progress("Stage_0: Init")
 	// panic("TEST PANIC")
 	return p.st0a_SanityCheck()
 }

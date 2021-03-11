@@ -2,14 +2,12 @@ package mcfile
 
 import (
 	"io/fs"
-	"os"
 	FP "path/filepath"
 	S "strings"
 
 	FU "github.com/fbaube/fileutils"
 	"github.com/fbaube/fss"
 	L "github.com/fbaube/mlog"
-	SU "github.com/fbaube/stringutils"
 )
 
 var pCFS *ContentityFS
@@ -29,7 +27,7 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	// FIRST PASS
 	// Load slice & map
 	if nil == pCFS.InputFS() {
-		panic("OH SHIT")
+		panic("OH SHIT in ctyfsnew")
 	}
 	e := fs.WalkDir(pCFS.InputFS(), ".", wfnBuildContentityTree)
 	if e != nil {
@@ -52,7 +50,7 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 			var par *Contentity
 			var ok bool
 			if par, ok = pCFS.asMap[itsDir]; !ok {
-				println("findParInMap: failed for:", itsDir, "of", n.Path())
+				L.L.Error("findParInMap: failed for: " + itsDir + " of " + n.Path())
 				panic(n.Path)
 			}
 			if itsDir != par.Path() {
@@ -95,7 +93,7 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 			fmt.Printf("%s\t:: %s %s \n", k, v.LinePrefixString(), v.LineSummaryString())
 		}
 	*/
-	println(SU.Gbg("=== TREE ==="))
-	pCFS.rootNord.PrintAll(os.Stdout)
+	// println(SU.Gbg("=== TREE ==="))
+	// pCFS.rootNord.PrintAll(os.Stdout)
 	return pCFS
 }

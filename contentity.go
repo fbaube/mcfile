@@ -93,11 +93,11 @@ func NewContentity(aPath string) *Contentity {
 
 	pPP := FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
 	if pPP.IsOkayDir() {
-		L.L.Warning(SU.Ybg("Directory") + ": " + FU.Tildotted(pPP.AbsFP()))
+		L.L.Info(SU.Ybg(" Directory " + FU.Tildotted(pPP.AbsFP())))
 		p.ContentRecord.PathProps = *pPP
 		return p
 	}
-	L.L.Success(SU.Gbg(SU.Yfg("==>")) + " " + SU.Gfg(pPP.String()))
+	L.L.Okay(SU.Gbg(" " + pPP.String() + " "))
 	// This also does content fetching & analysis !
 	pCR := db.NewContentRecord(pPP)
 	if pCR.GetError() != nil {
