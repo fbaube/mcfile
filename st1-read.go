@@ -31,13 +31,14 @@ import (
 // - DoPreMeta()
 // - DoTokenize()
 // // - DoPostMeta()
-// func (p *MCFile) st1_Read() *MCFile {
+//
 func (p *Contentity) st1_Read() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
-	println("--> (1) Read")
-	fmt.Printf("    --> FileType<%s> MType<%v> \n", p.FileType(), p.MType)
+	p.logStg = "1:"
+	p.L(LProgress, "Read")
+	p.L(LInfo, "FileType<%s> MType<%v>", p.FileType(), p.MType)
 	return p.
 		st1a_Split_mkdn().
 		st1b_ProcessMetadata().
@@ -56,26 +57,27 @@ type ContentitySections is struct {
 	MetaProps  SU.PropSet
 }
 */
+
 // st1a_Split is Step 1a: used to split the file into two parts
 // - (header/"hed") meta and (body/"bod") text. However for XML
 // and HTML, this has already been done in Peek, so this stage
 // is for Markdown only.
 //
-// func (p *MCFile) st1a_Split_mkdn() *MCFile {
 func (p *Contentity) st1a_Split_mkdn() *Contentity {
 	if p.HasError() {
 		return p
 	}
+	p.logStg = "1a"
 	switch p.FileType() {
 	case "MKDN":
-		fmt.Printf("D=> MkdnSxns: len<%d> root<%s> meta<%s> text<%s> \n",
+		p.L(LDbg, "MkdnSxns: len<%d> root<%s> meta<%s> text<%s> \n",
 			len(p.ContentityStructure.Raw), p.Root.String(), p.Meta.String(), p.Text.String())
 		ln, e := SU.YamlMetadataHeaderLength(p.Raw)
 		if e != nil {
 			p.SetError(fmt.Errorf("yaml metadata header: %w", e))
 			return p
 		}
-		fmt.Printf(">>>> st1a_Split_mkdn() hdr-len %d FIXME \n", ln)
+		p.L(LWarning, "Split_mkdn() hdr-len %d FIXME", ln)
 		/*
 			p.TextRaw() = p.Raw
 			if i != 0 {

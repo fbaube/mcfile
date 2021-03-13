@@ -23,6 +23,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
+	p.logStg = "--"
 	defer func() {
 		if r := recover(); r != nil {
 			L.L.Panic(SU.Rfg(SU.Ybg(" ** PANIC caught in ExecuteStages ** ")))
@@ -48,7 +49,8 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	}()
 	// Execute stages/steps
 	if p.IsDir() {
-		L.L.Info("Is a dir: skipping all stages")
+		// L.L.Info("Is a dir: skipping all stages")
+		p.L(LInfo, "Is a dir: skipping content processing")
 		return p
 	}
 	// println("--> DOING STAGES FOR:", p.AbsFP())

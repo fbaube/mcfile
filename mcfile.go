@@ -49,6 +49,8 @@ type ContentityStage func(*Contentity) *Contentity
 // this is a logical place to store a GTokenization and a GTree.
 type MCFile struct {
 	CFU.GCtx
+	// logIdx int
+	// logStg string
 	// db.Times
 	// FU.PathProps
 	db.ContentRecord // embeds FU.AnalysisRecord

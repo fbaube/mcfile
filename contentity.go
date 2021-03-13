@@ -19,6 +19,8 @@ import (
 // Contentity is awesome.
 type Contentity struct {
 	ON.Nord
+	logIdx int
+	logStg string
 	// ContentRecord is what gets persisted to the DB
 	db.ContentRecord
 	// ParserResults is parseutils.ParserResults_ffs
