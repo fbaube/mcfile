@@ -25,7 +25,6 @@ func (p *Contentity) st0_Init() *Contentity {
 // st0a_SanityCheck is Stage 0a: it sets `MCFile.TypeSpecific`
 // based on `MCFile.FileType()`, which uses `MCFile.MType[]`.
 //
-// func (p *MCFile) st0a_SanityCheck() *MCFile {
 func (p *Contentity) st0a_SanityCheck() *Contentity {
 	p.logStg = "0a"
 	// println("Init:", p.FileType())

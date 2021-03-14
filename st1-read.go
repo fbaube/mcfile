@@ -37,8 +37,8 @@ func (p *Contentity) st1_Read() *Contentity {
 		return p
 	}
 	p.logStg = "1:"
-	p.L(LProgress, "Read")
-	p.L(LInfo, "FileType<%s> MType<%v>", p.FileType(), p.MType)
+	// p.L(LProgress, "Read")
+	p.L(LInfo, "At entry: FileType<%s> MType<%v>", p.FileType(), p.MType)
 	return p.
 		st1a_Split_mkdn().
 		st1b_ProcessMetadata().
@@ -58,10 +58,9 @@ type ContentitySections is struct {
 }
 */
 
-// st1a_Split is Step 1a: used to split the file into two parts
-// - (header/"hed") meta and (body/"bod") text. However for XML
-// and HTML, this has already been done in Peek, so this stage
-// is for Markdown only.
+// st1a_Split is Step 1a: used to split the file into two parts:
+// meta (i.e. header) and text (i.e. body) However for XML & HTML,
+// this has already been done in Peek, so this stage is for Markdown only.
 //
 func (p *Contentity) st1a_Split_mkdn() *Contentity {
 	if p.HasError() {
@@ -96,24 +95,24 @@ func (p *Contentity) st1a_Split_mkdn() *Contentity {
 
 // st1b_ProcessMetadata is Step 1b: used to process metadata.
 //
-// func (p *MCFile) st1b_ProcessMetadata() *MCFile {
 func (p *Contentity) st1b_ProcessMetadata() *Contentity {
 	if p.HasError() {
 		return p
 	}
+	p.logStg = "1b"
 	if p.MetaRaw() == "" && p.Meta.Beg.Pos == 0 {
-		println("--> st1b: No metadata encountered")
+		p.L(LInfo, "No metadata encountered")
 		return p
 	}
 	switch p.FileType() {
 	case "XML", "HTML":
 		ft := p.FileType()
-		fmt.Printf("--> st1b: MetaPos:%d MetaRaw(): %s \n",
+		p.L(LDbg, "MetaPos:%d MetaRaw(): %s",
 			p.Meta.Beg.Pos, p.MetaRaw())
 		if p.Meta.Beg.Pos != 0 {
 			var e error
 			var ct int
-			println("st1b_PreMeta: doing", ft)
+			p.L(LProgress, "Doing "+ft)
 			if ft == "HTML" {
 				var pPR *PU.ParserResults_html
 				pPR, e = PU.GenerateParserResults_html(p.MetaRaw())
@@ -127,10 +126,10 @@ func (p *Contentity) st1b_ProcessMetadata() *Contentity {
 				p.ParserResults = pPR
 			}
 			if e != nil {
-				e = fmt.Errorf("%s tokenization failed: %w", ft, e)
+				p.L(LError, "%s tokenization failed: %w", ft, e)
 				p.ParserResults = nil
 			}
-			fmt.Printf("==> %stokens: got %d \n", ft, ct)
+			p.L(LOkay, "%s tokens: got %d \n", ft, ct)
 			return p
 		}
 	case "MKDN":
@@ -141,7 +140,7 @@ func (p *Contentity) st1b_ProcessMetadata() *Contentity {
 			return p
 		}
 		if len(p.TextRaw()) == 0 {
-			println("NO MKDN in st1b")
+			p.L(LWarning, "NO MKDN in st1b_ProcessMetadata")
 		}
 		p.MetaProps = ps
 	}
@@ -149,13 +148,14 @@ func (p *Contentity) st1b_ProcessMetadata() *Contentity {
 }
 
 // st1c_GetCPR is Step 1c: Generate ParserResults
-// func (p *MCFile) st1c_GetCPR() *MCFile {
+//
 func (p *Contentity) st1c_GetCPR() *Contentity {
 	if p.HasError() {
 		return p
 	}
+	p.logStg = "1c"
 	if len(p.TextRaw()) == 0 {
-		// // p.Whine(p.OwnLogPfx + "st[1c] " + "Zero-length content")
+		p.L(LWarning, "Zero-length content")
 		return p
 	}
 	var e error
@@ -167,11 +167,14 @@ func (p *Contentity) st1c_GetCPR() *Contentity {
 			e = errors.New("st[1c] " + e.Error())
 			// // p.Blare(p.OwnLogPfx + e.Error())
 			p.SetError(e)
-			println("MKDN BARFED")
+			p.L(LError, "Failure in GenerateParserResults_mkdn")
 			return p
 		}
+		if pPR == nil {
+			p.L(LError, "No Error but nil ParserResults")
+		}
 		p.ParserResults = pPR
-		fmt.Printf("==> MKDNtokens: got %d \n", len(pPR.NodeSlice))
+		p.L(LOkay, "MKDN tokens: got %d", len(pPR.NodeSlice))
 		// p.TallyTags()
 		return p
 	case "HTML":
@@ -181,10 +184,11 @@ func (p *Contentity) st1c_GetCPR() *Contentity {
 			e = errors.New("st[1b] " + e.Error())
 			// p.Blare(p.OwnLogPfx + e.Error())
 			p.SetError(e)
+			p.L(LError, "Failure in GenerateParserResults_html")
 			return p
 		}
 		p.ParserResults = pPR
-		fmt.Printf("==> HTMLtokens: got %d \n", len(pPR.NodeSlice))
+		p.L(LOkay, "HTML tokens: got %d", len(pPR.NodeSlice))
 		// p.TallyTags()
 		return p
 	case "XML":
@@ -192,38 +196,40 @@ func (p *Contentity) st1c_GetCPR() *Contentity {
 		pPR, e := XM.GenerateParserResults_xml(p.TextRaw())
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
+			p.L(LError, "Failure in GenerateParserResults_xml")
 		}
 		p.ParserResults = pPR
-		fmt.Printf("==> XMLtokens: got %d \n", len(pPR.NodeSlice))
+		p.L(LOkay, "XML tokens: got %d \n", len(pPR.NodeSlice))
 		return p
 	default:
-		println("ERROR st1b_GetCPR: bad file type:", p.FileType())
+		p.L(LError, "st1b_GetCPR: bad file type: "+p.FileType())
 	}
 	return p
 }
 
 // st1d_MakeAFLfromCFL is Step 1d:
 // Make Abstract Flat List from Concrete Flat List
-// func (p *MCFile) st1d_MakeAFLfromCFL() *MCFile {
+//
 func (p *Contentity) st1d_MakeAFLfromCFL() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
+	p.logStg = "1d"
 	var e error
 	// var errmsg string
 	var GTs []*gtoken.GToken
 
-	fmt.Printf("D=> st1d: ParserResults: %T \n", p.ParserResults)
+	p.L(LDbg, "ParserResults: %T", p.ParserResults)
 
 	switch p.FileType() {
 	case "MKDN":
 		var pCPR_M *PU.ParserResults_mkdn
-		println("BEFORE BARF")
+		p.L(LWarning, "BEFORE BARF")
 		if nil == p.ParserResults {
-			println("BARF ON NIL")
+			p.L(LError, "BARF ON NIL ParserResults")
 		}
 		pCPR_M = p.ParserResults.(*PU.ParserResults_mkdn)
-		println("!AFTER BARF")
+		p.L(LOkay, "!AFTER BARF")
 		if p.GTokensOutput != nil {
 			pCPR_M.DumpDest = p.GTokensOutput
 		} else {
@@ -282,7 +288,7 @@ func (p *Contentity) st1d_MakeAFLfromCFL() *Contentity {
 }
 
 // st1e_PostMeta_notmkdn is Step 1e (XML,HTML): XML per format; HTML <head>
-// func (p *MCFile) st1e_PostMeta_notmkdn() *MCFile {
+//
 func (p *Contentity) st1e_PostMeta_notmkdn() *Contentity {
 	switch p.FileType() {
 	case "MKDN":

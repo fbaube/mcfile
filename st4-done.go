@@ -1,6 +1,7 @@
 package mcfile
 
 // st4_Done does final cleanup and beautification.
+//
 func (p *MCFile) st4_Done() *MCFile {
 	if p.GetError() != nil {
 		return p

@@ -4,7 +4,6 @@ import (
 	"runtime/debug"
 
 	"github.com/fatih/color"
-	L "github.com/fbaube/mlog"
 	SU "github.com/fbaube/stringutils"
 )
 
@@ -26,13 +25,13 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	p.logStg = "--"
 	defer func() {
 		if r := recover(); r != nil {
-			L.L.Panic(SU.Rfg(SU.Ybg(" ** PANIC caught in ExecuteStages ** ")))
+			p.L(LPanic, SU.Rfg(SU.Ybg(" ** PANIC caught in ExecuteStages ** ")))
 			color.Set(color.FgHiRed)
 			// L.L.Panic(e.Error())
 			color.Unset()
 			var sRecovered string
 			var eRecovered error
-			L.L.Info("recover got a: %T", r)
+			p.L(LInfo, "recover got a: %T", r)
 			switch r.(type) {
 			case string:
 				sRecovered = r.(string)
@@ -42,14 +41,13 @@ func (p *Contentity) ExecuteStages() *Contentity {
 			if sRecovered == "" {
 				sRecovered = eRecovered.Error()
 			}
-			L.L.Panic(SU.Rfg(SU.Ybg("=== PANICKED ===")))
-			L.L.Error("Recovered in MCFile.ExecuteStages(): " + sRecovered)
-			L.L.Error("Stacktrace from panic: " + string(debug.Stack()))
+			p.L(LPanic, SU.Rfg(SU.Ybg("=== PANICKED ===")))
+			p.L(LError, "Recovered in MCFile.ExecuteStages(): "+sRecovered)
+			p.L(LError, "Stacktrace from panic: "+string(debug.Stack()))
 		}
 	}()
 	// Execute stages/steps
 	if p.IsDir() {
-		// L.L.Info("Is a dir: skipping all stages")
 		p.L(LInfo, "Is a dir: skipping content processing")
 		return p
 	}
