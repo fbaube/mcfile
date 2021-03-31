@@ -3,7 +3,6 @@ package mcfile
 import (
 	"runtime/debug"
 
-	"github.com/fatih/color"
 	SU "github.com/fbaube/stringutils"
 )
 
@@ -26,9 +25,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	defer func() {
 		if r := recover(); r != nil {
 			p.L(LPanic, SU.Rfg(SU.Ybg(" ** PANIC caught in ExecuteStages ** ")))
-			color.Set(color.FgHiRed)
-			// L.L.Panic(e.Error())
-			color.Unset()
+			p.L(LPanic, " ** PANIC caught in ExecuteStages ** ")
 			var sRecovered string
 			var eRecovered error
 			p.L(LInfo, "recover got a: %T", r)
@@ -41,16 +38,15 @@ func (p *Contentity) ExecuteStages() *Contentity {
 			if sRecovered == "" {
 				sRecovered = eRecovered.Error()
 			}
-			p.L(LPanic, SU.Rfg(SU.Ybg("=== PANICKED ===")))
-			p.L(LError, "Recovered in MCFile.ExecuteStages(): "+sRecovered)
-			p.L(LError, "Stacktrace from panic: "+string(debug.Stack()))
+			p.L(LError, "defer'd-recover()-string: "+sRecovered)
+			p.L(LError, "stdlib:runtime/debug.Stack(): "+string(debug.Stack()))
 		}
 	}()
-	// Execute stages/steps
 	if p.IsDir() {
 		p.L(LInfo, "Is a dir: skipping content processing")
 		return p
 	}
+	// Execute stages/steps
 	// println("--> DOING STAGES FOR:", p.AbsFP())
 	return p.
 		st0_Init().

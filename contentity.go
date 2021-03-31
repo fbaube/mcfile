@@ -153,3 +153,31 @@ func (p Contentity) String() string {
 	// p.PopBigFields(BF)
 	return s
 }
+
+/*
+WHATWG:
+
+document . images
+Returns an HTMLCollection of the img elements in the Document.
+document . embeds
+document . plugins
+Return an HTMLCollection of the embed elements in the Document.
+document . links
+Returns an HTMLCollection of the a and area elements in the Document that have href attributes.
+document . forms
+Return an HTMLCollection of the form elements in the Document.
+document . scripts
+Return an HTMLCollection of the script elements in the Document.
+
+element . innerText [ = value ]                                                 
+Returns the element's text content "as rendered".                               
+Can be set, to replace the element's children with the given                    
+value, but with line breaks converted to br elements.                           
+                                                                                
+                                                                                
+element . dataset                                                               
+https://html.spec.whatwg.org/#domstringmap                                      
+Returns a DOMStringMap object for the element's data-* attributes.              
+Hyphenated names become camel-cased. For example, data-foo-bar=""               
+becomes element.dataset.fooBar.   
+*/

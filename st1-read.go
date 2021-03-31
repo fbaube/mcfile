@@ -100,7 +100,9 @@ func (p *Contentity) st1b_ProcessMetadata() *Contentity {
 		return p
 	}
 	p.logStg = "1b"
-	if p.MetaRaw() == "" && p.Meta.Beg.Pos == 0 {
+	metaRaw := p.GetSpan(p.Meta)
+	textRaw := p.GetSpan(p.Text)
+	if metaRaw == "" {
 		p.L(LInfo, "No metadata encountered")
 		return p
 	}
@@ -108,20 +110,20 @@ func (p *Contentity) st1b_ProcessMetadata() *Contentity {
 	case "XML", "HTML":
 		ft := p.FileType()
 		p.L(LDbg, "MetaPos:%d MetaRaw(): %s",
-			p.Meta.Beg.Pos, p.MetaRaw())
+			p.Meta.Beg.Pos, metaRaw)
 		if p.Meta.Beg.Pos != 0 {
 			var e error
 			var ct int
 			p.L(LProgress, "Doing "+ft)
 			if ft == "HTML" {
 				var pPR *PU.ParserResults_html
-				pPR, e = PU.GenerateParserResults_html(p.MetaRaw())
+				pPR, e = PU.GenerateParserResults_html(metaRaw)
 				ct = len(pPR.NodeSlice)
 				p.ParserResults = pPR
 			}
 			if ft == "XML" {
 				var pPR *XM.ParserResults_xml
-				pPR, e = XM.GenerateParserResults_xml(p.MetaRaw())
+				pPR, e = XM.GenerateParserResults_xml(metaRaw)
 				ct = len(pPR.NodeSlice)
 				p.ParserResults = pPR
 			}
@@ -134,12 +136,12 @@ func (p *Contentity) st1b_ProcessMetadata() *Contentity {
 		}
 	case "MKDN":
 		ps, e := SU.GetYamlMetadataAsPropSet(
-			SU.TrimYamlMetadataDelimiters(p.MetaRaw()))
+			SU.TrimYamlMetadataDelimiters(metaRaw))
 		if e != nil {
 			p.SetError(fmt.Errorf("yaml metadata: %w", e))
 			return p
 		}
-		if len(p.TextRaw()) == 0 {
+		if len(textRaw) == 0 {
 			p.L(LWarning, "NO MKDN in st1b_ProcessMetadata")
 		}
 		p.MetaProps = ps
@@ -153,8 +155,9 @@ func (p *Contentity) st1c_GetCPR() *Contentity {
 	if p.HasError() {
 		return p
 	}
+	textRaw := p.GetSpan(p.Text)
 	p.logStg = "1c"
-	if len(p.TextRaw()) == 0 {
+	if len(textRaw) == 0 {
 		p.L(LWarning, "Zero-length content")
 		return p
 	}
@@ -162,7 +165,7 @@ func (p *Contentity) st1c_GetCPR() *Contentity {
 	switch p.FileType() {
 	case "MKDN":
 		var pPR *PU.ParserResults_mkdn
-		pPR, e = PU.GenerateParserResults_mkdn(p.TextRaw())
+		pPR, e = PU.GenerateParserResults_mkdn(textRaw)
 		if e != nil {
 			e = errors.New("st[1c] " + e.Error())
 			// // p.Blare(p.OwnLogPfx + e.Error())
@@ -179,7 +182,7 @@ func (p *Contentity) st1c_GetCPR() *Contentity {
 		return p
 	case "HTML":
 		var pPR *PU.ParserResults_html
-		pPR, e = PU.GenerateParserResults_html(p.TextRaw())
+		pPR, e = PU.GenerateParserResults_html(textRaw)
 		if e != nil {
 			e = errors.New("st[1b] " + e.Error())
 			// p.Blare(p.OwnLogPfx + e.Error())
@@ -193,7 +196,7 @@ func (p *Contentity) st1c_GetCPR() *Contentity {
 		return p
 	case "XML":
 		var pPR *XM.ParserResults_xml
-		pPR, e := XM.GenerateParserResults_xml(p.TextRaw())
+		pPR, e := XM.GenerateParserResults_xml(textRaw)
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
 			p.L(LError, "Failure in GenerateParserResults_xml")
