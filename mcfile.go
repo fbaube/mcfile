@@ -53,7 +53,7 @@ type MCFile struct {
 	// logStg string
 	// db.Times
 	// FU.PathProps
-	db.ContentRecord // embeds FU.AnalysisRecord
+	db.ContentityRecord // embeds FU.AnalysisRecord
 
 	// Data stuctures and conversions ("FFS" = file-format-specific):
 	// 1) CCT = Concrete Content Tree = FFS-nodes [not available for XML]
@@ -140,9 +140,9 @@ func (p *MCFile) Whine(s string) {
 */
 
 // NewMCFile // also sets `MCFile.MType[..]`.
-func NewMCFile(pCR *db.ContentRecord) *MCFile {
+func NewMCFile(pCR *db.ContentityRecord) *MCFile {
 	p := new(MCFile)
-	p.ContentRecord = *pCR
+	p.ContentityRecord = *pCR
 	// println("ZORK3:", pCR.Error())
 	// println("ZORK2:", pCR.GetError().Error())
 	if pCR.GetError() != nil {
@@ -211,7 +211,7 @@ func (p MCFile) String() string {
 	}
 	== */
 	// if p.DitaInfo != nil {
-	s += fmt.Sprintf("DitaInfo|ML:%s|Cntp:%s|", p.DitaMarkupLg, p.DitaContype)
+	s += fmt.Sprintf("DitaInfo|Flav:%s|Cntp:%s|", p.DitaFlavor, p.DitaContype)
 	// }
 
 	// !! // p.PopBigFields(BF)
@@ -273,7 +273,7 @@ func (pMCF *MCFile) GatherGLinksInto(pGL *GLinks) {
 // === Implement interface Errable
 
 func (p *MCFile) HasError() bool {
-	return p.ContentRecord.HasError() || p.PathProps.HasError()
+	return p.ContentityRecord.HasError() || p.PathProps.HasError()
 }
 
 // GetError is necessary cos "Error()"" dusnt tell you whether "error"
@@ -283,7 +283,7 @@ func (p *MCFile) GetError() error {
 	if p.PathProps.HasError() {
 		return p.PathProps.GetError()
 	}
-	return p.ContentRecord.GetError()
+	return p.ContentityRecord.GetError()
 }
 
 // Error satisfies interface "error", but the
@@ -292,9 +292,9 @@ func (p *MCFile) Error() string {
 	if p.PathProps.HasError() {
 		return p.PathProps.Error()
 	}
-	return p.ContentRecord.Error()
+	return p.ContentityRecord.Error()
 }
 
 func (p *MCFile) SetError(e error) {
-	p.ContentRecord.SetError(e)
+	p.ContentityRecord.SetError(e)
 }

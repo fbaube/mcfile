@@ -91,6 +91,9 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		return nil
 	}
 	p = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))
+	if p == nil {
+		panic("nil Contentity")
+	}
 	nxtIdx := len(pCFS.asSlice)
 	pCFS.asSlice = append(pCFS.asSlice, p)
 	p.logIdx = nxtIdx

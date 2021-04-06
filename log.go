@@ -14,7 +14,8 @@ func (p *Contentity) L(level LL, format string, a ...interface{}) {
 func (p *Contentity) LogTextQuote(level LL, textquote string, format string, a ...interface{}) {
 	// L.L.Log(level, format, a...)
 	L.L.LogWithString(L.Level(level), format, fmt.Sprintf("%02d", p.logIdx)+","+p.logStg, a...)
-	L.L.LogMultilineAsIs(SU.IndentWith("   |  ", textquote))
+	panic("FIXME")
+	// L.L.LogMultilineAsIs(SU.IndentWith("   |  ", textquote))
 }
 
 type LL L.Level

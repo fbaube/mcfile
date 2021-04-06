@@ -21,8 +21,8 @@ type Contentity struct {
 	ON.Nord
 	logIdx int
 	logStg string
-	// ContentRecord is what gets persisted to the DB
-	db.ContentRecord
+	// ContentityRecord is what gets persisted to the DB
+	db.ContentityRecord
 	// ParserResults is parseutils.ParserResults_ffs
 	ParserResults interface{}
 	GTokens       []*gtoken.GToken
@@ -37,7 +37,7 @@ type Contentity struct {
 }
 
 func (p *Contentity) IsDir() bool {
-	return p.ContentRecord.PathProps.IsOkayDir()
+	return p.ContentityRecord.PathProps.IsOkayDir()
 }
 
 // RootContentityNord is available to make assignments to/from root node explicit.
@@ -60,7 +60,7 @@ func NewRootContentityNord(aRootPath string) *Contentity {
 		panic("NewRootContentityNord FAILED on pPP")
 	}
 	// This also does content fetching & analysis !
-	pCR := db.NewContentRecord(pPP)
+	pCR := db.NewContentityRecord(pPP)
 	if pCR == nil {
 		panic("NewRootContentityNord FAILED on pCR")
 	}
@@ -74,7 +74,7 @@ func NewRootContentityNord(aRootPath string) *Contentity {
 		return nil
 	}
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
-	p.ContentRecord = *pCR
+	p.ContentityRecord = *pCR
 	p.GLinks = *new(GLinks)
 	// println("D=> NewContentity:", p.String()) // p.MType, p.AbsFP())
 	// fmt.Printf("D=> NewContentity: %s / %s \n", p.MType, p.AbsFP())
@@ -96,19 +96,22 @@ func NewContentity(aPath string) *Contentity {
 	pPP := FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
 	if pPP.IsOkayDir() {
 		L.L.Info(SU.Ybg(" Directory " + FU.Tildotted(pPP.AbsFP())))
-		p.ContentRecord.PathProps = *pPP
+		p.ContentityRecord.PathProps = *pPP
 		return p
 	}
 	L.L.Okay(SU.Gbg(" " + pPP.String() + " "))
 	// This also does content fetching & analysis !
-	pCR := db.NewContentRecord(pPP)
+	pCR := db.NewContentityRecord(pPP)
+	if pCR == nil {
+		panic("BAD pCR")
+	}
 	if pCR.GetError() != nil {
 		pCR.SetError(fmt.Errorf("newCty<%s> failed: %w",
-			pCR.AbsFilePath, pCR.GetError()))
-		return nil
+			pCR.AbsFP(), pCR.GetError()))
+		return p // nil
 	}
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
-	p.ContentRecord = *pCR
+	p.ContentityRecord = *pCR
 	p.GLinks = *new(GLinks)
 	// println("D=> NewContentity:", p.String()) // p.MType, p.AbsFP())
 	// fmt.Printf("D=> NewContentity: %s / %s \n", p.MType, p.AbsFP())
@@ -147,7 +150,7 @@ func (p Contentity) String() string {
 	}
 	== */
 	// if p.DitaInfo != nil {
-	s += fmt.Sprintf("DitaInfo|ML:%s|Cntp:%s|", p.DitaMarkupLg, p.DitaContype)
+	s += fmt.Sprintf("DitaInfo|Flav:%s|Cntp:%s|", p.DitaFlavor, p.DitaContype)
 	// }
 
 	// p.PopBigFields(BF)
@@ -169,15 +172,15 @@ Return an HTMLCollection of the form elements in the Document.
 document . scripts
 Return an HTMLCollection of the script elements in the Document.
 
-element . innerText [ = value ]                                                 
-Returns the element's text content "as rendered".                               
-Can be set, to replace the element's children with the given                    
-value, but with line breaks converted to br elements.                           
-                                                                                
-                                                                                
-element . dataset                                                               
-https://html.spec.whatwg.org/#domstringmap                                      
-Returns a DOMStringMap object for the element's data-* attributes.              
-Hyphenated names become camel-cased. For example, data-foo-bar=""               
-becomes element.dataset.fooBar.   
+element . innerText [ = value ]
+Returns the element's text content "as rendered".
+Can be set, to replace the element's children with the given
+value, but with line breaks converted to br elements.
+
+
+element . dataset
+https://html.spec.whatwg.org/#domstringmap
+Returns a DOMStringMap object for the element's data-* attributes.
+Hyphenated names become camel-cased. For example, data-foo-bar=""
+becomes element.dataset.fooBar.
 */
