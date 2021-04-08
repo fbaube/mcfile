@@ -70,7 +70,7 @@ func NewRootContentityNord(aRootPath string) *Contentity {
 	if pCR.GetError() != nil && !pPP.IsOkayDir() {
 		println("newRootCty failed:", pCR.GetError().Error())
 		pCR.SetError(fmt.Errorf("newRootCty<%s> failed: %w",
-			pCR.AbsFP(), pCR.GetError()))
+			pCR.AbsFP, pCR.GetError()))
 		return nil
 	}
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
@@ -95,7 +95,7 @@ func NewContentity(aPath string) *Contentity {
 
 	pPP := FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
 	if pPP.IsOkayDir() {
-		L.L.Info(SU.Ybg(" Directory " + FU.Tildotted(pPP.AbsFP())))
+		L.L.Info(SU.Ybg(" Directory " + FU.Tildotted(pPP.AbsFP.S())))
 		p.ContentityRecord.PathProps = *pPP
 		return p
 	}
@@ -107,7 +107,7 @@ func NewContentity(aPath string) *Contentity {
 	}
 	if pCR.GetError() != nil {
 		pCR.SetError(fmt.Errorf("newCty<%s> failed: %w",
-			pCR.AbsFP(), pCR.GetError()))
+			pCR.AbsFP, pCR.GetError()))
 		return p // nil
 	}
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
@@ -130,7 +130,7 @@ func (p Contentity) String() string {
 	}
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("||%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		FU.Tildotted(p.PathProps.AbsFP()) /* p.OutputFiles.String(), */, sGTree,
+		FU.Tildotted(p.PathProps.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {

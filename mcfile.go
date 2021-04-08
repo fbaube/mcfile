@@ -167,7 +167,7 @@ func (p *MCFile) Errorbarf(e error, s string) bool {
 	p.SetError(e)
 	// elog.Printf("%s failed: %s \n", myAppName, e.Error())
 	fmt.Fprintf(os.Stderr, "%s failed: %s \n\t error was: %s \n",
-		p.PathProps.AbsFP(), s, e.Error())
+		p.PathProps.AbsFP, s, e.Error())
 	// os.Exit(1)
 	println("==> DUMP OF FAILING MCFILE:")
 	println(p.String())
@@ -191,7 +191,7 @@ func (p MCFile) String() string {
 	}
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("||%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		FU.Tildotted(p.PathProps.AbsFP()) /* p.OutputFiles.String(), */, sGTree,
+		FU.Tildotted(p.PathProps.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {
