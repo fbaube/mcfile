@@ -3,7 +3,7 @@ package mcfile
 import (
 	"runtime/debug"
 
-	SU "github.com/fbaube/stringutils"
+	L "github.com/fbaube/mlog"
 )
 
 // ExecuteStages processes an Contentity to completion in an isolated thread,
@@ -24,11 +24,11 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	p.logStg = "--"
 	defer func() {
 		if r := recover(); r != nil {
-			p.L(LPanic, SU.Rfg(SU.Ybg(" ** PANIC caught in ExecuteStages ** ")))
-			p.L(LPanic, " ** PANIC caught in ExecuteStages ** ")
+			L.L.Panic("= = = = = = = = = = = = = = = = = = = =")
+			L.L.Panic(" ** PANIC caught in ExecuteStages ** ")
 			var sRecovered string
 			var eRecovered error
-			p.L(LInfo, "recover got a: %T", r)
+			p.L(LInfo, "recover() got a: %T", r)
 			switch r.(type) {
 			case string:
 				sRecovered = r.(string)
@@ -38,8 +38,9 @@ func (p *Contentity) ExecuteStages() *Contentity {
 			if sRecovered == "" {
 				sRecovered = eRecovered.Error()
 			}
-			p.L(LError, "defer'd-recover()-string: "+sRecovered)
-			p.L(LError, "stdlib:runtime/debug.Stack(): "+string(debug.Stack()))
+			L.L.Error("defer'd-recover()-string: " + sRecovered)
+			L.L.Error("stdlib:runtime/debug.Stack(): " + string(debug.Stack()))
+			L.L.Panic("= = = = = = = = = = = = = = = = = = = =")
 		}
 	}()
 	if p.IsDir() {

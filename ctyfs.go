@@ -5,6 +5,7 @@ import (
 	S "strings"
 
 	"github.com/fbaube/fss"
+	L "github.com/fbaube/mlog"
 )
 
 type ContentityFS struct {
@@ -73,6 +74,8 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 			panic("wfnBuildContentityTree mustInitRoot NewRootContentityNord FAILED")
 		}
 		pCFS.rootNord = p
+		p.MimeType = "dir"
+		p.MType = "dir"
 		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
 		pCFS.asSlice = append(pCFS.asSlice, p)
 		pCFS.asMap[path] = p
@@ -92,7 +95,9 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	}
 	p = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))
 	if p == nil {
-		panic("nil Contentity")
+		// panic("nil Contentity")
+		L.L.Error("Skipping this item!")
+		return nil
 	}
 	nxtIdx := len(pCFS.asSlice)
 	pCFS.asSlice = append(pCFS.asSlice, p)
@@ -100,6 +105,9 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	pCFS.asMap[path] = p
 	if p.IsDir() {
 		pCFS.nDirs++
+		// println("================DIR ========")
+		p.MimeType = "dir"
+		p.MType = "dir"
 	} else {
 		pCFS.nFiles++
 	}

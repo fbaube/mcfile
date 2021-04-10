@@ -103,7 +103,9 @@ func NewContentity(aPath string) *Contentity {
 	// This also does content fetching & analysis !
 	pCR := db.NewContentityRecord(pPP)
 	if pCR == nil {
-		panic("BAD pCR")
+		// panic("BAD pCR")
+		// L.L.Error("New contentity failed")
+		return nil
 	}
 	if pCR.GetError() != nil {
 		pCR.SetError(fmt.Errorf("newCty<%s> failed: %w",
