@@ -1,9 +1,11 @@
 package mcfile
 
+import L "github.com/fbaube/mlog"
+
 // st0_Init does pre-processing prep.
-// Input: A bare-bones `Contentity`.
+// Input: A `Contentity` that has had its contents analyzed.
 //
-// For `Init()` to work, the `Contentity` *must* refer to a readable
+// For `st0_Init()` to work, the `Contentity` *must* refer to a readable
 // file, and the field `Contentity.MType` *must* already be set.
 //
 // Output: A `Contentity` that is in-memory and analyzed (shallowly)
@@ -17,7 +19,7 @@ func (p *Contentity) st0_Init() *Contentity {
 		return p
 	}
 	p.logStg = "0:"
-	p.L(LProgress, "Init")
+	L.L.Progress("Init")
 	// panic("TEST PANIC")
 	return p.st0a_SanityCheck()
 }
@@ -42,7 +44,7 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 			panic("Init error: is HTML but:!XML?!")
 		}
 	default:
-		p.L(LPanic, "Init: File type: "+p.FileType())
+		L.L.Panic("Init: File type: " + p.FileType())
 		panic("st0a_SanityCheck")
 	}
 	return p

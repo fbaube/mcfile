@@ -90,7 +90,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		return nil
 	}
 	if S.HasPrefix(path, ".") || S.Contains(path, "/.") || S.HasSuffix(path, "~") {
-		println("Path rejected:", path)
+		L.L.Warning("Path rejected: " + path)
 		return nil
 	}
 	p = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))

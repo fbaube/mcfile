@@ -2,8 +2,6 @@ package mcfile
 
 import (
 	"runtime/debug"
-
-	L "github.com/fbaube/mlog"
 )
 
 // ExecuteStages processes an Contentity to completion in an isolated thread,
@@ -24,8 +22,8 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	p.logStg = "--"
 	defer func() {
 		if r := recover(); r != nil {
-			L.L.Panic("= = = = = = = = = = = = = = = = = = = =")
-			L.L.Panic(" ** PANIC caught in ExecuteStages ** ")
+			p.L(LPanic, "= = = = = = = = = = = = = = = = = = = =")
+			p.L(LPanic, " ** PANIC caught in ExecuteStages ** ")
 			var sRecovered string
 			var eRecovered error
 			p.L(LInfo, "recover() got a: %T", r)
@@ -38,9 +36,9 @@ func (p *Contentity) ExecuteStages() *Contentity {
 			if sRecovered == "" {
 				sRecovered = eRecovered.Error()
 			}
-			L.L.Error("defer'd-recover()-string: " + sRecovered)
-			L.L.Error("stdlib:runtime/debug.Stack(): " + string(debug.Stack()))
-			L.L.Panic("= = = = = = = = = = = = = = = = = = = =")
+			p.L(LError, "defer'd-recover()-string: "+sRecovered)
+			p.L(LError, "stdlib:runtime/debug.Stack(): "+string(debug.Stack()))
+			p.L(LError, "= = = = = = = = = = = = = = = = = = = =")
 		}
 	}()
 	if p.IsDir() {
