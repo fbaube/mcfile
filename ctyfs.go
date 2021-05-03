@@ -89,8 +89,10 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	if S.Contains(path, "/.git/") {
 		return nil
 	}
-	if S.HasPrefix(path, ".") || S.Contains(path, "/.") || S.HasSuffix(path, "~") {
-		L.L.Warning("Path rejected: " + path)
+	if S.HasPrefix(path, ".") || S.HasPrefix(path, "_") ||
+		S.Contains(path, "/.") || S.Contains(path, "/_") ||
+		S.HasSuffix(path, "~") {
+		L.L.Dbg("Path rejected: " + path)
 		return nil
 	}
 	p = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))

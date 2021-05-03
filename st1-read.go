@@ -7,7 +7,6 @@ import (
 
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
-	SU "github.com/fbaube/stringutils"
 	XM "github.com/fbaube/xmlmodels"
 )
 
@@ -28,9 +27,6 @@ import (
 
 // st1_Read reads in the file and does what is
 // needed to end up with a list of `GToken`s.
-// - DoPreMeta()
-// - DoTokenize()
-// // - DoPostMeta()
 //
 func (p *Contentity) st1_Read() *Contentity {
 	if p.GetError() != nil {
@@ -40,68 +36,23 @@ func (p *Contentity) st1_Read() *Contentity {
 	// p.L(LProgress, "Read")
 	p.L(LInfo, "At entry: FileType<%s> MType<%v>", p.FileType(), p.MType)
 	return p.
-		st1a_Split_mkdn().
-		st1b_ProcessMetadata().
-		st1c_GetCPR().
-		st1d_MakeAFLfromCFL().
-		st1e_PostMeta_notmkdn() // XML per format; HTML <head>
+		st1a_ProcessMetadata().
+		st1b_GetCPR().
+		st1c_MakeAFLfromCFL().
+		st1d_PostMeta_notmkdn() // XML per format; HTML <head>
 }
 
-/*
-type ContentitySections is struct {
-	Raw string // The entire input file
-	// TextRaw() + MetaRaw() = Raw (maybe plus surrounding tags)
-	TextRaw()   string
-	MetaRaw()   string
-	MetaFormat string
-	MetaProps  SU.PropSet
-}
-*/
-
-// st1a_Split is Step 1a: used to split the file into two parts:
-// meta (i.e. header) and text (i.e. body) However for XML & HTML,
-// this has already been done in Peek, so this stage is for Markdown only.
+// st1a_ProcessMetadata is Step 1a: used to process metadata.
+// Note that for Markdown, YAML metadata parsing is currently
+// done during initial file content analysis.
 //
-func (p *Contentity) st1a_Split_mkdn() *Contentity {
+func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 	if p.HasError() {
 		return p
 	}
 	p.logStg = "1a"
-	switch p.FileType() {
-	case "MKDN":
-		p.L(LDbg, "MkdnSxns: len<%d> root<%s> meta<%s> text<%s> \n",
-			len(p.ContentityStructure.Raw), p.Root.String(), p.Meta.String(), p.Text.String())
-		ln, e := SU.YamlMetadataHeaderLength(p.Raw)
-		if e != nil {
-			p.SetError(fmt.Errorf("yaml metadata header: %w", e))
-			return p
-		}
-		p.L(LWarning, "Split_mkdn() hdr-len %d FIXME", ln)
-		/*
-			p.TextRaw() = p.Raw
-			if i != 0 {
-				p.MetaRaw() = p.Raw[:i]
-				p.TextRaw() = p.Raw[i:]
-				println(
-					"D=> === BODY ===\n", p.Raw,
-					"D=> === META ===\n", p.MetaRaw(),
-					"D=> === TEXT === \n", p.TextRaw(),
-					"D=> === End ===")
-			}
-		*/
-	}
-	return p
-}
-
-// st1b_ProcessMetadata is Step 1b: used to process metadata.
-//
-func (p *Contentity) st1b_ProcessMetadata() *Contentity {
-	if p.HasError() {
-		return p
-	}
-	p.logStg = "1b"
 	metaRaw := p.GetSpan(p.Meta)
-	textRaw := p.GetSpan(p.Text)
+	// textRaw := p.GetSpan(p.Text)
 	if metaRaw == "" {
 		p.L(LInfo, "No metadata encountered")
 		return p
@@ -132,31 +83,23 @@ func (p *Contentity) st1b_ProcessMetadata() *Contentity {
 				p.ParserResults = nil
 			}
 			p.L(LOkay, "%s tokens: got %d \n", ft, ct)
+			p.L(LWarning, "TODO: Do something with XML/HTML metadata")
 			return p
 		}
 	case "MKDN":
-		ps, e := SU.GetYamlMetadataAsPropSet(
-			SU.TrimYamlMetadataDelimiters(metaRaw))
-		if e != nil {
-			p.SetError(fmt.Errorf("yaml metadata: %w", e))
-			return p
-		}
-		if len(textRaw) == 0 {
-			p.L(LWarning, "NO MKDN in st1b_ProcessMetadata")
-		}
-		p.MetaProps = ps
+		p.L(LWarning, "TODO: Do something with YAML metadata")
 	}
 	return p
 }
 
-// st1c_GetCPR is Step 1c: Generate ParserResults
+// st1b_GetCPR is Step 1b: Generate ParserResults
 //
-func (p *Contentity) st1c_GetCPR() *Contentity {
+func (p *Contentity) st1b_GetCPR() *Contentity {
 	if p.HasError() {
 		return p
 	}
 	textRaw := p.GetSpan(p.Text)
-	p.logStg = "1c"
+	p.logStg = "1b"
 	if len(textRaw) == 0 {
 		p.L(LWarning, "Zero-length content")
 		return p
@@ -210,29 +153,29 @@ func (p *Contentity) st1c_GetCPR() *Contentity {
 	return p
 }
 
-// st1d_MakeAFLfromCFL is Step 1d:
+// st1c_MakeAFLfromCFL is Step 1c:
 // Make Abstract Flat List from Concrete Flat List
 //
-func (p *Contentity) st1d_MakeAFLfromCFL() *Contentity {
+func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
-	p.logStg = "1d"
+	p.logStg = "1c"
 	var e error
 	// var errmsg string
 	var GTs []*gtoken.GToken
 
-	p.L(LDbg, "ParserResults: %T", p.ParserResults)
+	// p.L(LDbg, "ParserResults: %T", p.ParserResults)
 
 	switch p.FileType() {
 	case "MKDN":
 		var pCPR_M *PU.ParserResults_mkdn
-		p.L(LWarning, "BEFORE BARF")
+		// p.L(LWarning, "BEFORE BARF")
 		if nil == p.ParserResults {
 			p.L(LError, "BARF ON NIL ParserResults")
 		}
 		pCPR_M = p.ParserResults.(*PU.ParserResults_mkdn)
-		p.L(LOkay, "!AFTER BARF")
+		// p.L(LOkay, "!AFTER BARF")
 		if p.GTokensOutput != nil {
 			pCPR_M.DumpDest = p.GTokensOutput
 		} else {
@@ -290,9 +233,10 @@ func (p *Contentity) st1d_MakeAFLfromCFL() *Contentity {
 	return p
 }
 
-// st1e_PostMeta_notmkdn is Step 1e (XML,HTML): XML per format; HTML <head>
+// st1d_PostMeta_notmkdn is Step 1d (XML,HTML): XML per format; HTML <head>
 //
-func (p *Contentity) st1e_PostMeta_notmkdn() *Contentity {
+func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
+	p.logStg = "1d"
 	switch p.FileType() {
 	case "MKDN":
 		// Markdown YAML metadata was processed in step st1a
