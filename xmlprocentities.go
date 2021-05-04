@@ -146,7 +146,7 @@ func (p *MCFile) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error) {
 			s1, s2, e = SU.SplitOffQuotedToken(extIDtext)
 			if e != nil {
 				/* elog.Printf("PUBLIC external ID not properly quoted: (%s) |%s| \n",
-					newEnt.NameAsRef, extIDtext) */
+				newEnt.NameAsRef, extIDtext) */
 				return nil, fmt.Errorf("Bad quotes on ID for %s ID", extIDtext)
 			}
 			newEnt.ID = S.TrimSpace(s1)
@@ -157,7 +157,7 @@ func (p *MCFile) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error) {
 		// double - so if we don't find them, it's an error.
 		if !SU.IsXmlQuoted(extIDtext) {
 			/* elog.Printf("External ID's URL not properly quoted: (%s) |%s| \n",
-				newEnt.NameAsRef, extIDtext) */
+			newEnt.NameAsRef, extIDtext) */
 			return nil, fmt.Errorf("Bad quotes on URL %s for external ID", extIDtext)
 		}
 		newEnt.URI = SU.MustXmlUnquote(extIDtext)
@@ -272,7 +272,7 @@ func (p *MCFile) DoEntitiesList() error {
 			s1, s2, e = SU.SplitOffQuotedToken(extIDtext)
 			if e != nil {
 				/* elog.Printf("PUBLIC external ID not properly quoted: (%s) |%s| \n",
-					newEnt.NameAsRef, extIDtext) */
+				newEnt.NameAsRef, extIDtext) */
 				return fmt.Errorf("Bad quotes on ID for %s ID", extIDtext)
 			}
 			newEnt.ID = S.TrimSpace(s1)
@@ -283,7 +283,7 @@ func (p *MCFile) DoEntitiesList() error {
 		// double - so if we don't find them, it's an error.
 		if !SU.IsXmlQuoted(extIDtext) {
 			/* elog.Printf("External ID's URL not properly quoted: (%s) |%s| \n",
-				newEnt.NameAsRef, extIDtext) */
+			newEnt.NameAsRef, extIDtext) */
 			return fmt.Errorf("Bad quotes on URL %s for external ID", extIDtext)
 		}
 		newEnt.URI = SU.MustXmlUnquote(extIDtext)
@@ -349,11 +349,11 @@ func (p *MCFile) SubstituteEntities() error {
 					}
 				*/
 				switch E.TTType {
-				case "SE":
+				case "Elm":
 					continue
-				case "EE":
+				case "end":
 					continue
-				case "PI":
+				case "PrI":
 					continue
 				case "Cmt":
 					continue
@@ -363,7 +363,7 @@ func (p *MCFile) SubstituteEntities() error {
 					continue
 				default:
 					// CD, ELEMENT, ATTLIST, ENTITY, NOTATION
-					if E.TTType == "CD" {
+					if E.TTType == "ChD" {
 						s2check = E.Keyword
 						// if s2check != "" { fmt.Printf("SubEnts got CDATA|%v| \n", RT) }
 					} else {

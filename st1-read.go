@@ -186,7 +186,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 			p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
 		}
 		// p.GTokens = GTs
-		// Compress out nil GTokens ?
+		// Compress out nil GTokens
 		p.GTokens = make([]*gtoken.GToken, 0)
 		for _, GT := range GTs {
 			if GT != nil {

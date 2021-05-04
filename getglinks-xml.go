@@ -92,7 +92,7 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 			continue
 		}
 		// If it's not a Start Element, skip it
-		if GT.TTType != "SE" {
+		if GT.TTType != "Elm" {
 			continue
 		}
 		GN := GT.GName

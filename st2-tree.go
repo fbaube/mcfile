@@ -23,7 +23,7 @@ func (p *Contentity) st2_Tree() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	println("--> (2) Tree")
+	p.logStg = "2:"
 	return p.
 		st2a_PrepareToTree().
 		st2b_ParseIntoTree().
@@ -31,14 +31,15 @@ func (p *Contentity) st2_Tree() *Contentity {
 		st2d_NormalizeTree()
 }
 
-// PrepareToTree is Step 2a. <br/>
-// This is used when there is some preparation specific to building
+// st2a_PrepareToTree is Step 2a:
+// Used when there is some preparation specific to building
 // the tree. Like making GTags out of a bunch of GTokens.
 //
 func (p *Contentity) st2a_PrepareToTree() *Contentity {
 	if p.HasError() {
 		return p
 	}
+	p.logStg = "2a"
 	var e error
 	switch p.FileType() {
 	case "XML":

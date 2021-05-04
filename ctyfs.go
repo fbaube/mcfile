@@ -91,6 +91,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	}
 	if S.HasPrefix(path, ".") || S.HasPrefix(path, "_") ||
 		S.Contains(path, "/.") || S.Contains(path, "/_") ||
+		S.HasSuffix(path, "-gtk") || S.HasSuffix(path, "-gtr") ||
 		S.HasSuffix(path, "~") {
 		L.L.Dbg("Path rejected: " + path)
 		return nil
