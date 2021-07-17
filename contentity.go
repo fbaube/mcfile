@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/fbaube/db"
+	DU "github.com/fbaube/dbutils"
 	FU "github.com/fbaube/fileutils"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
@@ -22,7 +22,7 @@ type Contentity struct {
 	logIdx int
 	logStg string
 	// ContentityRecord is what gets persisted to the DB
-	db.ContentityRecord
+	DU.ContentityRecord
 	// ParserResults is parseutils.ParserResults_ffs
 	ParserResults interface{}
 	GTokens       []*gtoken.GToken
@@ -60,7 +60,7 @@ func NewRootContentityNord(aRootPath string) *Contentity {
 		panic("NewRootContentityNord FAILED on pPP")
 	}
 	// This also does content fetching & analysis !
-	pCR := db.NewContentityRecord(pPP)
+	pCR := DU.NewContentityRecord(pPP)
 	if pCR == nil {
 		panic("NewRootContentityNord FAILED on pCR")
 	}
@@ -101,7 +101,7 @@ func NewContentity(aPath string) *Contentity {
 	}
 	L.L.Okay(SU.Gbg(" " + pPP.String() + " "))
 	// This also does content fetching & analysis !
-	pCR := db.NewContentityRecord(pPP)
+	pCR := DU.NewContentityRecord(pPP)
 	if pCR == nil {
 		// panic("BAD pCR")
 		// L.L.Error("New contentity failed")

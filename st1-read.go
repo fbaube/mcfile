@@ -3,11 +3,10 @@ package mcfile
 import (
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
-	XM "github.com/fbaube/xmlmodels"
+	XU "github.com/fbaube/xmlutils"
 )
 
 // - "XML"
@@ -73,8 +72,8 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 				p.ParserResults = pPR
 			}
 			if ft == "XML" {
-				var pPR *XM.ParserResults_xml
-				pPR, e = XM.GenerateParserResults_xml(metaRaw)
+				var pPR *XU.ParserResults_xml
+				pPR, e = XU.GenerateParserResults_xml(metaRaw)
 				ct = len(pPR.NodeSlice)
 				p.ParserResults = pPR
 			}
@@ -138,8 +137,8 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		// p.TallyTags()
 		return p
 	case "XML":
-		var pPR *XM.ParserResults_xml
-		pPR, e := XM.GenerateParserResults_xml(textRaw)
+		var pPR *XU.ParserResults_xml
+		pPR, e := XU.GenerateParserResults_xml(textRaw)
 		if e != nil {
 			e = fmt.Errorf("XML tokenization failed: %w", e)
 			p.L(LError, "Failure in GenerateParserResults_xml")
@@ -165,22 +164,16 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	// var errmsg string
 	var GTs []*gtoken.GToken
 
-	// p.L(LDbg, "ParserResults: %T", p.ParserResults)
+	fmt.Fprintln(p.GTokensOutput, "=== Input:", p.AbsFP())
 
 	switch p.FileType() {
 	case "MKDN":
 		var pCPR_M *PU.ParserResults_mkdn
-		// p.L(LWarning, "BEFORE BARF")
 		if nil == p.ParserResults {
-			p.L(LError, "BARF ON NIL ParserResults")
+			p.L(LError, "ParserResults are nil")
 		}
 		pCPR_M = p.ParserResults.(*PU.ParserResults_mkdn)
-		// p.L(LOkay, "!AFTER BARF")
-		if p.GTokensOutput != nil {
-			pCPR_M.DumpDest = p.GTokensOutput
-		} else {
-			pCPR_M.DumpDest = os.Stdout
-		}
+		pCPR_M.DiagDest = p.GTokensOutput
 		GTs, e = gtoken.DoGTokens_mkdn(pCPR_M)
 		if e != nil {
 			p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
@@ -196,24 +189,16 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	case "HTML":
 		var pCPR_H *PU.ParserResults_html
 		pCPR_H = p.ParserResults.(*PU.ParserResults_html)
-		if p.GTokensOutput != nil {
-			pCPR_H.DumpDest = p.GTokensOutput
-		} else {
-			pCPR_H.DumpDest = os.Stdout
-		}
+		pCPR_H.DiagDest = p.GTokensOutput
 		GTs, e = gtoken.DoGTokens_html(pCPR_H)
 		if e != nil {
 			p.SetError(fmt.Errorf("st1d: html.GTs: %w", e))
 		}
 		p.GTokens = GTs
 	case "XML":
-		var pCPR_X *XM.ParserResults_xml
-		pCPR_X = p.ParserResults.(*XM.ParserResults_xml)
-		if p.GTokensOutput != nil {
-			pCPR_X.DumpDest = p.GTokensOutput
-		} else {
-			pCPR_X.DumpDest = os.Stdout
-		}
+		var pCPR_X *XU.ParserResults_xml
+		pCPR_X = p.ParserResults.(*XU.ParserResults_xml)
+		pCPR_X.DiagDest = p.GTokensOutput
 		GTs, e = gtoken.DoGTokens_xml(pCPR_X)
 		if e != nil {
 			e = fmt.Errorf("GToken-ization failed: %w", e)
@@ -228,6 +213,12 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		// fmt.Printf("==> Tags: %v \n", pGF.TagTally)
 		// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
 		p.GTokens = GTs
+	}
+	fmt.Fprintln(p.GTokensOutput, "=== Output:")
+	for i, pGtkn := range p.GTokens {
+		if pGtkn != nil {
+			fmt.Fprintf(p.GTokensOutput, "[%02d:L%d] %s \n", i, p.Level(), pGtkn.String())
+		}
 	}
 	// fmt.Printf("st1c_MakeAFLfromCFL: nGTokens: %d %d \n", len(p.GTokens), len(GTs))
 	return p

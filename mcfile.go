@@ -8,15 +8,13 @@ import (
 	"os"
 
 	CFU "github.com/fbaube/cliflagutils"
-	"github.com/fbaube/db"
+	DU "github.com/fbaube/dbutils"
 	FU "github.com/fbaube/fileutils"
 
-	// XM "github.com/fbaube/xmlmodels"
 	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 
-	// "github.com/pkg/errors"
 	_ "github.com/sanity-io/litter"
 )
 
@@ -51,9 +49,9 @@ type MCFile struct {
 	CFU.GCtx
 	// logIdx int
 	// logStg string
-	// db.Times
+	// DU.Times
 	// FU.PathProps
-	db.ContentityRecord // embeds FU.AnalysisRecord
+	DU.ContentityRecord // embeds FU.AnalysisRecord
 
 	// Data stuctures and conversions ("FFS" = file-format-specific):
 	// 1) CCT = Concrete Content Tree = FFS-nodes [not available for XML]
@@ -140,7 +138,7 @@ func (p *MCFile) Whine(s string) {
 */
 
 // NewMCFile // also sets `MCFile.MType[..]`.
-func NewMCFile(pCR *db.ContentityRecord) *MCFile {
+func NewMCFile(pCR *DU.ContentityRecord) *MCFile {
 	p := new(MCFile)
 	p.ContentityRecord = *pCR
 	// println("ZORK3:", pCR.Error())

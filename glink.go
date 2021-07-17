@@ -92,10 +92,10 @@ type GLink struct {
 	// used to narrow in on difficult cases
 	Resolved bool
 	// the tag where the GLink is defined
-	Source *gtree.GTag
+	LinkedFrom *gtree.GTag
 	// can be nil: the tag where the GLink is resolved to, quite possibly
 	// in another file, which we hope we also have available in memory.
-	Target *gtree.GTag
+	Original *gtree.GTag
 }
 
 /*

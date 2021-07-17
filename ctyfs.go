@@ -4,12 +4,12 @@ import (
 	"io/fs"
 	S "strings"
 
-	"github.com/fbaube/fss"
+	FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
 )
 
 type ContentityFS struct {
-	fss.BaseFS
+	FSU.BaseFS
 	rootNord      *Contentity
 	asSlice       []*Contentity
 	asMap         map[string]*Contentity // string is Rel.Path
@@ -91,7 +91,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	}
 	if S.HasPrefix(path, ".") || S.HasPrefix(path, "_") ||
 		S.Contains(path, "/.") || S.Contains(path, "/_") ||
-		S.HasSuffix(path, "-gtk") || S.HasSuffix(path, "-gtr") ||
+		S.HasSuffix(path, "gtk") || S.HasSuffix(path, "gtr") ||
 		S.HasSuffix(path, "~") {
 		L.L.Dbg("Path rejected: " + path)
 		return nil

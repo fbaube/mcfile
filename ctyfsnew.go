@@ -6,7 +6,7 @@ import (
 	S "strings"
 
 	FU "github.com/fbaube/fileutils"
-	"github.com/fbaube/fss"
+	FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
 )
 
@@ -16,8 +16,8 @@ var pCFS *ContentityFS
 func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	pCFS = new(ContentityFS)
 	// Initialize embedded baseFS
-	pCFS.BaseFS = *(fss.NewBaseFS(path))
-	// println("fss.newContentityFS:", FU.Tildotted(pCFS.BaseFS.RootAbsPath()))
+	pCFS.BaseFS = *(FSU.NewBaseFS(path))
+	// println("FSU.newContentityFS:", FU.Tildotted(pCFS.BaseFS.RootAbsPath()))
 	// Initialize slice & map
 	pCFS.asSlice = make([]*Contentity, 0)
 	pCFS.asMap = make(map[string]*Contentity)

@@ -1,12 +1,9 @@
 package mcfile
 
 import (
-	// "github.com/fbaube/gparse"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 	SU "github.com/fbaube/stringutils"
-	// XM "github.com/fbaube/xmlmodels"
-	// "github.com/pkg/errors"
 )
 
 // RefineDirectives scans to patch Directives with correct keyword.
