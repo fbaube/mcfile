@@ -64,7 +64,8 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	// ROOT NODE ?
 	if mustInitRoot() {
 		if path != "." {
-			println("wfnBuildContentityTree: root path is not dot but instead:", path)
+			println("wfnBuildContentityTree: root path is not dot but instead:",
+				path)
 		}
 		if pCFS.RootAbsPath() == "" {
 			panic("wfnBuildContentityTree: nil ROOT")
@@ -102,6 +103,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		L.L.Error("Skipping this item!")
 		return nil
 	}
+	L.L.Dbg("CTY FileType: " + p.FileType())
 	nxtIdx := len(pCFS.asSlice)
 	pCFS.asSlice = append(pCFS.asSlice, p)
 	p.logIdx = nxtIdx

@@ -241,7 +241,9 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 		return p
 	case "XML":
 		// [Lw]DITA stuff, ?DublinCore
-		println("mcfl.st1.todo: SetMTypePerDoctypeFields")
+		println("mcfl.st1.todo: SetMTypePerDoctypeFields:")
+		fmt.Println(p.AnalysisRecord.String())
+
 	}
 	return p
 }

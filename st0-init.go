@@ -45,7 +45,7 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 		}
 	default:
 		L.L.Panic("Init: File type: " + p.FileType())
-		panic("st0a_SanityCheck")
+		panic("st0a_SanityCheck: no Contentity.FileType")
 	}
 	return p
 }

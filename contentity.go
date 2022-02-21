@@ -3,6 +3,7 @@ package mcfile
 import (
 	"fmt"
 	"io"
+	FP "path/filepath"
 
 	DU "github.com/fbaube/dbutils"
 	FU "github.com/fbaube/fileutils"
@@ -53,6 +54,7 @@ var pNCS *norderCreationState = new(norderCreationState)
 
 // NewRootContentityNord needs aRootPath to be an absolute filepath.
 func NewRootContentityNord(aRootPath string) *Contentity {
+	L.L.Info("NewRootContentityNord: ", aRootPath)
 	p := new(Contentity)
 	pNCS.rootPath = aRootPath
 	pPP := FU.NewPathProps(aRootPath)
@@ -93,7 +95,16 @@ func NewContentity(aPath string) *Contentity {
 	p.Nord = *ON.NewNord(aPath)
 	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
 
-	pPP := FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
+	var pPP *FU.PathProps
+	if FP.IsAbs(aPath) {
+		pPP = FU.NewPathProps(aPath)
+	} else {
+		if !FP.IsAbs(pNCS.rootPath) {
+			panic("NewContentity: rootPath not absolute: " + pNCS.rootPath)
+		}
+		pPP = FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
+	}
+
 	if pPP.IsOkayDir() {
 		L.L.Info(SU.Ybg(" Directory " + FU.Tildotted(pPP.AbsFP.S())))
 		p.ContentityRecord.PathProps = *pPP

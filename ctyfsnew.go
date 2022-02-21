@@ -35,6 +35,12 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	}
 	L.L.Info("mcfile.newContentityFS: got %d nords \n", len(pCFS.asSlice))
 
+	// DEBUG
+	for _, pp := range pCFS.asSlice {
+		L.L.Dbg("%s ", pp.FileType())
+	}
+	L.L.Dbg(" END")
+
 	// SECOND PASS
 	// Go down slice to identify parent nords and link together.
 	for i, n := range pCFS.asSlice {
