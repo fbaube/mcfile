@@ -54,7 +54,7 @@ var pNCS *norderCreationState = new(norderCreationState)
 
 // NewRootContentityNord needs aRootPath to be an absolute filepath.
 func NewRootContentityNord(aRootPath string) *Contentity {
-	L.L.Info("NewRootContentityNord: ", aRootPath)
+	L.L.Info("NewRootContentityNord: %s", aRootPath)
 	p := new(Contentity)
 	pNCS.rootPath = aRootPath
 	pPP := FU.NewPathProps(aRootPath)
