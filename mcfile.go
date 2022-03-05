@@ -174,7 +174,9 @@ func (p *MCFile) Errorbarf(e error, s string) bool {
 
 func (p *MCFile) Lengths() string {
 	return fmt.Sprintf("len.raw.file<%d> len.meta.hdr.props<%d> len.text.body.content<%d>",
-		len(p.Raw), p.Meta.End.Pos-p.Meta.Beg.Pos, p.Text.End.Pos-p.Text.Beg.Pos)
+		len(p.ContentityStructure.Raw), 
+		p.Meta.End.Pos-p.Meta.Beg.Pos, 
+		p.Text.End.Pos-p.Text.Beg.Pos)
 }
 
 // String is developer output. Hafta dump:
