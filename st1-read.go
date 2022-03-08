@@ -101,6 +101,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	p.logStg = "1b"
 	if len(textRaw) == 0 {
 		p.L(LWarning, "Zero-length content")
+		p.SetError(errors.New("no content"))
 		return p
 	}
 	var e error
