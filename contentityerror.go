@@ -16,7 +16,7 @@ type ContentityError struct {
 	*Contentity
 }
 
-func WrapContentityError(e error, op string, cty *Contentity, fnc string) ContentityError {
+func WrapAsContentityError(e error, op string, cty *Contentity, fnc string) ContentityError {
 	ce := ContentityError{}
 	ce.PE.Err = e
 	ce.PE.Op = op
@@ -42,11 +42,15 @@ func NewContentityError(ermsg string, op string, cty *Contentity, fnc string) Co
 	return ce
 }
 
+func (ce ContentityError) Error() string {
+	return ce.String()
+}
+
 func (ce *ContentityError) String() string {
 	var s string
 	s = fmt.Sprintf("%s(%s): %s", ce.PE.Op, ce.PE.Path, ce.PE.Err.Error())
 	if ce.Func != "" {
-		s += fmt.Sprintf("(in %s)", ce.Func)
+		s += fmt.Sprintf(" (in %s)", ce.Func)
 	}
 	return s
 }
