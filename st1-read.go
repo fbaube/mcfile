@@ -31,7 +31,7 @@ func (p *Contentity) st1_Read() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
-	p.logStg = "1:"
+	p.logStg = "11"
 	// p.L(LProgress, "Read")
 	p.L(LInfo, "At entry: FileType<%s> MType<%v>", p.FileType(), p.MType)
 	return p.
@@ -81,7 +81,7 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 				p.L(LError, "%s tokenization failed: %w", ft, e)
 				p.ParserResults = nil
 			}
-			p.L(LOkay, "%s tokens: got %d \n", ft, ct)
+			p.L(LOkay, "%s tokens: got %d", ft, ct)
 			p.L(LWarning, "TODO: Do something with XML/HTML metadata")
 			return p
 		}
@@ -242,7 +242,7 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 		return p
 	case "XML":
 		// [Lw]DITA stuff, ?DublinCore
-		println("mcfl.st1.todo: SetMTypePerDoctypeFields:")
+		p.L(LWarning, "mcfl.st1.TODO: SetMTypePerDoctypeFields:")
 		fmt.Println(p.AnalysisRecord.String())
 
 	}

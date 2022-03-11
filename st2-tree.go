@@ -7,6 +7,7 @@ import (
 	// "fmt"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
+	L "github.com/fbaube/mlog" 
 )
 
 // st2_Tree takes the output of st1_Read - which at a minimum
@@ -98,7 +99,7 @@ func (p *Contentity) st2c_PostTreeMeta() *Contentity {
 	}
 	switch p.FileType() {
 	case "XML":
-		println("TODO> st2c_PostTreeMeta XML ==> BIG!")
+		L.L.Warning("TODO> st2c_PostTreeMeta XML ==> BIG!")
 		/*
 			// =========================
 			//   XML ANALYSIS and also
@@ -124,9 +125,9 @@ func (p *Contentity) st2c_PostTreeMeta() *Contentity {
 				}
 		*/
 	case "MKDN":
-		println("TODO> st2c_PostTreeMeta MKDN")
+		L.L.Warning("TODO> st2c_PostTreeMeta MKDN")
 	case "HTML":
-		println("TODO> st2c_PostTreeMeta HTML")
+		L.L.Warning("TODO> st2c_PostTreeMeta HTML")
 	}
 	return p
 }
@@ -141,7 +142,7 @@ func (p *Contentity) st2d_NormalizeTree() *Contentity {
 	}
 	switch p.FileType() {
 	case "XML":
-		println("TODO> 2d. NormalizeTree XML ==> ENTs, etc.!")
+		L.L.Warning("TODO> 2d. NormalizeTree XML ==> ENTs, etc.!")
 		/*
 			e = p.DoEntitiesList()
 			if e != nil {
@@ -153,9 +154,9 @@ func (p *Contentity) st2d_NormalizeTree() *Contentity {
 			}
 		*/
 	case "MKDN":
-		println("TODO> 2d. NormalizeTree MKDN")
+		L.L.Warning("TODO> 2d. NormalizeTree MKDN")
 	case "HTML":
-		println("TODO> 2d. NormalizeTree HTML")
+		L.L.Warning("TODO> 2d. NormalizeTree HTML")
 	}
 	return p
 }

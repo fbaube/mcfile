@@ -1,5 +1,7 @@
 package mcfile
 
+import L "github.com/fbaube/mlog" 
+
 // st3_Refs gathers all the various types of internal and
 // external references.
 // - DoBlockList()
@@ -10,7 +12,7 @@ func (p *Contentity) st3_Refs() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
-	println("--> (3) Refs")
+	p.L(LProgress, "(stg3) Refs")
 	return p.DoBlockList().DoGLinks().DoTableOfContents()
 }
 
@@ -22,11 +24,11 @@ func (p *Contentity) DoBlockList() *Contentity {
 	}
 	switch p.FileType() {
 	case "XML":
-		println("TODO> 3a. DoBlockList XML")
+		L.L.Warning("TODO> 3a. DoBlockList XML")
 	case "HTML":
-		println("TODO> 3a. DoBlockList HTML")
+		L.L.Warning("TODO> 3a. DoBlockList HTML")
 	case "MKDN":
-		println("TODO> 3a. DoBlockList MKDN")
+		L.L.Warning("TODO> 3a. DoBlockList MKDN")
 	}
 	return p
 }
@@ -41,9 +43,9 @@ func (p *Contentity) DoGLinks() *Contentity {
 	case "XML":
 		p.GatherXmlGLinks()
 	case "HTML":
-		println("TODO> 3b. DoGLinks HTML")
+		L.L.Warning("TODO> 3b. DoGLinks HTML")
 	case "MKDN":
-		println("TODO> 3b. DoGLinks MKDN")
+		L.L.Warning("TODO> 3b. DoGLinks MKDN")
 	}
 	return p
 }
@@ -56,11 +58,11 @@ func (p *Contentity) DoTableOfContents() *Contentity {
 	}
 	switch p.FileType() {
 	case "XML":
-		println("TODO> 3c. DoTableOfContents XML")
+		L.L.Warning("TODO> 3c. DoTableOfContents XML")
 	case "HTML":
-		println("TODO> 3c. DoTableOfContents HTML")
+		L.L.Warning("TODO> 3c. DoTableOfContents HTML")
 	case "MKDN":
-		println("TODO> 3c. DoTableOfContents MKDN")
+		L.L.Warning("TODO> 3c. DoTableOfContents MKDN")
 	}
 	return p
 }

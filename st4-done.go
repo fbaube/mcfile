@@ -1,5 +1,7 @@
 package mcfile
 
+import L "github.com/fbaube/mlog" 
+
 // st4_Done does final cleanup and beautification.
 //
 func (p *MCFile) st4_Done() *MCFile {
@@ -9,11 +11,11 @@ func (p *MCFile) st4_Done() *MCFile {
 	println("--> (4) Done")
 	switch p.FileType() {
 	case "XML":
-		println("TODO> 4. Done XML")
+		L.L.Warning("TODO> 4. Done XML")
 	case "HTML":
-		println("TODO> 4. Done HTML")
+		L.L.Warning("TODO> 4. Done HTML")
 	case "MKDN":
-		println("TODO> 4. Done MKDN")
+		L.L.Warning("TODO> 4. Done MKDN")
 	}
 	return p
 }
