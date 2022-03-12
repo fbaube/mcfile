@@ -8,7 +8,7 @@ import (
 
 	FU "github.com/fbaube/fileutils"
 	SU "github.com/fbaube/stringutils"
-	// "fmt"
+	L "github.com/fbaube/mlog"
 )
 
 // TYPES ARE; external+http, file, pure-ID
@@ -159,12 +159,12 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 				} else {
 					pGL.RelFP = pGL.Link_raw
 				}
-				println("URI:", pGL.RelFP, "#", pGL.FragID)
+				L.L.Dbg("URI: " + pGL.RelFP + "#" + pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
 				s, _ := FP.Abs(FP.Join(p.PathProps.AbsFP.S(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
-				println("URI AbsFP:", FU.Enhomed(pGL.AbsFP.S()))
+				L.L.Dbg("URI AbsFP: " + FU.Enhomed(pGL.AbsFP.S()))
 			}
 			switch pGL.Att {
 			// Link SOURCES
