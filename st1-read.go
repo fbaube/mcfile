@@ -7,6 +7,7 @@ import (
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
 	XU "github.com/fbaube/xmlutils"
+	// L "github.com/fbaube/mlog"
 )
 
 // - "XML"
@@ -98,6 +99,9 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		return p
 	}
 	textRaw := p.GetSpan(p.Text)
+	if textRaw == "" {
+		textRaw = p.ContentityStructure.Raw 
+	}
 	p.logStg = "1b"
 	if len(textRaw) == 0 {
 		p.L(LWarning, "Zero-length content")
@@ -243,7 +247,7 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 	case "XML":
 		// [Lw]DITA stuff, ?DublinCore
 		p.L(LWarning, "mcfl.st1.TODO: SetMTypePerDoctypeFields:")
-		fmt.Println(p.AnalysisRecord.String())
+		p.L(LDbg, p.AnalysisRecord.String())
 
 	}
 	return p

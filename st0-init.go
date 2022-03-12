@@ -18,8 +18,8 @@ func (p *Contentity) st0_Init() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
-	p.logStg = "0:"
-	L.L.Progress("Init")
+	p.logStg = "00"
+	p.L(LProgress, "Init")
 	// panic("TEST PANIC")
 	return p.st0a_SanityCheck()
 }
@@ -43,9 +43,13 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 		if !p.IsXML() {
 			panic("Init error: is HTML but:!XML?!")
 		}
+	case "BIN":
+		if p.IsXML() {
+			panic("Init error: is BIN but:!XML?!")
+		}
 	default:
 		L.L.Panic("Init: File type: " + p.FileType())
-		panic("st0a_SanityCheck: no Contentity.FileType")
+		panic("st0a_SanityCheck: no/bad Contentity.FileType")
 	}
 	return p
 }

@@ -139,12 +139,12 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 				} else {
 					pGL.RelFP = pGL.Link_raw
 				}
-				println("KEY:", pGL.RelFP, "#", pGL.FragID)
+				p.L(LDbg, "KEY:", pGL.RelFP, "#", pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
 				s, _ := FP.Abs(FP.Join(p.PathProps.AbsFP.S(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
-				println("2. AbsFP:", pGL.AbsFP)
+				p.L(LDbg, "2. AbsFP:", pGL.AbsFP)
 			} else if S.HasPrefix(pGL.Att, "idref") {
 				pGL.AddressMode = "idref"
 				if i := S.Index(pGL.Link_raw, "#"); i != -1 {
