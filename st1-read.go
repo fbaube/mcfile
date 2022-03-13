@@ -33,8 +33,8 @@ func (p *Contentity) st1_Read() *Contentity {
 		return p
 	}
 	p.logStg = "11"
-	// p.L(LProgress, "Read")
-	p.L(LInfo, "At entry: FileType<%s> MType<%v>", p.FileType(), p.MType)
+	p.L(LProgress, "Read")
+	p.L(LInfo, "@entry: FileType<%s> MType<%v>", p.FileType(), p.MType)
 	return p.
 		st1a_ProcessMetadata().
 		st1b_GetCPR().
@@ -42,9 +42,9 @@ func (p *Contentity) st1_Read() *Contentity {
 		st1d_PostMeta_notmkdn() // XML per format; HTML <head>
 }
 
-// st1a_ProcessMetadata is Step 1a: used to process metadata.
-// Note that for Markdown, YAML metadata parsing is currently
-// done during initial file content analysis.
+// st1a_ProcessMetadata processes metadata.
+// Note that for Markdown, YAML metadata parsing is 
+// currently done during initial file content analysis.
 //
 func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 	if p.HasError() {
@@ -52,14 +52,12 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 	}
 	p.logStg = "1a"
 	metaRaw := p.GetSpan(p.Meta)
-	// textRaw := p.GetSpan(p.Text)
 	if metaRaw == "" {
-		p.L(LInfo, "No metadata encountered")
+		p.L(LInfo, "No metadata found")
 		return p
 	}
-	switch p.FileType() {
+	switch ft := p.FileType(); ft {
 	case "XML", "HTML":
-		ft := p.FileType()
 		p.L(LDbg, "MetaPos:%d MetaRaw(): %s",
 			p.Meta.Beg.Pos, metaRaw)
 		if p.Meta.Beg.Pos != 0 {

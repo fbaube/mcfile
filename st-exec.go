@@ -19,6 +19,10 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	if p.GetError() != nil {
 		return p
 	}
+	if p.FileType() == "BIN" {
+		p.L(LWarning, "Skipping ALL stages for binary file")
+		return p
+	}
 	p.logStg = "--"
 	defer func() {
 		if r := recover(); r != nil {
@@ -46,7 +50,6 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		return p
 	}
 	// Execute stages/steps
-	// println("--> DOING STAGES FOR:", p.AbsFP())
 	return p.
 		st0_Init().
 		st1_Read().

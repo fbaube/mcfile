@@ -24,7 +24,8 @@ func (p *Contentity) st2_Tree() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	p.logStg = "2:"
+	p.logStg = "22"
+	p.L(LProgress, "Tree")
 	return p.
 		st2a_PrepareToTree().
 		st2b_ParseIntoTree().

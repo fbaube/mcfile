@@ -1,7 +1,5 @@
 package mcfile
 
-import L "github.com/fbaube/mlog"
-
 // st0_Init does pre-processing prep.
 // Input: A `Contentity` that has had its contents analyzed.
 //
@@ -24,12 +22,14 @@ func (p *Contentity) st0_Init() *Contentity {
 	return p.st0a_SanityCheck()
 }
 
-// st0a_SanityCheck is Stage 0a: it sets `MCFile.TypeSpecific`
-// based on `MCFile.FileType()`, which uses `MCFile.MType[]`.
+// st0a_SanityCheck checks that `mcfile.FileType()` & 
+// `mcfile.IsXML()` are OK and that `MCFile.MType[]` is set. 
 //
 func (p *Contentity) st0a_SanityCheck() *Contentity {
 	p.logStg = "0a"
-	// println("Init:", p.FileType())
+	if p.MType == "" {
+		p.L(LWarning, "MType is empty")
+	}
 	switch p.FileType() {
 	case "XML":
 		if !p.IsXML() {
@@ -43,13 +43,10 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 		if !p.IsXML() {
 			panic("Init error: is HTML but:!XML?!")
 		}
-	case "BIN":
-		if p.IsXML() {
-			panic("Init error: is BIN but:!XML?!")
-		}
 	default:
-		L.L.Panic("Init: File type: " + p.FileType())
-		panic("st0a_SanityCheck: no/bad Contentity.FileType")
+		// L.L.Panic("Bad contentitype: " + p.FileType())
+		p.L(LPanic, "Bad contentitype: " + p.FileType())
+		// panic("st0a_SanityCheck: no/bad contentitype")
 	}
 	return p
 }

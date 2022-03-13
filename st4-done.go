@@ -8,7 +8,8 @@ func (p *MCFile) st4_Done() *MCFile {
 	if p.GetError() != nil {
 		return p
 	}
-	println("--> (4) Done")
+	// p.L(LProgress, "Done")
+	L.L.Progress("Done")
 	switch p.FileType() {
 	case "XML":
 		L.L.Warning("TODO> 4. Done XML")
