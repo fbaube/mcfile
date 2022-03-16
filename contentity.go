@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	FP "path/filepath"
+	"errors"
 
 	DU "github.com/fbaube/dbutils"
 	FU "github.com/fbaube/fileutils"
@@ -53,13 +54,14 @@ type norderCreationState struct {
 var pNCS *norderCreationState = new(norderCreationState)
 
 // NewRootContentityNord needs aRootPath to be an absolute filepath.
-func NewRootContentityNord(aRootPath string) *Contentity {
+func NewRootContentityNord(aRootPath string) (*Contentity, error) {
 	L.L.Info("NewRootContentityNord: %s", aRootPath)
 	p := new(Contentity)
 	pNCS.rootPath = aRootPath
-	pPP := FU.NewPathProps(aRootPath)
-	if pPP == nil {
-		panic("NewRootContentityNord FAILED on pPP")
+	pPP, e := FU.NewPathProps(aRootPath)
+	if e != nil || pPP == nil {
+		return nil, FU.WrapAsPathPropsError(
+			e, "NewRootContentityNord (L63)", pPP)
 	}
 	// This also does content fetching & analysis !
 	pCR := DU.NewContentityRecord(pPP)
@@ -69,12 +71,14 @@ func NewRootContentityNord(aRootPath string) *Contentity {
 	// This block should not happen. And anyways for a directory,
 	// we don't need to worry about any error. Unless maybe there's
 	// some weird permissions problem.
+	/*
 	if pCR.GetError() != nil && !pPP.IsOkayDir() {
 		println("newRootCty failed:", pCR.GetError().Error())
 		pCR.SetError(fmt.Errorf("newRootCty<%s> failed: %w",
 			pCR.AbsFP, pCR.GetError()))
-		return nil
+		return nil 
 	}
+	*/
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
 	p.ContentityRecord = *pCR
 	p.GLinks = *new(GLinks)
@@ -83,7 +87,7 @@ func NewRootContentityNord(aRootPath string) *Contentity {
 	p.Nord = *ON.NewRootNord(aRootPath, nil)
 	// println("NewRootContentityNord:", FU.Tildotted(p.AbsFP()))
 	// fmt.Printf("\t RootNord seqID %d \n", p.SeqID())
-	return p
+	return p, nil
 }
 
 func NewContentity(aPath string) *Contentity {
@@ -96,13 +100,19 @@ func NewContentity(aPath string) *Contentity {
 	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
 
 	var pPP *FU.PathProps
+	var e error 
 	if FP.IsAbs(aPath) {
-		pPP = FU.NewPathProps(aPath)
+		pPP, e = FU.NewPathProps(aPath)
 	} else {
 		if !FP.IsAbs(pNCS.rootPath) {
-			panic("NewContentity: rootPath not absolute: " + pNCS.rootPath)
+			e = errors.New("rootPath not absolute: " + pNCS.rootPath)
+		} else {
+			pPP, e = FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
 		}
-		pPP = FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
+	}
+	if e != nil {
+		panic("contentity.go L114")
+		// return nil 
 	}
 
 	if pPP.IsOkayDir() {

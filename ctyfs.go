@@ -3,6 +3,7 @@ package mcfile
 import (
 	"io/fs"
 	S "strings"
+	"errors"
 
 	FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
@@ -61,6 +62,7 @@ func (p *ContentityFS) DoForEvery(stgprocsr ContentityStage) {
 // type WalkDirFunc func(path string, d DirEntry, err error) error
 func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	var p *Contentity
+	var e error 
 	// ROOT NODE ?
 	if mustInitRoot() {
 		if path != "." {
@@ -70,9 +72,10 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		if pCFS.RootAbsPath() == "" {
 			panic("wfnBuildContentityTree: nil ROOT")
 		}
-		p = NewRootContentityNord(pCFS.RootAbsPath())
-		if p == nil {
-			panic("wfnBuildContentityTree mustInitRoot NewRootContentityNord FAILED")
+		p, e = NewRootContentityNord(pCFS.RootAbsPath())
+		if e != nil || p == nil {
+			// panic("wfnBuildContentityTree mustInitRoot NewRootContentityNord FAILED")
+			return errors.New("wfnBuildContentityTree mustInitRoot NewRootContentityNord L77")
 		}
 		pCFS.rootNord = p
 		p.MimeType = "dir"
