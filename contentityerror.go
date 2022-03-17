@@ -17,7 +17,6 @@ import (
 //
 type ContentityError struct {
 	PE     fs.PathError
-	SrcLoc string
 	*Contentity
 }
 
@@ -25,7 +24,6 @@ func WrapAsContentityError(e error, op string, cty *Contentity, srcLoc string) C
 	ce := ContentityError{}
 	ce.PE.Err = e
 	ce.PE.Op  = op
-	ce.SrcLoc = srcLoc 
 	if cty == nil {
 		ce.PE.Path = "(contentity path not found!)"
 	} else {
@@ -34,11 +32,10 @@ func WrapAsContentityError(e error, op string, cty *Contentity, srcLoc string) C
 	return ce
 }
 
-func NewContentityError(ermsg string, op string, cty *Contentity, srcLoc string) ContentityError {
+func NewContentityError(ermsg string, op string, cty *Contentity) ContentityError {
 	ce := ContentityError{}
 	ce.PE.Err = errors.New(ermsg)
 	ce.PE.Op  = op
-	ce.SrcLoc = srcLoc
 	if cty == nil {
 		ce.PE.Path = "(contentity path not found!)"
 	} else {
@@ -54,8 +51,5 @@ func (ce ContentityError) Error() string {
 func (ce *ContentityError) String() string {
 	var s string
 	s = fmt.Sprintf("%s(%s): %s", ce.PE.Op, ce.PE.Path, ce.PE.Err.Error())
-	if ce.SrcLoc != "" {
-		s += fmt.Sprintf(" (in %s)", ce.SrcLoc)
-	}
 	return s
 }

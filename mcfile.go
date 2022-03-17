@@ -270,6 +270,7 @@ func (pMCF *MCFile) GatherGLinksInto(pGL *GLinks) {
 	}
 }
 
+/*
 // === Implement interface Errable
 
 func (p *MCFile) HasError() bool {
@@ -298,3 +299,5 @@ func (p *MCFile) Error() string {
 func (p *MCFile) SetError(e error) {
 	p.ContentityRecord.SetError(e)
 }
+*/
+
