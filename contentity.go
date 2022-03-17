@@ -111,8 +111,8 @@ func NewContentity(aPath string) *Contentity {
 		}
 	}
 	if e != nil {
-		panic("contentity.go L114")
-		// return nil 
+		p.SetError(fmt.Errorf("NewContentity: %w", e))
+		return p
 	}
 
 	if pPP.IsOkayDir() {
