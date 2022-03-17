@@ -20,7 +20,7 @@ type ContentityError struct {
 	*Contentity
 }
 
-func WrapAsContentityError(e error, op string, cty *Contentity, srcLoc string) ContentityError {
+func WrapAsContentityError(e error, op string, cty *Contentity) ContentityError {
 	ce := ContentityError{}
 	ce.PE.Err = e
 	ce.PE.Op  = op
