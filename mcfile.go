@@ -9,7 +9,7 @@ import (
 
 	CFU "github.com/fbaube/cliflagutils"
 	DU "github.com/fbaube/dbutils"
-	FU "github.com/fbaube/fileutils"
+	SU "github.com/fbaube/stringutils"
 
 	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtoken"
@@ -174,8 +174,8 @@ func (p *MCFile) Errorbarf(e error, s string) bool {
 
 func (p *MCFile) Lengths() string {
 	return fmt.Sprintf("len.raw.file<%d> len.meta.hdr.props<%d> len.text.body.content<%d>",
-		len(p.ContentityStructure.Raw), 
-		p.Meta.End.Pos-p.Meta.Beg.Pos, 
+		len(p.ContentityStructure.Raw),
+		p.Meta.End.Pos-p.Meta.Beg.Pos,
 		p.Text.End.Pos-p.Text.Beg.Pos)
 }
 
@@ -191,7 +191,7 @@ func (p MCFile) String() string {
 	}
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("||%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		FU.Tildotted(p.PathProps.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
+		SU.Tildotted(p.PathProps.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {
@@ -300,4 +300,3 @@ func (p *MCFile) SetError(e error) {
 	p.ContentityRecord.SetError(e)
 }
 */
-

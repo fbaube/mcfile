@@ -1,10 +1,10 @@
 package mcfile
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	FP "path/filepath"
-	"errors"
 
 	DU "github.com/fbaube/dbutils"
 	FU "github.com/fbaube/fileutils"
@@ -72,12 +72,12 @@ func NewRootContentityNord(aRootPath string) (*Contentity, error) {
 	// we don't need to worry about any error. Unless maybe there's
 	// some weird permissions problem.
 	/*
-	if pCR.GetError() != nil && !pPP.IsOkayDir() {
-		println("newRootCty failed:", pCR.GetError().Error())
-		pCR.SetError(fmt.Errorf("newRootCty<%s> failed: %w",
-			pCR.AbsFP, pCR.GetError()))
-		return nil 
-	}
+		if pCR.GetError() != nil && !pPP.IsOkayDir() {
+			println("newRootCty failed:", pCR.GetError().Error())
+			pCR.SetError(fmt.Errorf("newRootCty<%s> failed: %w",
+				pCR.AbsFP, pCR.GetError()))
+			return nil
+		}
 	*/
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
 	p.ContentityRecord = *pCR
@@ -100,7 +100,7 @@ func NewContentity(aPath string) *Contentity {
 	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
 
 	var pPP *FU.PathProps
-	var e error 
+	var e error
 	if FP.IsAbs(aPath) {
 		pPP, e = FU.NewPathProps(aPath)
 	} else {
@@ -116,7 +116,7 @@ func NewContentity(aPath string) *Contentity {
 	}
 
 	if pPP.IsOkayDir() {
-		L.L.Info(SU.Ybg(" Directory " + FU.Tildotted(pPP.AbsFP.S())))
+		L.L.Info(SU.Ybg(" Directory " + SU.Tildotted(pPP.AbsFP.S())))
 		p.ContentityRecord.PathProps = *pPP
 		return p
 	}
@@ -153,7 +153,7 @@ func (p Contentity) String() string {
 	}
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("||%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		FU.Tildotted(p.PathProps.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
+		SU.Tildotted(p.PathProps.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
 		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
 	/*
 			if p.XmlFileMeta != nil {
