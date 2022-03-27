@@ -16,11 +16,15 @@ import (
 // and so this function already has code to catch a panic.
 //
 func (p *Contentity) ExecuteStages() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	if p.FileType() == "BIN" {
 		p.L(LWarning, "Skipping ALL stages for binary file")
+		return p
+	}
+	if p.Size() == 0 {
+		p.L(LWarning, "Skipping ALL stages for empty file")
 		return p
 	}
 	p.logStg = "--"

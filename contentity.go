@@ -72,7 +72,7 @@ func NewRootContentityNord(aRootPath string) (*Contentity, error) {
 	// we don't need to worry about any error. Unless maybe there's
 	// some weird permissions problem.
 	/*
-		if pCR.GetError() != nil && !pPP.IsOkayDir() {
+		if pCR.HasError() && !pPP.IsOkayDir() {
 			println("newRootCty failed:", pCR.GetError().Error())
 			pCR.SetError(fmt.Errorf("newRootCty<%s> failed: %w",
 				pCR.AbsFP, pCR.GetError()))
@@ -128,7 +128,7 @@ func NewContentity(aPath string) *Contentity {
 		// L.L.Error("New contentity failed")
 		return nil
 	}
-	if pCR.GetError() != nil {
+	if pCR.HasError() {
 		pCR.SetError(fmt.Errorf("newCty<%s> failed: %w",
 			pCR.AbsFP, pCR.GetError()))
 		return p // nil

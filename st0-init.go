@@ -13,7 +13,7 @@ package mcfile
 // - SanityCheck()
 //
 func (p *Contentity) st0_Init() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	p.logStg = "00"
@@ -22,8 +22,8 @@ func (p *Contentity) st0_Init() *Contentity {
 	return p.st0a_SanityCheck()
 }
 
-// st0a_SanityCheck checks that `mcfile.FileType()` & 
-// `mcfile.IsXML()` are OK and that `MCFile.MType[]` is set. 
+// st0a_SanityCheck checks that `mcfile.FileType()` &
+// `mcfile.IsXML()` are OK and that `MCFile.MType[]` is set.
 //
 func (p *Contentity) st0a_SanityCheck() *Contentity {
 	p.logStg = "0a"
@@ -45,7 +45,7 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 		}
 	default:
 		// L.L.Panic("Bad contentitype: " + p.FileType())
-		p.L(LPanic, "Bad contentitype: " + p.FileType())
+		p.L(LPanic, "Bad contentitype: "+p.FileType())
 		// panic("st0a_SanityCheck: no/bad contentitype")
 	}
 	return p

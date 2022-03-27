@@ -1,6 +1,6 @@
 package mcfile
 
-import L "github.com/fbaube/mlog" 
+import L "github.com/fbaube/mlog"
 
 // st3_Refs gathers all the various types of internal and
 // external references.
@@ -9,7 +9,7 @@ import L "github.com/fbaube/mlog"
 // - DoTableOfContents()
 //
 func (p *Contentity) st3_Refs() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	p.logStg = "33"
@@ -20,7 +20,7 @@ func (p *Contentity) st3_Refs() *Contentity {
 // DoBlockList is Step 3a
 //
 func (p *Contentity) DoBlockList() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	switch p.FileType() {
@@ -37,7 +37,7 @@ func (p *Contentity) DoBlockList() *Contentity {
 // DoGLinks is Step 3b
 //
 func (p *Contentity) DoGLinks() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	switch p.FileType() {
@@ -54,7 +54,7 @@ func (p *Contentity) DoGLinks() *Contentity {
 // DoTableOfContents is Step 3c
 //
 func (p *Contentity) DoTableOfContents() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	switch p.FileType() {

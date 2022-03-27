@@ -7,7 +7,7 @@ import (
 	// "fmt"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
-	L "github.com/fbaube/mlog" 
+	L "github.com/fbaube/mlog"
 )
 
 // st2_Tree takes the output of st1_Read - which at a minimum
@@ -95,7 +95,7 @@ func (p *Contentity) st2b_ParseIntoTree() *Contentity {
 // only after tree-building. For example, XML `DOCTYPE`.
 //
 func (p *Contentity) st2c_PostTreeMeta() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	switch p.FileType() {
@@ -138,7 +138,7 @@ func (p *Contentity) st2c_PostTreeMeta() *Contentity {
 // and which therefore must still be converted into a `GTree`.
 //
 func (p *Contentity) st2d_NormalizeTree() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	switch p.FileType() {

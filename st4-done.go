@@ -1,11 +1,11 @@
 package mcfile
 
-import L "github.com/fbaube/mlog" 
+import L "github.com/fbaube/mlog"
 
 // st4_Done does final cleanup and beautification.
 //
 func (p *MCFile) st4_Done() *MCFile {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	// p.L(LProgress, "Done")

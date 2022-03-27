@@ -5,7 +5,6 @@ package mcfile
 import (
 	"fmt"
 	"io"
-	"os"
 
 	CFU "github.com/fbaube/cliflagutils"
 	DU "github.com/fbaube/dbutils"
@@ -114,29 +113,6 @@ type MCFile struct {
 // (TODO) when it is stored as JSON K/V pairs, it can be accessed from
 // the command line using Sqlite (and other nifty) tools.
 
-/*
-func (p *MCFile) LogIt(s string) {
-	if p.OwnLog != nil {
-		p.OwnLog.Printf(s)
-	} else {
-		p.SsnLog.Printf(s)
-	}
-}
-
-// Blare is used for errors that will stop processing.
-func (p *MCFile) Blare(s string) {
-	p.LogIt(s)
-	fmt.Fprintf(os.Stderr, s)
-	// println("Bogus SU ref \n", SU.GetIndent(2))
-}
-
-// Whine is used for non-fatal errors, i.e. strong warnings.
-func (p *MCFile) Whine(s string) {
-	p.LogIt(s)
-	fmt.Fprintf(os.Stdout, "--> "+s+"\n")
-}
-*/
-
 // NewMCFile // also sets `MCFile.MType[..]`.
 func NewMCFile(pCR *DU.ContentityRecord) *MCFile {
 	p := new(MCFile)
@@ -151,25 +127,6 @@ func NewMCFile(pCR *DU.ContentityRecord) *MCFile {
 	p.GLinks = new(GLinks)
 	println("D=> (C:NewMCF)", p.String()) // p.MType, p.AbsFP())
 	return p
-}
-
-// Errorbarf just complains and dies. At the top level
-// (i.e. in main()), we don't wrap errors and return them.
-func (p *MCFile) Errorbarf(e error, s string) bool {
-	if e == nil {
-		return false
-	}
-	if e.Error() == "" {
-		return false
-	}
-	p.SetError(e)
-	// elog.Printf("%s failed: %s \n", myAppName, e.Error())
-	fmt.Fprintf(os.Stderr, "%s failed: %s \n\t error was: %s \n",
-		p.PathProps.AbsFP, s, e.Error())
-	// os.Exit(1)
-	println("==> DUMP OF FAILING MCFILE:")
-	println(p.String())
-	return true
 }
 
 func (p *MCFile) Lengths() string {
@@ -269,34 +226,3 @@ func (pMCF *MCFile) GatherGLinksInto(pGL *GLinks) {
 		}
 	}
 }
-
-/*
-// === Implement interface Errable
-
-func (p *MCFile) HasError() bool {
-	return p.ContentityRecord.HasError() || p.PathProps.HasError()
-}
-
-// GetError is necessary cos "Error()"" dusnt tell you whether "error"
-// is "nil", which is the indication of no error. Therefore we need
-// this function, which can actually return the telltale "nil".
-func (p *MCFile) GetError() error {
-	if p.PathProps.HasError() {
-		return p.PathProps.GetError()
-	}
-	return p.ContentityRecord.GetError()
-}
-
-// Error satisfies interface "error", but the
-// weird thing is that "error" can be nil.
-func (p *MCFile) Error() string {
-	if p.PathProps.HasError() {
-		return p.PathProps.Error()
-	}
-	return p.ContentityRecord.Error()
-}
-
-func (p *MCFile) SetError(e error) {
-	p.ContentityRecord.SetError(e)
-}
-*/

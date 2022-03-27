@@ -29,7 +29,7 @@ import (
 // needed to end up with a list of `GToken`s.
 //
 func (p *Contentity) st1_Read() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	p.logStg = "11"
@@ -43,7 +43,7 @@ func (p *Contentity) st1_Read() *Contentity {
 }
 
 // st1a_ProcessMetadata processes metadata.
-// Note that for Markdown, YAML metadata parsing is 
+// Note that for Markdown, YAML metadata parsing is
 // currently done during initial file content analysis.
 //
 func (p *Contentity) st1a_ProcessMetadata() *Contentity {
@@ -98,7 +98,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	}
 	textRaw := p.GetSpan(p.Text)
 	if textRaw == "" {
-		textRaw = p.ContentityStructure.Raw 
+		textRaw = p.ContentityStructure.Raw
 	}
 	p.logStg = "1b"
 	if len(textRaw) == 0 {
@@ -159,7 +159,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 // Make Abstract Flat List from Concrete Flat List
 //
 func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
-	if p.GetError() != nil {
+	if p.HasError() {
 		return p
 	}
 	p.logStg = "1c"
