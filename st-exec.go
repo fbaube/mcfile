@@ -4,16 +4,16 @@ import (
 	"runtime/debug"
 )
 
-// ExecuteStages processes an Contentity to completion in an isolated thread,
-// and can eaily be converted to run as a goroutine.
+// ExecuteStages processes a Contentity to completion in an isolated
+// thread, and can eaily be converted to run as a goroutine.
 //
 // Package mlog has been added. HOWEVER an interesting question is,
 // how is an error indicated and a thread terminated prematurely ?
-// One method was to set the field `MCFile.CheckedPath.error` to
-// non-`nil`, which has to be checked for at the start of functions.
-// Another way might be to pass in a `Context` and use its
-// cancellation capability. Yet another way might be to `panic(..)``,
-// and so this function already has code to catch a panic.
+// One method was to set the field `Contentity.Err`, which has to
+// be checked for at the start of functions. Another way might be
+// to pass in a `Context` and use its cancellation capability. Yet
+// another way might be to `panic(..)``, and so this function already
+// has code to catch a panic.
 //
 func (p *Contentity) ExecuteStages() *Contentity {
 	if p.HasError() {
@@ -25,6 +25,10 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	}
 	if p.Size() == 0 {
 		p.L(LWarning, "Skipping ALL stages for empty file")
+		return p
+	}
+	if p.IsDir() {
+		p.L(LInfo, "Is a dir: skipping content processing")
 		return p
 	}
 	p.logStg = "--"
@@ -49,10 +53,6 @@ func (p *Contentity) ExecuteStages() *Contentity {
 			p.L(LError, "= = = = = = = = = = = = = = = = = = = =")
 		}
 	}()
-	if p.IsDir() {
-		p.L(LInfo, "Is a dir: skipping content processing")
-		return p
-	}
 	// Execute stages/steps
 	return p.
 		st0_Init().

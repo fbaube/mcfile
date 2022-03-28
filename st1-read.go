@@ -33,7 +33,7 @@ func (p *Contentity) st1_Read() *Contentity {
 		return p
 	}
 	p.logStg = "11"
-	p.L(LProgress, "Read")
+	p.L(LProgress, "11:Read")
 	p.L(LInfo, "@entry: FileType<%s> MType<%v>", p.FileType(), p.MType)
 	return p.
 		st1a_ProcessMetadata().

@@ -17,7 +17,7 @@ func (p *Contentity) st0_Init() *Contentity {
 		return p
 	}
 	p.logStg = "00"
-	p.L(LProgress, "Init")
+	p.L(LProgress, "00:Init")
 	// panic("TEST PANIC")
 	return p.st0a_SanityCheck()
 }
@@ -33,20 +33,23 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 	switch p.FileType() {
 	case "XML":
 		if !p.IsXML() {
-			panic("Init error: is XML but:!XML?!")
+			panic("Init error: is XML but: !XML?!")
 		}
 	case "MKDN":
 		if p.IsXML() {
-			panic("Init error: is Mkdn but:XML?!")
+			panic("Init error: is Mkdn but: XML?!")
 		}
 	case "HTML":
 		if !p.IsXML() {
-			panic("Init error: is HTML but:!XML?!")
+			panic("Init error: is HTML but: !XML?!")
+		}
+	case "BIN":
+		if p.IsXML() {
+			panic("Init error: is BIN but: XML?!")
 		}
 	default:
 		// L.L.Panic("Bad contentitype: " + p.FileType())
-		p.L(LPanic, "Bad contentitype: "+p.FileType())
-		// panic("st0a_SanityCheck: no/bad contentitype")
+		p.L(LError, "Bad/missing contentitype: "+p.FileType())
 	}
 	return p
 }

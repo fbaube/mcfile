@@ -7,8 +7,8 @@ import (
 	S "strings"
 
 	FU "github.com/fbaube/fileutils"
-	SU "github.com/fbaube/stringutils"
 	L "github.com/fbaube/mlog"
+	SU "github.com/fbaube/stringutils"
 )
 
 // TYPES ARE; external+http, file, pure-ID
@@ -139,12 +139,12 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 				} else {
 					pGL.RelFP = pGL.Link_raw
 				}
-				p.L(LDbg, "KEY:", pGL.RelFP, "#", pGL.FragID)
+				p.L(LDbg, "KEY: %s#%s", pGL.RelFP, pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
 				s, _ := FP.Abs(FP.Join(p.PathProps.AbsFP.S(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
-				p.L(LDbg, "2. AbsFP:", pGL.AbsFP)
+				p.L(LDbg, "2.AbsFP: "+pGL.AbsFP.S())
 			} else if S.HasPrefix(pGL.Att, "idref") {
 				pGL.AddressMode = "idref"
 				if i := S.Index(pGL.Link_raw, "#"); i != -1 {

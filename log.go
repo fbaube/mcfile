@@ -8,13 +8,14 @@ import (
 
 func (p *Contentity) L(level LL, format string, a ...interface{}) {
 	// L.L.Log(level, format, a...)
-	L.L.LogWithString(L.Level(level), format, 
-		fmt.Sprintf("F%02d", p.logIdx) + ",stg" + p.logStg, a...)
+	L.L.LogWithString(L.Level(level), format,
+		fmt.Sprintf("F%02d", p.logIdx)+",stg"+p.logStg, a...)
 }
 
 func (p *Contentity) LogTextQuote(level LL, textquote string, format string, a ...interface{}) {
 	// L.L.Log(level, format, a...)
-	L.L.LogWithString(L.Level(level), format, fmt.Sprintf("%02d", p.logIdx)+","+p.logStg, a...)
+	L.L.LogWithString(L.Level(level), format,
+		fmt.Sprintf("%02d", p.logIdx)+","+p.logStg, a...)
 	panic("FIXME")
 	// L.L.LogMultilineAsIs(SU.IndentWith("   |  ", textquote))
 }

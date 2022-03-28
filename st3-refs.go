@@ -13,7 +13,7 @@ func (p *Contentity) st3_Refs() *Contentity {
 		return p
 	}
 	p.logStg = "33"
-	p.L(LProgress, "Refs")
+	p.L(LProgress, "33:Refs")
 	return p.DoBlockList().DoGLinks().DoTableOfContents()
 }
 

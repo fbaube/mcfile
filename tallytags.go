@@ -9,6 +9,14 @@ import (
 	"github.com/fbaube/gtoken"
 )
 
+type StringTally map[string]int
+
+/*
+func (tt TagTally) String() string {
+	return "tt"
+}
+*/
+
 var GlobalTagTally StringTally
 var GlobalAttTally StringTally
 var GlobalTagCount int
