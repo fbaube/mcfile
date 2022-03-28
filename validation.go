@@ -8,7 +8,7 @@ import (
 )
 
 // DoValidation TODO If no DOCTYPE, make a guess based on Filext but it can't be fatal.
-func (p *MCFile) DoValidation(pXCF *XU.XmlCatalogFile) (dtdS string, docS string, errS string) {
+func (p *Contentity) DoValidation(pXCF *XU.XmlCatalogFile) (dtdS string, docS string, errS string) {
 	errS = ""
 	if !p.IsXML() {
 		panic("DoValidation !IsXML")

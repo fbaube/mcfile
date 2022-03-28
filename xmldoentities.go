@@ -1,6 +1,6 @@
 package mcfile
 
-func (p *MCFile) ProcessEntities_() error {
+func (p *Contentity) ProcessEntities_() error {
 	// pX := p.TheXml()
 	// p := new(XmlItems)
 	// var pXI *XmlItems

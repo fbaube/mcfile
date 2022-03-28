@@ -47,19 +47,19 @@ func (p *Contentity) st2a_PrepareToTree() *Contentity {
 	case "XML":
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
-			p.SetError(fmt.Errorf("st2a gtree: can't make gtags from xml: %w", e))
+			p.Err = fmt.Errorf("st2a gtree: can't make gtags from xml: %w", e)
 			return p
 		}
 	case "MKDN":
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
-			p.SetError(fmt.Errorf("st2a gtree: can't make gtags from mkdn: %w", e))
+			p.Err = fmt.Errorf("st2a gtree: can't make gtags from mkdn: %w", e)
 			return p
 		}
 	case "HTML":
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
-			p.SetError(fmt.Errorf("st2a gtree: can't make gtags from html: %w", e))
+			p.Err = fmt.Errorf("st2a gtree: can't make gtags from html: %w", e)
 			return p
 		}
 	}
@@ -75,7 +75,7 @@ func (p *Contentity) st2b_ParseIntoTree() *Contentity {
 	var e error
 	p.GTree, e = gtree.NewGTreeFromGTags(p.GTags)
 	if e != nil {
-		p.SetError(e)
+		p.Err = e
 		println("==> mcfl.st2b: Error!:", e)
 		return p
 	}

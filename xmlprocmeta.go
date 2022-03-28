@@ -7,7 +7,7 @@ import (
 )
 
 // RefineDirectives scans to patch Directives with correct keyword.
-func (p *MCFile) RefineDirectives() error {
+func (p *Contentity) RefineDirectives() error {
 	// pX := p.TheXml()
 
 	var pTag *gtree.GTag

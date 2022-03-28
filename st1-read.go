@@ -103,7 +103,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	p.logStg = "1b"
 	if len(textRaw) == 0 {
 		p.L(LWarning, "Zero-length content")
-		p.SetError(errors.New("no content"))
+		p.Err = errors.New("no content")
 		return p
 	}
 	var e error
@@ -113,8 +113,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		pPR, e = PU.GenerateParserResults_mkdn(textRaw)
 		if e != nil {
 			e = errors.New("st[1c] " + e.Error())
-			// // p.Blare(p.OwnLogPfx + e.Error())
-			p.SetError(e)
+			p.Err = errors.New("st[1c] " + e.Error())
 			p.L(LError, "Failure in GenerateParserResults_mkdn")
 			return p
 		}
@@ -129,9 +128,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *PU.ParserResults_html
 		pPR, e = PU.GenerateParserResults_html(textRaw)
 		if e != nil {
-			e = errors.New("st[1b] " + e.Error())
-			// p.Blare(p.OwnLogPfx + e.Error())
-			p.SetError(e)
+			p.Err = errors.New("st[1b] " + e.Error())
 			p.L(LError, "Failure in GenerateParserResults_html")
 			return p
 		}
@@ -179,7 +176,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		pCPR_M.DiagDest = p.GTokensOutput
 		GTs, e = gtoken.DoGTokens_mkdn(pCPR_M)
 		if e != nil {
-			p.SetError(fmt.Errorf("st1d: mkdn.GTs: %w", e))
+			p.Err = fmt.Errorf("st1d: mkdn.GTs: %w", e)
 		}
 		// p.GTokens = GTs
 		// Compress out nil GTokens
@@ -195,7 +192,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		pCPR_H.DiagDest = p.GTokensOutput
 		GTs, e = gtoken.DoGTokens_html(pCPR_H)
 		if e != nil {
-			p.SetError(fmt.Errorf("st1d: html.GTs: %w", e))
+			p.Err = fmt.Errorf("st1d: html.GTs: %w", e)
 		}
 		p.GTokens = GTs
 	case "XML":
@@ -208,8 +205,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		}
 		if e != nil {
 			// errmsg = "st[1f] " + e.Error()
-			// p.Blare(p.OwnLogPfx + errmsg)
-			p.SetError(e)
+			p.Err = e
 			return p
 		}
 		p.TallyTags()

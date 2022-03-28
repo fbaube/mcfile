@@ -31,7 +31,7 @@ package mcfile
 // - video/source @value
 // - section @id
 // - p @conref
-func (p *MCFile) GatherLinks() error {
+func (p *Contentity) GatherLinks() error {
 	println("    --> MF.GatherLinks TODO")
 	/*
 		// if !pGF.IsXML { return nil }

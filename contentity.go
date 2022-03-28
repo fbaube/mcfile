@@ -8,12 +8,16 @@ import (
 
 	DU "github.com/fbaube/dbutils"
 	FU "github.com/fbaube/fileutils"
+	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
+	MU "github.com/fbaube/miscutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
 	SU "github.com/fbaube/stringutils"
 )
+
+type ContentityStage func(*Contentity) *Contentity
 
 // For the record, ignore the API of
 // https://godoc.org/golang.org/x/net/html#Node
@@ -21,10 +25,14 @@ import (
 // Contentity is awesome.
 type Contentity struct {
 	ON.Nord
+	MU.Errer
+	// CFU.GCtx // utils/cliflagutils
 	logIdx int
 	logStg string
 	// ContentityRecord is what gets persisted to the DB
 	DU.ContentityRecord
+	// FU.OutputFiles // NOTE Does this belong here ? Not sure.
+
 	// ParserResults is parseutils.ParserResults_ffs
 	ParserResults interface{}
 	GTokens       []*gtoken.GToken
@@ -33,6 +41,10 @@ type Contentity struct {
 
 	GTokensOutput, GTreeOutput io.Writer
 	GLinks
+	// GEnts is "ENTITY"" directives (both with "%" and without).
+	GEnts map[string]*gparse.GEnt
+	// DElms is "ELEMENT" directives.
+	DElms map[string]*gtree.GTag
 
 	TagTally StringTally
 	AttTally StringTally
@@ -64,13 +76,15 @@ func NewRootContentityNord(aRootPath string) (*Contentity, error) {
 			e, "NewRootContentityNord (L63)", pPP)
 	}
 	// This also does content fetching & analysis !
-	pCR := DU.NewContentityRecord(pPP)
-	if pCR == nil {
-		panic("NewRootContentityNord FAILED on pCR")
+	pCR, e := DU.NewContentityRecord(pPP)
+	p.ContentityRecord = *pCR
+	if e != nil || pCR == nil {
+		L.L.Error("NewRootContentityNord<%s>: %s", aRootPath, e.Error())
+		return p, e
 	}
-	// This block should not happen. And anyways for a directory,
-	// we don't need to worry about any error. Unless maybe there's
-	// some weird permissions problem.
+	// This block should not happen. And anyways for a
+	// directory, we don't need to worry about any error.
+	// Unless maybe there's some weird permissions problem.
 	/*
 		if pCR.HasError() && !pPP.IsOkayDir() {
 			println("newRootCty failed:", pCR.GetError().Error())
@@ -80,7 +94,6 @@ func NewRootContentityNord(aRootPath string) (*Contentity, error) {
 		}
 	*/
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
-	p.ContentityRecord = *pCR
 	p.GLinks = *new(GLinks)
 	// println("D=> NewContentity:", p.String()) // p.MType, p.AbsFP())
 	// fmt.Printf("D=> NewContentity: %s / %s \n", p.MType, p.AbsFP())
@@ -111,7 +124,7 @@ func NewContentity(aPath string) *Contentity {
 		}
 	}
 	if e != nil {
-		p.SetError(fmt.Errorf("NewContentity: %w", e))
+		p.Err = fmt.Errorf("NewContentity: %w", e)
 		return p
 	}
 
@@ -122,16 +135,12 @@ func NewContentity(aPath string) *Contentity {
 	}
 	L.L.Okay(SU.Gbg(" " + pPP.String() + " "))
 	// This also does content fetching & analysis !
-	pCR := DU.NewContentityRecord(pPP)
-	if pCR == nil {
+	pCR, e := DU.NewContentityRecord(pPP)
+	if e != nil || pCR == nil {
 		// panic("BAD pCR")
 		// L.L.Error("New contentity failed")
-		return nil
-	}
-	if pCR.HasError() {
-		pCR.SetError(fmt.Errorf("newCty<%s> failed: %w",
-			pCR.AbsFP, pCR.GetError()))
-		return p // nil
+		L.L.Error("NewContentity<%s>: %s", pPP.AbsFP, e.Error())
+		return nil // p, e
 	}
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
 	p.ContentityRecord = *pCR

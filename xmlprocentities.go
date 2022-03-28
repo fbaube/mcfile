@@ -62,7 +62,7 @@ import (
 // rtType:ENTITY  string1:bar  string2:"BAR"  entityIsParameter:true
 //
 // CALLED BY ProcessEntities only//
-func (p *MCFile) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error) {
+func (p *Contentity) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error) {
 	// pX := p.TheXml()
 	// pXI = new(XmlItems)
 	// pXI.GEnts = make(map[string]*gtoken.GEnt)
@@ -184,7 +184,7 @@ func (p *MCFile) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error) {
 // rtType:ENTITY  string1:foo  string2:"FOO"  entityIsParameter:false -n-
 // rtType:ENTITY  string1:bar  string2:"BAR"  entityIsParameter:true
 //
-func (p *MCFile) DoEntitiesList() error {
+func (p *Contentity) DoEntitiesList() error {
 	// pX := p.TheXml()
 	println("    ==> DoEntitiesList TODO")
 
@@ -309,7 +309,7 @@ var s2check = ""
 
 // SubstituteEntities does replacement in Entities for simple
 // (single-token) entity references, i.e. that begin with "%" or "&".
-func (p *MCFile) SubstituteEntities() error {
+func (p *Contentity) SubstituteEntities() error {
 	// pX := p.TheXml()
 	println("    ==> SubstituteEntities TODO")
 
