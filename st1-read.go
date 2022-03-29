@@ -81,16 +81,16 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 				p.ParserResults = nil
 			}
 			p.L(LOkay, "%s tokens: got %d", ft, ct)
-			p.L(LWarning, "TODO: Do something with XML/HTML metadata")
+			p.L(LWarning, "TODO: Do sthg with XML/HTML metadata")
 			return p
 		}
 	case "MKDN":
-		p.L(LWarning, "TODO: Do something with YAML metadata")
+		p.L(LWarning, "TODO: Do sthg with YAML metadata")
 	}
 	return p
 }
 
-// st1b_GetCPR is Step 1b: Generate ParserResults
+// st1b_GetCPR generates Concrete ParserResults
 //
 func (p *Contentity) st1b_GetCPR() *Contentity {
 	if p.HasError() {
@@ -112,13 +112,15 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *PU.ParserResults_mkdn
 		pPR, e = PU.GenerateParserResults_mkdn(textRaw)
 		if e != nil {
-			e = errors.New("st[1c] " + e.Error())
-			p.Err = errors.New("st[1c] " + e.Error())
-			p.L(LError, "Failure in GenerateParserResults_mkdn")
+			// e = errors.New("st[1c] " + e.Error())
+			// p.Err = errors.New("st[1c] " + e.Error())
+			// p.L(LError, "Failure in GenerateParserResults_mkdn")
+			p.Err = fmt.Errorf("GenerateParserResults_mkdn: %w", e)
 			return p
 		}
 		if pPR == nil {
-			p.L(LError, "No Error but nil ParserResults")
+			// p.L(LError, "nil ParserResults")
+			p.Err = errors.New("nil ParserResults_mkdn")
 		}
 		p.ParserResults = pPR
 		p.L(LOkay, "MKDN tokens: got %d", len(pPR.NodeSlice))
@@ -128,8 +130,9 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *PU.ParserResults_html
 		pPR, e = PU.GenerateParserResults_html(textRaw)
 		if e != nil {
-			p.Err = errors.New("st[1b] " + e.Error())
-			p.L(LError, "Failure in GenerateParserResults_html")
+			// p.Err = errors.New("st[1b] " + e.Error())
+			// p.L(LError, "Failure in GenerateParserResults_html")
+			p.Err = fmt.Errorf("GenerateParserResults_html: %w", e)
 			return p
 		}
 		p.ParserResults = pPR
@@ -140,14 +143,16 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *XU.ParserResults_xml
 		pPR, e := XU.GenerateParserResults_xml(textRaw)
 		if e != nil {
-			e = fmt.Errorf("XML tokenization failed: %w", e)
-			p.L(LError, "Failure in GenerateParserResults_xml")
+			// e = fmt.Errorf("XML tokenization failed: %w", e)
+			// p.L(LError, "Failure in GenerateParserResults_xml")
+			p.Err = fmt.Errorf("GenerateParserResults_xml: %w", e)
 		}
 		p.ParserResults = pPR
 		p.L(LOkay, "XML tokens: got %d \n", len(pPR.NodeSlice))
 		return p
 	default:
-		p.L(LError, "st1b_GetCPR: bad file type: "+p.FileType())
+		// p.L(LError, "st1b_GetCPR: bad file type: "+p.FileType())
+		p.Err = errors.New("Bad file type: " + p.FileType())
 	}
 	return p
 }
@@ -176,7 +181,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		pCPR_M.DiagDest = p.GTokensOutput
 		GTs, e = gtoken.DoGTokens_mkdn(pCPR_M)
 		if e != nil {
-			p.Err = fmt.Errorf("st1d: mkdn.GTs: %w", e)
+			p.SetErrWrap("mkdn.gtkns", e)
 		}
 		// p.GTokens = GTs
 		// Compress out nil GTokens

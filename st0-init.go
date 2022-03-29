@@ -18,7 +18,7 @@ func (p *Contentity) st0_Init() *Contentity {
 	}
 	p.logStg = "00"
 	p.L(LProgress, "00:Init")
-	// panic("TEST PANIC")
+	// panic("TEST PANIC in st0")
 	return p.st0a_SanityCheck()
 }
 
@@ -28,28 +28,34 @@ func (p *Contentity) st0_Init() *Contentity {
 func (p *Contentity) st0a_SanityCheck() *Contentity {
 	p.logStg = "0a"
 	if p.MType == "" {
-		p.L(LWarning, "MType is empty")
+		// p.L(LWarning, "MType is empty")
+		p.SetErrMsg("MType is empty")
 	}
 	switch p.FileType() {
 	case "XML":
 		if !p.IsXML() {
-			panic("Init error: is XML but: !XML?!")
+			// panic("Init error: is XML but: !XML?!")
+			p.SetErrMsg("Init error: is XML but: !XML?!")
 		}
 	case "MKDN":
 		if p.IsXML() {
-			panic("Init error: is Mkdn but: XML?!")
+			// panic("Init error: is Mkdn but: XML?!")
+			p.SetErrMsg("Init error: is Mkdn but: XML?!")
 		}
 	case "HTML":
 		if !p.IsXML() {
-			panic("Init error: is HTML but: !XML?!")
+			// panic("Init error: is HTML but: !XML?!")
+			p.SetErrMsg("Init error: is HTML but: !XML?!")
 		}
 	case "BIN":
 		if p.IsXML() {
-			panic("Init error: is BIN but: XML?!")
+			// panic("Init error: is BIN but: XML?!")
+			p.SetErrMsg("Init error: is BIN but: XML?!")
 		}
 	default:
 		// L.L.Panic("Bad contentitype: " + p.FileType())
-		p.L(LError, "Bad/missing contentitype: "+p.FileType())
+		// p.L(LError, "Bad/missing contentitype: "+p.FileType())
+		p.SetErrMsg("Bad/missing contentitype: " + p.FileType())
 	}
 	return p
 }

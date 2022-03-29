@@ -6,6 +6,10 @@ import (
 	L "github.com/fbaube/mlog"
 )
 
+func (p *Contentity) LogPrefix(mid string) string {
+	return fmt.Sprintf("%02d%sst%s", p.logIdx, mid, p.logStg)
+}
+
 func (p *Contentity) L(level LL, format string, a ...interface{}) {
 	// L.L.Log(level, format, a...)
 	L.L.LogWithString(L.Level(level), format,
