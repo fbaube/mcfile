@@ -181,7 +181,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		pCPR_M.DiagDest = p.GTokensOutput
 		GTs, e = gtoken.DoGTokens_mkdn(pCPR_M)
 		if e != nil {
-			p.SetErrWrap("mkdn.gtkns", e)
+			p.SetErrWrap("mkdn.gtokens", e)
 		}
 		// p.GTokens = GTs
 		// Compress out nil GTokens
@@ -197,7 +197,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		pCPR_H.DiagDest = p.GTokensOutput
 		GTs, e = gtoken.DoGTokens_html(pCPR_H)
 		if e != nil {
-			p.Err = fmt.Errorf("st1d: html.GTs: %w", e)
+			p.SetErrWrap("html.gtokens", e)
 		}
 		p.GTokens = GTs
 	case "XML":
@@ -206,12 +206,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		pCPR_X.DiagDest = p.GTokensOutput
 		GTs, e = gtoken.DoGTokens_xml(pCPR_X)
 		if e != nil {
-			e = fmt.Errorf("GToken-ization failed: %w", e)
-		}
-		if e != nil {
-			// errmsg = "st[1f] " + e.Error()
-			p.Err = e
-			return p
+			p.SetErrWrap("GToken-ization", e)
 		}
 		p.TallyTags()
 		// fmt.Printf("==> Tags: %v \n", pGF.TagTally)
@@ -231,6 +226,9 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 // st1d_PostMeta_notmkdn is Step 1d (XML,HTML): XML per format; HTML <head>
 //
 func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
+	if p.HasError() {
+		return p
+	}
 	p.logStg = "1d"
 	switch p.FileType() {
 	case "MKDN":
@@ -245,8 +243,8 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 		return p
 	case "XML":
 		// [Lw]DITA stuff, ?DublinCore
-		p.L(LWarning, "mcfl.st1.TODO: SetMTypePerDoctypeFields:")
-		p.L(LDbg, p.AnalysisRecord.String())
+		p.L(LWarning, "cty.st1.TODO: SetMTypePerDoctypeFields:")
+		p.L(LDbg, "     \\ "+p.AnalysisRecord.String())
 
 	}
 	return p

@@ -42,7 +42,9 @@ func (p *Contentity) DoGLinks() *Contentity {
 	}
 	switch p.FileType() {
 	case "XML":
+		L.L.Info("Calling GatherXmlGLinks...")
 		p.GatherXmlGLinks()
+		L.L.Info("Called! GatherXmlGLinks")
 	case "HTML":
 		L.L.Warning("TODO> 3b. DoGLinks HTML")
 	case "MKDN":

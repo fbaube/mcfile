@@ -6,7 +6,7 @@ import (
 	"io"
 	FP "path/filepath"
 
-	DU "github.com/fbaube/dbutils"
+	// DU "github.com/fbaube/dbutils"
 	FU "github.com/fbaube/fileutils"
 	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtoken"
@@ -14,6 +14,7 @@ import (
 	MU "github.com/fbaube/miscutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
+	"github.com/fbaube/repo"
 	SU "github.com/fbaube/stringutils"
 )
 
@@ -30,7 +31,7 @@ type Contentity struct {
 	logIdx int
 	logStg string
 	// ContentityRecord is what gets persisted to the DB
-	DU.ContentityRecord
+	repo.ContentityRecord
 	// FU.OutputFiles // NOTE Does this belong here ? Not sure.
 
 	// ParserResults is parseutils.ParserResults_ffs
@@ -76,7 +77,7 @@ func NewRootContentityNord(aRootPath string) (*Contentity, error) {
 			e, "NewRootContentityNord (L63)", pPP)
 	}
 	// This also does content fetching & analysis !
-	pCR, e := DU.NewContentityRecord(pPP)
+	pCR, e := repo.NewContentityRecord(pPP)
 	p.ContentityRecord = *pCR
 	if e != nil || pCR == nil {
 		L.L.Error("NewRootContentityNord<%s>: %s", aRootPath, e.Error())
@@ -135,7 +136,7 @@ func NewContentity(aPath string) *Contentity {
 	}
 	L.L.Okay(SU.Gbg(" " + pPP.String() + " "))
 	// This also does content fetching & analysis !
-	pCR, e := DU.NewContentityRecord(pPP)
+	pCR, e := repo.NewContentityRecord(pPP)
 	if e != nil || pCR == nil {
 		// panic("BAD pCR")
 		// L.L.Error("New contentity failed")
