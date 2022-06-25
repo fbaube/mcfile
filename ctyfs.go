@@ -1,9 +1,9 @@
 package mcfile
 
 import (
+	"errors"
 	"io/fs"
 	S "strings"
-	"errors"
 
 	FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
@@ -62,7 +62,7 @@ func (p *ContentityFS) DoForEvery(stgprocsr ContentityStage) {
 // type WalkDirFunc func(path string, d DirEntry, err error) error
 func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	var p *Contentity
-	var e error 
+	var e error
 	// ROOT NODE ?
 	if mustInitRoot() {
 		if path != "." {
@@ -100,8 +100,8 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		L.L.Dbg("Path rejected: " + path)
 		return nil
 	}
-	p = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))
-	if p == nil {
+	p, e = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))
+	if p == nil || e != nil {
 		// panic("nil Contentity")
 		L.L.Error("Skipping this item!")
 		return nil

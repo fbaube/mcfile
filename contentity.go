@@ -6,7 +6,6 @@ import (
 	"io"
 	FP "path/filepath"
 
-	// DU "github.com/fbaube/dbutils"
 	FU "github.com/fbaube/fileutils"
 	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtoken"
@@ -40,7 +39,7 @@ type Contentity struct {
 	GTags         []*gtree.GTag
 	*gtree.GTree  // maybe not need GRootTag or RootOfASTp
 
-	GTokensOutput, GTreeOutput io.Writer
+	GTokensWriter, GTreeWriter io.Writer
 	GLinks
 	// GEnts is "ENTITY"" directives (both with "%" and without).
 	GEnts map[string]*gparse.GEnt
@@ -104,10 +103,9 @@ func NewRootContentityNord(aRootPath string) (*Contentity, error) {
 	return p, nil
 }
 
-func NewContentity(aPath string) *Contentity {
+func NewContentity(aPath string) (*Contentity, error) {
 	if aPath == "" {
-		println("NewContentity: missing path")
-		return nil
+		return nil, errors.New("newcontentity: missing path")
 	}
 	p := new(Contentity)
 	p.Nord = *ON.NewNord(aPath)
@@ -125,14 +123,13 @@ func NewContentity(aPath string) *Contentity {
 		}
 	}
 	if e != nil {
-		p.Err = fmt.Errorf("NewContentity: %w", e)
-		return p
+		return nil, fmt.Errorf("newcontentity: %w", e)
 	}
 
 	if pPP.IsOkayDir() {
 		L.L.Info(SU.Ybg(" Directory " + SU.Tildotted(pPP.AbsFP.S())))
 		p.ContentityRecord.PathProps = *pPP
-		return p
+		return p, nil
 	}
 	L.L.Okay(SU.Gbg(" " + pPP.String() + " "))
 	// This also does content fetching & analysis !
@@ -140,15 +137,15 @@ func NewContentity(aPath string) *Contentity {
 	if e != nil || pCR == nil {
 		// panic("BAD pCR")
 		// L.L.Error("New contentity failed")
-		L.L.Error("NewContentity<%s>: %s", pPP.AbsFP, e.Error())
-		return nil // p, e
+		// L.L.Error("NewContentity<%s>: %s", pPP.AbsFP, e.Error())
+		return nil, fmt.Errorf("newcontentity<%s>: %w", pPP.AbsFP, e)
 	}
 	// Now fill in the Contentity, using code taken from NewMCFile(..)
 	p.ContentityRecord = *pCR
 	p.GLinks = *new(GLinks)
 	// println("D=> NewContentity:", p.String()) // p.MType, p.AbsFP())
 	// fmt.Printf("D=> NewContentity: %s / %s \n", p.MType, p.AbsFP())
-	return p
+	return p, nil
 }
 
 // String is developer output. Hafta dump:

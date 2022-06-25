@@ -169,7 +169,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	// var errmsg string
 	var GTs []*gtoken.GToken
 
-	fmt.Fprintln(p.GTokensOutput, "=== Input:", p.AbsFP())
+	fmt.Fprintln(p.GTokensWriter, "=== Input file:", p.AbsFP())
 
 	switch p.FileType() {
 	case "MKDN":
@@ -178,7 +178,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 			p.L(LError, "ParserResults are nil")
 		}
 		pCPR_M = p.ParserResults.(*PU.ParserResults_mkdn)
-		pCPR_M.DiagDest = p.GTokensOutput
+		pCPR_M.DiagDest = p.GTokensWriter
 		GTs, e = gtoken.DoGTokens_mkdn(pCPR_M)
 		if e != nil {
 			p.SetErrWrap("mkdn.gtokens", e)
@@ -194,7 +194,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	case "HTML":
 		var pCPR_H *PU.ParserResults_html
 		pCPR_H = p.ParserResults.(*PU.ParserResults_html)
-		pCPR_H.DiagDest = p.GTokensOutput
+		pCPR_H.DiagDest = p.GTokensWriter
 		GTs, e = gtoken.DoGTokens_html(pCPR_H)
 		if e != nil {
 			p.SetErrWrap("html.gtokens", e)
@@ -203,7 +203,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	case "XML":
 		var pCPR_X *XU.ParserResults_xml
 		pCPR_X = p.ParserResults.(*XU.ParserResults_xml)
-		pCPR_X.DiagDest = p.GTokensOutput
+		pCPR_X.DiagDest = p.GTokensWriter
 		GTs, e = gtoken.DoGTokens_xml(pCPR_X)
 		if e != nil {
 			p.SetErrWrap("GToken-ization", e)
@@ -213,10 +213,10 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
 		p.GTokens = GTs
 	}
-	fmt.Fprintln(p.GTokensOutput, "=== Output:")
+	fmt.Fprintln(p.GTokensWriter, "=== Output:")
 	for i, pGtkn := range p.GTokens {
 		if pGtkn != nil {
-			fmt.Fprintf(p.GTokensOutput, "[%02d:L%d] %s \n", i, p.Level(), pGtkn.String())
+			fmt.Fprintf(p.GTokensWriter, "[%02d:L%d] %s \n", i, p.Level(), pGtkn.String())
 		}
 	}
 	// fmt.Printf("st1c_MakeAFLfromCFL: nGTokens: %d %d \n", len(p.GTokens), len(GTs))

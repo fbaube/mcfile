@@ -82,8 +82,8 @@ func (p *Contentity) st2b_ParseIntoTree() *Contentity {
 		println("==> mcfl.st2b: got nil Gtree: %s", e.Error())
 		p.SetErrWrap("nil tree from NewGTreeFromGTags", e)
 	}
-	if p.GTree != nil && p.GTreeOutput != nil {
-		gtoken.DumpTo(p.GTokens, p.GTreeOutput)
+	if p.GTree != nil && p.GTreeWriter != nil {
+		gtoken.DumpTo(p.GTokens, p.GTreeWriter)
 	} else {
 		gtoken.DumpTo(p.GTokens, os.Stdout)
 	}
