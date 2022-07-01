@@ -35,11 +35,13 @@ type Contentity struct {
 
 	// ParserResults is parseutils.ParserResults_ffs
 	ParserResults interface{}
-	GTokens       []*gtoken.GToken
-	GTags         []*gtree.GTag
-	*gtree.GTree  // maybe not need GRootTag or RootOfASTp
 
-	GTokensWriter, GTreeWriter io.Writer
+	GTokens      []*gtoken.GToken
+	GTags        []*gtree.GTag
+	*gtree.GTree // maybe not need GRootTag or RootOfASTptr
+	GTokensWriter, GTreeWriter,
+	EchoWriter io.Writer
+
 	GLinks
 	// GEnts is "ENTITY"" directives (both with "%" and without).
 	GEnts map[string]*gparse.GEnt

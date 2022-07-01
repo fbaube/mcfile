@@ -1,11 +1,11 @@
-// Package mcfile defines a per-file structure `MCFile` that holds all
-// relevant per-file information. This includes:
+// Package mcfile defines a per-file structure [MCFile] that
+// holds all relevant per-file information. This includes:
 //
-// - file path info
-// - file content (UTF-8, tietysti)
-// - file type information (MIME and more)
-// - the results of markup-specific file analysis (in the most analysable
-// case, i.e. XML, this comprises tokens, gtokens, gelms, gtree)
+//  - file path info
+//  - file content (UTF-8, tietysti)
+//  - file type information (MIME and more)
+//  - the results of markup-specific file analysis (in the most analysable
+//    case, i.e. XML, this comprises tokens, gtokens, gelms, gtree)
 //
 // For a discussion of tree walk functions, see `doc_wfn.go`
 //
