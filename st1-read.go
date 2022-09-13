@@ -27,7 +27,6 @@ import (
 
 // st1_Read reads in the file and does what is
 // needed to end up with a list of `GToken`s.
-//
 func (p *Contentity) st1_Read() *Contentity {
 	if p.HasError() {
 		return p
@@ -45,13 +44,12 @@ func (p *Contentity) st1_Read() *Contentity {
 // st1a_ProcessMetadata processes metadata.
 // Note that for Markdown, YAML metadata parsing is
 // currently done during initial file content analysis.
-//
 func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 	if p.HasError() {
 		return p
 	}
 	p.logStg = "1a"
-	metaRaw := p.GetSpan(p.Meta)
+	metaRaw := XU.GetSpan(p.PathProps.Raw, p.Meta)
 	if metaRaw == "" {
 		p.L(LInfo, "No metadata found")
 		return p
@@ -91,14 +89,14 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 }
 
 // st1b_GetCPR generates Concrete ParserResults
-//
 func (p *Contentity) st1b_GetCPR() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	textRaw := p.GetSpan(p.Text)
+	textRaw := XU.GetSpan(p.PathProps.Raw, p.Text)
 	if textRaw == "" {
-		textRaw = p.ContentityStructure.Raw
+		p.L(LWarning, "Hack in st1-read L98")
+		textRaw = p.PathProps.Raw
 	}
 	p.logStg = "1b"
 	if len(textRaw) == 0 {
@@ -159,7 +157,6 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 
 // st1c_MakeAFLfromCFL is Step 1c:
 // Make Abstract Flat List from Concrete Flat List
-//
 func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	if p.HasError() {
 		return p
@@ -224,7 +221,6 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 }
 
 // st1d_PostMeta_notmkdn is Step 1d (XML,HTML): XML per format; HTML <head>
-//
 func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 	if p.HasError() {
 		return p
@@ -244,7 +240,7 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 	case "XML":
 		// [Lw]DITA stuff, ?DublinCore
 		p.L(LWarning, "cty.st1.TODO: SetMTypePerDoctypeFields:")
-		p.L(LDbg, "     \\ "+p.AnalysisRecord.String())
+		p.L(LDbg, "     \\ "+p.PathAnalysis.String())
 
 	}
 	return p

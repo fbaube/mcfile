@@ -12,10 +12,12 @@ import (
 // One method was to set the field `Contentity.Err`, which has to
 // be checked for at the start of functions. Another way might be
 // to pass in a `Context` and use its cancellation capability. Yet
-// another way might be to `panic(..)``, and so this function already
+// another way might be to `panic(..)“, and so this function already
 // has code to catch a panic.
-//
 func (p *Contentity) ExecuteStages() *Contentity {
+	if len(p.PathProps.Raw) == 0 {
+		panic("ExecuteStages :: ZERO")
+	}
 	if p.HasError() {
 		return p
 	}

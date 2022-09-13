@@ -11,7 +11,7 @@ import (
 
 type ContentityFS struct {
 	FSU.BaseFS
-	rootNord      *Contentity
+	rootNord      *RootContentity
 	asSlice       []*Contentity
 	asMap         map[string]*Contentity // string is Rel.Path
 	nFiles, nDirs int
@@ -34,7 +34,7 @@ func (p *ContentityFS) FileCount() int {
 	return p.nFiles
 }
 
-func (p *ContentityFS) RootContentity() *Contentity {
+func (p *ContentityFS) RootContentity() *RootContentity {
 	return p.rootNord
 }
 
@@ -65,22 +65,25 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	var e error
 	// ROOT NODE ?
 	if mustInitRoot() {
+		var r *RootContentity
 		if path != "." {
-			println("wfnBuildContentityTree: root path is not dot but instead:",
-				path)
+			println("wfnBuildContentityTree: "+
+				"root path is not dot but instead:", path)
 		}
 		if pCFS.RootAbsPath() == "" {
 			panic("wfnBuildContentityTree: nil ROOT")
 		}
-		p, e = NewRootContentityNord(pCFS.RootAbsPath())
-		if e != nil || p == nil {
+		r, e = NewRootContentity(pCFS.RootAbsPath())
+		if e != nil || r == nil {
 			// panic("wfnBuildContentityTree mustInitRoot NewRootContentityNord FAILED")
 			return errors.New("wfnBuildContentityTree mustInitRoot NewRootContentityNord L77")
 		}
-		pCFS.rootNord = p
-		p.MimeType = "dir"
-		p.MType = "dir"
+		pCFS.rootNord = r
+		r.MimeType = "dir"
+		r.MType = "dir"
 		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
+		var p *Contentity
+		p = ((*Contentity)(r))
 		pCFS.asSlice = append(pCFS.asSlice, p)
 		pCFS.asMap[path] = p
 		// println("ADDED TO MAP:", path)
@@ -88,9 +91,9 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		pCFS.nFiles = 0
 		return nil
 	}
-	// Filter out hidden (esp'ly .git) and emacs backup.
-	// Note that "/" is assumed, not os.Sep
-	if S.Contains(path, "/.git/") {
+	// Filter out hidden, esp'ly .git & .git* ;
+	// note that "/" is assumed, not os.Sep
+	if S.Contains(path, "/.git") {
 		return nil
 	}
 	if S.HasPrefix(path, ".") || S.HasPrefix(path, "_") ||

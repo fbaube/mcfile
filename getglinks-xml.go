@@ -105,20 +105,6 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 				continue
 			}
 			pGL := new(GLink)
-			/*
-				type GLink struct {
-					Att    string         // id, idref, href, xref, keyref, etc.
-					Tag    string
-					Raw    string         // as redd in during parsing
-					RelFP  FU.RelFilePath // "" if target is in same file
-					AbsFP  FU.AbsFilePath // "" if target is in same file
-					Anchor string  // peeled off from Raw
-					Resolved bool  // used to narrow in on difficult cases
-					IsHref   bool  // resolution is simpler if is href
-					Source *gtree.GTag    // the tag where the GLink is defined
-					Target *gtree.GTag    // can be nil: the tag where the GLink is resolved
-					to, quite possibly in another file, which we hope we also have availablein memory.
-			*/
 			pGL.Att = XA.Name.Local
 			pGL.Tag = theTag
 			pGL.Link_raw = XA.Value

@@ -31,7 +31,8 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	}
 	e := fs.WalkDir(pCFS.InputFS(), ".", wfnBuildContentityTree)
 	if e != nil {
-		panic("mcfile.newContentityFS: " + e.Error())
+		// panic("mcfile.newContentityFS: " + e.Error())
+		L.L.Panic("mcfile.newContentityFS: " + e.Error())
 	}
 	L.L.Okay("FS walked OK: got %d nords", len(pCFS.asSlice))
 
