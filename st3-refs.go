@@ -7,18 +7,16 @@ import L "github.com/fbaube/mlog"
 // - DoBlockList()
 // - DoGLinks()
 // - DoTableOfContents()
-//
 func (p *Contentity) st3_Refs() *Contentity {
 	if p.HasError() {
 		return p
 	}
 	p.logStg = "33"
-	p.L(LProgress, "33:Refs")
+	p.L(LProgress, "=== 33:Refs ===")
 	return p.DoBlockList().DoGLinks().DoTableOfContents()
 }
 
 // DoBlockList is Step 3a
-//
 func (p *Contentity) DoBlockList() *Contentity {
 	if p.HasError() {
 		return p
@@ -35,7 +33,6 @@ func (p *Contentity) DoBlockList() *Contentity {
 }
 
 // DoGLinks is Step 3b
-//
 func (p *Contentity) DoGLinks() *Contentity {
 	if p.HasError() {
 		return p
@@ -54,7 +51,6 @@ func (p *Contentity) DoGLinks() *Contentity {
 }
 
 // DoTableOfContents is Step 3c
-//
 func (p *Contentity) DoTableOfContents() *Contentity {
 	if p.HasError() {
 		return p

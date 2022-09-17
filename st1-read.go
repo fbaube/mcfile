@@ -1,7 +1,6 @@
 package mcfile
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/fbaube/gtoken"
@@ -37,7 +36,7 @@ func (p *Contentity) st1_Read() *Contentity {
 		return p
 	}
 	p.logStg = "11"
-	p.L(LProgress, "11:Read")
+	p.L(LProgress, "=== 11:Read ===")
 	p.L(LInfo, "@entry: FileType:%s MType:%s", p.FileType(), p.MType)
 	return p.
 		st1a_ProcessMetadata().
@@ -108,7 +107,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	p.logStg = "1b"
 	if len(textRaw) == 0 {
 		p.L(LWarning, "Zero-length content")
-		p.Err = errors.New("no content")
+		p.SetErrMsg("no content")
 		return p
 	}
 	var e error
@@ -117,11 +116,11 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *PU.ParserResults_mkdn
 		pPR, e = PU.GenerateParserResults_mkdn(textRaw)
 		if e != nil {
-			p.Err = fmt.Errorf("GenerateParserResults_mkdn says: %w", e)
+			p.WrapError("GenerateParserResults_mkdn", e)
 			return p
 		}
 		if pPR == nil {
-			p.Err = errors.New("nil ParserResults_mkdn")
+			p.SetErrMsg("nil ParserResults_mkdn")
 		}
 		p.ParserResults = pPR
 		p.L(LOkay, "MKDN tokens: got %d", len(pPR.NodeSlice))
@@ -131,7 +130,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *PU.ParserResults_html
 		pPR, e = PU.GenerateParserResults_html(textRaw)
 		if e != nil {
-			p.Err = fmt.Errorf("GenerateParserResults_html says: %w", e)
+			p.WrapError("GenerateParserResults_html", e)
 			return p
 		}
 		p.ParserResults = pPR
@@ -142,13 +141,13 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *XU.ParserResults_xml
 		pPR, e := XU.GenerateParserResults_xml(textRaw)
 		if e != nil {
-			p.Err = fmt.Errorf("GenerateParserResults_xml says: %w", e)
+			p.WrapError("GenerateParserResults_xml", e)
 		}
 		p.ParserResults = pPR
 		p.L(LOkay, "XML tokens: got %d \n", len(pPR.NodeSlice))
 		return p
 	default:
-		p.Err = errors.New("Bad file type: " + p.FileType())
+		p.SetErrMsg("bad file type: " + p.FileType())
 	}
 	return p
 }
