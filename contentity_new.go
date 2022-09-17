@@ -27,6 +27,8 @@ func NewContentity(aPath string) (*Contentity, error) {
 	pNewCty = new(Contentity)
 	pNewCty.Nord = *ON.NewNord(aPath)
 	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
+	L.L.Info(SU.Rfg(SU.Ybg(
+		"\n\t ===> New Contentity: %s <===             ")), aPath)
 
 	// ========================
 	//  Start with a PathProps

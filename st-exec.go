@@ -15,17 +15,22 @@ import (
 // another way might be to `panic(..)“, and so this function already
 // has code to catch a panic.
 func (p *Contentity) ExecuteStages() *Contentity {
+	if p.PathProps == nil {
+		panic("ExecuteStages :: nil PP")
+	}
 	if len(p.PathProps.Raw) == 0 {
 		panic("ExecuteStages :: ZERO")
 	}
 	if p.HasError() {
+		p.L(LInfo, "Has error: skipping")
 		return p
 	}
 	if p.FileType() == "BIN" {
 		p.L(LWarning, "Skipping ALL stages for binary file")
 		return p
 	}
-	if p.Size() == 0 {
+	// p.L(LInfo, "LENGTH %d SIZE %d", len(p.PathProps.Raw), p.Size())
+	if len(p.PathProps.Raw) == 0 { // p.Size() == 0 {
 		p.L(LWarning, "Skipping ALL stages for empty file")
 		return p
 	}
