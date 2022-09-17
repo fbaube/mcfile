@@ -14,12 +14,13 @@ import (
 // to pass in a `Context` and use its cancellation capability. Yet
 // another way might be to `panic(..)“, and so this function already
 // has code to catch a panic.
+// .
 func (p *Contentity) ExecuteStages() *Contentity {
 	if p.PathProps == nil {
 		panic("ExecuteStages :: nil PP")
 	}
 	if len(p.PathProps.Raw) == 0 {
-		panic("ExecuteStages :: ZERO")
+		panic("ExecuteStages :: ZERO-len Raw")
 	}
 	if p.HasError() {
 		p.L(LInfo, "Has error: skipping")

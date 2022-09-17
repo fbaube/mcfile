@@ -10,16 +10,6 @@ import (
 	// L "github.com/fbaube/mlog"
 )
 
-// - "XML"
-// - - (§1) Use stdlib `encoding/xml` to get `[]xml.Token`
-// - - (§1) Convert `[]xml.Token` to `[]gparse.GToken`
-// - "MKDN"
-// - - (§1) Use `yuin/goldmark` to get tree of `yuin/goldmark/ast/Node`
-// - - (§1) From each Node make a `MkdnToken` (in a list?) incl. `GToken` and `GTag`
-// - "HTML"
-// - - (§1) Use `golang.org/x/net/html` to get a tree of `html.Node`
-// - - (§1) From each Node make a `HtmlToken` (in a list?) incl. `GToken` and `GTag`
-
 // GetParseTokenization_Xml v GetParseCST_nonXml
 // GetNodelistFromCST_NonXml
 // GetGTokensFromParseTokenization_Xml v
@@ -27,13 +17,28 @@ import (
 
 // st1_Read reads in the file and does what is
 // needed to end up with a list of `GToken`s.
+//
+// Summary of processing per Contentity type:
+// "XML"
+//   - (§1) Use stdlib `encoding/xml` to get `[]xml.Token`
+//   - (§1) Convert `[]xml.Token` to `[]gparse.GToken`
+//
+// "MKDN"
+//   - (§1) Use `yuin/goldmark` to get tree of `yuin/goldmark/ast/Node`
+//   - (§1) From each Node make a `MkdnToken` (in a list?) incl. `GToken` and `GTag`
+//
+// "HTML"
+//   - (§1) Use `golang.org/x/net/html` to get a tree of `html.Node`
+//   - (§1) From each Node make a `HtmlToken` (in a list?) incl. `GToken` and `GTag`
+//
+// .
 func (p *Contentity) st1_Read() *Contentity {
 	if p.HasError() {
 		return p
 	}
 	p.logStg = "11"
 	p.L(LProgress, "11:Read")
-	p.L(LInfo, "@entry: FileType<%s> MType<%v>", p.FileType(), p.MType)
+	p.L(LInfo, "@entry: FileType:%s MType:%s", p.FileType(), p.MType)
 	return p.
 		st1a_ProcessMetadata().
 		st1b_GetCPR().
@@ -43,7 +48,8 @@ func (p *Contentity) st1_Read() *Contentity {
 
 // st1a_ProcessMetadata processes metadata.
 // Note that for Markdown, YAML metadata parsing is
-// currently done during initial file content analysis.
+// already done during initial file content analysis.
+// .
 func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 	if p.HasError() {
 		return p
@@ -88,14 +94,15 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 	return p
 }
 
-// st1b_GetCPR generates Concrete ParserResults
+// st1b_GetCPR generates Concrete Parser Results
+// .
 func (p *Contentity) st1b_GetCPR() *Contentity {
 	if p.HasError() {
 		return p
 	}
 	textRaw := XU.GetSpan(p.PathProps.Raw, p.Text)
 	if textRaw == "" {
-		p.L(LWarning, "Hack in st1-read L98")
+		p.L(LWarning, "Lame hack in st1-read L105")
 		textRaw = p.PathProps.Raw
 	}
 	p.logStg = "1b"
@@ -110,14 +117,10 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *PU.ParserResults_mkdn
 		pPR, e = PU.GenerateParserResults_mkdn(textRaw)
 		if e != nil {
-			// e = errors.New("st[1c] " + e.Error())
-			// p.Err = errors.New("st[1c] " + e.Error())
-			// p.L(LError, "Failure in GenerateParserResults_mkdn")
-			p.Err = fmt.Errorf("GenerateParserResults_mkdn: %w", e)
+			p.Err = fmt.Errorf("GenerateParserResults_mkdn says: %w", e)
 			return p
 		}
 		if pPR == nil {
-			// p.L(LError, "nil ParserResults")
 			p.Err = errors.New("nil ParserResults_mkdn")
 		}
 		p.ParserResults = pPR
@@ -128,9 +131,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *PU.ParserResults_html
 		pPR, e = PU.GenerateParserResults_html(textRaw)
 		if e != nil {
-			// p.Err = errors.New("st[1b] " + e.Error())
-			// p.L(LError, "Failure in GenerateParserResults_html")
-			p.Err = fmt.Errorf("GenerateParserResults_html: %w", e)
+			p.Err = fmt.Errorf("GenerateParserResults_html says: %w", e)
 			return p
 		}
 		p.ParserResults = pPR
@@ -141,15 +142,12 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		var pPR *XU.ParserResults_xml
 		pPR, e := XU.GenerateParserResults_xml(textRaw)
 		if e != nil {
-			// e = fmt.Errorf("XML tokenization failed: %w", e)
-			// p.L(LError, "Failure in GenerateParserResults_xml")
-			p.Err = fmt.Errorf("GenerateParserResults_xml: %w", e)
+			p.Err = fmt.Errorf("GenerateParserResults_xml says: %w", e)
 		}
 		p.ParserResults = pPR
 		p.L(LOkay, "XML tokens: got %d \n", len(pPR.NodeSlice))
 		return p
 	default:
-		// p.L(LError, "st1b_GetCPR: bad file type: "+p.FileType())
 		p.Err = errors.New("Bad file type: " + p.FileType())
 	}
 	return p
@@ -157,13 +155,13 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 
 // st1c_MakeAFLfromCFL is Step 1c:
 // Make Abstract Flat List from Concrete Flat List
+// .
 func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	if p.HasError() {
 		return p
 	}
 	p.logStg = "1c"
 	var e error
-	// var errmsg string
 	var GTs []*gtoken.GToken
 
 	fmt.Fprintln(p.GTokensWriter, "=== Input file:", p.AbsFP())
@@ -178,7 +176,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		pCPR_M.DiagDest = p.GTokensWriter
 		GTs, e = gtoken.DoGTokens_mkdn(pCPR_M)
 		if e != nil {
-			p.SetErrWrap("mkdn.gtokens", e)
+			p.WrapError("mkdn.gtokens", e)
 		}
 		// p.GTokens = GTs
 		// Compress out nil GTokens
@@ -194,7 +192,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		pCPR_H.DiagDest = p.GTokensWriter
 		GTs, e = gtoken.DoGTokens_html(pCPR_H)
 		if e != nil {
-			p.SetErrWrap("html.gtokens", e)
+			p.WrapError("html.gtokens", e)
 		}
 		p.GTokens = GTs
 	case "XML":
@@ -203,7 +201,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		pCPR_X.DiagDest = p.GTokensWriter
 		GTs, e = gtoken.DoGTokens_xml(pCPR_X)
 		if e != nil {
-			p.SetErrWrap("GToken-ization", e)
+			p.WrapError("GToken-ization", e)
 		}
 		p.TallyTags()
 		// fmt.Printf("==> Tags: %v \n", pGF.TagTally)

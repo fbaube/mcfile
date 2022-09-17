@@ -10,22 +10,13 @@ import (
 // Contentity + SrcLoc (in source code) +
 // PathError struct { Op, Path string; Err error }
 //
-// Maybe use the format pkg.filename.methodname.Lnn
+// # Maybe use the format pkg.filename.methodname.Lnn
 //
 // In code where package `mcfile` is not available,
 // try a fileutils.PathPropsError
-//
 type ContentityError struct {
 	PE fs.PathError
 	*Contentity
-}
-
-func (p *Contentity) SetErrMsg(s string) {
-	p.Err = fmt.Errorf("[%02d:%s] %s", p.logIdx, p.logStg, s)
-}
-
-func (p *Contentity) SetErrWrap(s string, e error) {
-	p.Err = fmt.Errorf("[%02d:%s] %s: %w", p.logIdx, p.logStg, s, e)
 }
 
 func WrapAsContentityError(e error, op string, cty *Contentity) ContentityError {

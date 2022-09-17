@@ -46,19 +46,19 @@ func (p *Contentity) st2a_PrepareToTree() *Contentity {
 	case "XML":
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
-			p.SetErrWrap("can't make gtags from xml", e)
+			p.WrapError("can't make gtags from xml", e)
 			return p
 		}
 	case "MKDN":
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
-			p.SetErrWrap("can't make gtags from mkdn", e)
+			p.WrapError("can't make gtags from mkdn", e)
 			return p
 		}
 	case "HTML":
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
-			p.SetErrWrap("can't make gtags from html", e)
+			p.WrapError("can't make gtags from html", e)
 			return p
 		}
 	}
@@ -75,12 +75,12 @@ func (p *Contentity) st2b_ParseIntoTree() *Contentity {
 	p.GTree, e = gtree.NewGTreeFromGTags(p.GTags)
 	if e != nil {
 		println("==> mcfl.st2b: Error!:", e.Error())
-		p.SetErrWrap("NewGTreeFromGTags", e)
+		p.WrapError("NewGTreeFromGTags", e)
 		return p
 	}
 	if p.GTree == nil {
 		println("==> mcfl.st2b: got nil Gtree: %s", e.Error())
-		p.SetErrWrap("nil tree from NewGTreeFromGTags", e)
+		p.WrapError("nil tree from NewGTreeFromGTags", e)
 	}
 	if p.GTree != nil && p.GTreeWriter != nil {
 		gtoken.DumpTo(p.GTokens, p.GTreeWriter)
