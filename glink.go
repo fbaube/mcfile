@@ -50,33 +50,33 @@ type GLinks struct {
 	// OwnerP points back to the owning struct, so that
 	// `GLink`s can be processed easily as simple data structures.
 	OwnerP interface{}
-	// OutgoingKeys are outgoing key-based links/references
-	OutgoingKeys []*GLink // (Extl|Intl)KeyRefs
-	// IncomableKeys are unique key-based definitions that are possible
-	// resolution targets (of same or other files' `OutgoingKeys`)
-	IncomableKeys []*GLink // (Extl|Intl)KeyDefs
-	// OutgoingURIs are outgoing URI-based links/references
-	OutgoingURIs []*GLink // (Extl|Intl)UriRefs
-	// IncomableURIs are unique URI-based definitions that are possible
-	// resolution targets (of same or other files' `OutgoingURIs`)
-	IncomableURIs []*GLink // (Extl|Intl)UriDefs
+	// KeyRefncs are outgoing key-based links/references
+	KeyRefncs []*GLink // (Extl|Intl)KeyReferences
+	// KeyRefnts are unique key-based definitions that are possible
+	// referents (resolution targets) of same or other files' [KeyRefncs]
+	KeyRefnts []*GLink // (Extl|Intl)KeyDefs
+	// UriRefncs are outgoing URI-based links/references
+	UriRefncs []*GLink // (Extl|Intl)UriReferences
+	// UriRefnts are unique URI-based definitions that are possible
+	// referents(resolution targets) of same or other files' [UriRefncs]
+	UriRefnts []*GLink // (Extl|Intl)UriDefs
 }
 
 // GLink summarizes a link (or key) (or reference) found in markup content.
 // It is either URI-based (`href conref id`) or key-based (`key keyref`). It
 // applies to all LwDITA formats, but not all fields apply to all LwDITA formats.
 type GLink struct {
-	// else is Def (which are much more numerous)
-	IsRef bool
-	// else is Intl (which are more numerous)
+	// IsRefnc - else is Refnt (Referents are much more numerous)
+	IsRefnc bool
+	// IsExtl - else is Intl (which are more numerous)
 	IsExtl bool
-	// "http", "key", "idref", "uri"
+	// AddressMode is "http", "key", "idref", "uri"
 	AddressMode string
-	// id, idref, href, xref, keyref, etc.
+	// Att is the XML attribute - id, idref, href, xref, keyref, etc.
 	Att string
-	// the tag that has this link-related attribute of interest
+	// Tag is the tag that has this link-related attribute of interest
 	Tag string
-	// as redd in during parsing
+	// Link_raw as redd in during parsing
 	Link_raw string
 	// RelFP can be a URI or the resolution of a keyref.
 	// "" if target is in same file; NOTE This is relative to the
@@ -85,15 +85,16 @@ type GLink struct {
 	// AbsFP can be a URI or the resolution of a keyref.
 	// "" if target is in same file
 	AbsFP FU.AbsFilePath
-	// if present
+	// TopicID iff present (but isn't it mandatory ?)
 	TopicID string
-	// peeled off from Raw
+	// FragID is peeled off from Raw
 	FragID string
-	// used to narrow in on difficult cases
+	// Resolved is used to narrow in on difficult cases
 	Resolved bool
-	// the tag where the GLink is defined
+	// LinkedFrom is the GTag where the GLink is defined
 	LinkedFrom *gtree.GTag
-	// can be nil: the tag where the GLink is resolved to, quite possibly
-	// in another file, which we hope we also have available in memory.
+	// Original can be nil: it is the tag where the GLink is resolved to,
+	// i.e. the REFERENT, and is quite possibly in another file, which we
+	// hope we also have available in memory.
 	Original *gtree.GTag
 }

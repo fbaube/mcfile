@@ -5,15 +5,22 @@ import (
 )
 
 // ExecuteStages processes a Contentity to completion in an isolated
-// thread, and can eaily be converted to run as a goroutine.
+// thread, and can eaily be converted to run as a goroutine. Summary:
+//   - st0_Init()
+//   - st1_Read()
+//   - st2_Tree()
+//   - st3_Refs()
+//   - st4_Done() (not currently called, but
+//     will work on all input files at once !)
 //
-// Package mlog has been added. HOWEVER an interesting question is,
-// how is an error indicated and a thread terminated prematurely ?
-// One method was to set the field `Contentity.Err`, which has to
-// be checked for at the start of functions. Another way might be
-// to pass in a `Context` and use its cancellation capability. Yet
-// another way might be to `panic(..)“, and so this function already
-// has code to catch a panic.
+// An interesting question is, how can we indicate an error and
+// terminate a thread prematurely ? The method currently chosen
+// is to use interface [github.com/fbaube/utils/miscutils/Errer].
+// This has to be checked for at the start of a func.
+//
+// We could also pass in a `Context` and use its cancellation
+// capability. Yet another way might be simply to `panic(..)“,
+// and so this function already has code to catch a panic.
 // .
 func (p *Contentity) ExecuteStages() *Contentity {
 	if p.PathProps == nil {

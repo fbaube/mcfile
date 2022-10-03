@@ -3,10 +3,14 @@ package mcfile
 import L "github.com/fbaube/mlog"
 
 // st3_Refs gathers all the various types of internal and
-// external references.
-// - DoBlockList()
-// - DoGLinks()
-// - DoTableOfContents()
+// external references. Summary:
+//   - 3a DoBlockList() // make list of blocks
+//   - 3b DoGLinks()    // gather links
+//   - 3c DoTableOfContents() // make ToC
+//
+// Some elms are not clearly either BLK or INL, so we
+// do (or should) permit an indeterminate third state.
+// .
 func (p *Contentity) st3_Refs() *Contentity {
 	if p.HasError() {
 		return p
@@ -16,7 +20,10 @@ func (p *Contentity) st3_Refs() *Contentity {
 	return p.DoBlockList().DoGLinks().DoTableOfContents()
 }
 
-// DoBlockList is Step 3a
+// DoBlockList makes a list of all the nodes that are
+// blocks, so that they cn be traversed for rendering,
+// and targeted for references.
+// .
 func (p *Contentity) DoBlockList() *Contentity {
 	if p.HasError() {
 		return p
@@ -32,7 +39,8 @@ func (p *Contentity) DoBlockList() *Contentity {
 	return p
 }
 
-// DoGLinks is Step 3b
+// DoGLinks gathers links.
+// .
 func (p *Contentity) DoGLinks() *Contentity {
 	if p.HasError() {
 		return p
@@ -50,7 +58,8 @@ func (p *Contentity) DoGLinks() *Contentity {
 	return p
 }
 
-// DoTableOfContents is Step 3c
+// DoTableOfContents makes a ToC.
+// .
 func (p *Contentity) DoTableOfContents() *Contentity {
 	if p.HasError() {
 		return p

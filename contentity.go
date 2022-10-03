@@ -76,7 +76,7 @@ func (p Contentity) String() string {
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("||%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
 		SU.Tildotted(p.PathProps.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
-		p.OutgoingKeys, p.IncomableKeys, p.OutgoingURIs, p.IncomableURIs)
+		p.KeyRefncs, p.KeyRefnts, p.UriRefncs, p.UriRefnts)
 	/*
 			if p.XmlFileMeta != nil {
 				s += fmt.Sprintf("XmlFileMeta|%s||", p.XmlFileMeta.String())

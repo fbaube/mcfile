@@ -156,18 +156,18 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 			// Link SOURCES
 			case "idref", "idrefs", "href", "conref",
 				"keyref", "data-conref", "data-keyref":
-				pGL.IsRef = true
+				pGL.IsRefnc = true
 				if pGL.AddressMode == "key" {
-					p.OutgoingKeys = append(p.OutgoingKeys, pGL)
+					p.KeyRefncs = append(p.KeyRefncs, pGL)
 				} else {
-					p.OutgoingURIs = append(p.OutgoingURIs, pGL)
+					p.UriRefncs = append(p.UriRefncs, pGL)
 				}
 				// Link TARGETS
 			case "id", "keys", "data-keys":
 				if pGL.AddressMode == "key" {
-					p.IncomableKeys = append(p.IncomableKeys, pGL)
+					p.KeyRefnts = append(p.KeyRefnts, pGL)
 				} else {
-					p.IncomableURIs = append(p.IncomableURIs, pGL)
+					p.UriRefnts = append(p.UriRefnts, pGL)
 				}
 			}
 		}
