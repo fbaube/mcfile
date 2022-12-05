@@ -109,7 +109,7 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 			pGL.Tag = theTag
 			pGL.Link_raw = XA.Value
 			// Is it HTTP, FTP, etc. ?
-			if i := S.Index(pGL.Link_raw, "://"); i > 0 {
+			if i := S.Index(pGL.Link_raw, "://"); i > 0 { // not S.Cut(.)
 				pGL.AddressMode = pGL.Link_raw[:i]
 				pGL.Resolved = true
 				if pGL.Att != "href" {

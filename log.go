@@ -3,6 +3,7 @@ package mcfile
 import (
 	"fmt"
 
+	LU "github.com/fbaube/logutils"
 	L "github.com/fbaube/mlog"
 )
 
@@ -12,28 +13,28 @@ func (p *Contentity) LogPrefix(mid string) string {
 
 func (p *Contentity) L(level LL, format string, a ...interface{}) {
 	// L.L.Log(level, format, a...)
-	L.L.LogWithString(L.Level(level), format,
+	L.L.LogWithString(LU.Level(level), format,
 		fmt.Sprintf("F%02d", p.logIdx)+"|stg"+p.logStg, a...)
 }
 
 func (p *Contentity) LogTextQuote(level LL, textquote string, format string, a ...interface{}) {
 	// L.L.Log(level, format, a...)
-	L.L.LogWithString(L.Level(level), format,
+	L.L.LogWithString(LU.Level(level), format,
 		fmt.Sprintf("%02d", p.logIdx)+","+p.logStg, a...)
 	panic("FIXME")
 	// L.L.LogMultilineAsIs(SU.IndentWith("   |  ", textquote))
 }
 
-type LL L.Level
+type LL LU.Level
 
 var LDbg, LProgress, LInfo, LOkay, LWarning, LError, LPanic LL
 
 func init() {
-	LDbg = LL(L.LevelDbg)
-	LProgress = LL(L.LevelProgress)
-	LInfo = LL(L.LevelInfo)
-	LOkay = LL(L.LevelOkay)
-	LWarning = LL(L.LevelWarning)
-	LError = LL(L.LevelError)
-	LPanic = LL(L.LevelPanic)
+	LDbg = LL(LU.LevelDbg)
+	LProgress = LL(LU.LevelProgress)
+	LInfo = LL(LU.LevelInfo)
+	LOkay = LL(LU.LevelOkay)
+	LWarning = LL(LU.LevelWarning)
+	LError = LL(LU.LevelError)
+	LPanic = LL(LU.LevelPanic)
 }
