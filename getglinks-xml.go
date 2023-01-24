@@ -7,6 +7,7 @@ import (
 	S "strings"
 
 	FU "github.com/fbaube/fileutils"
+	"github.com/fbaube/gtoken"
 	L "github.com/fbaube/mlog"
 	SU "github.com/fbaube/stringutils"
 )
@@ -92,7 +93,7 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 			continue
 		}
 		// If it's not a Start Element, skip it
-		if GT.TTType != "Elm" {
+		if GT.TTType != gtoken.TT_type_ELMNT {
 			continue
 		}
 		GN := GT.GName

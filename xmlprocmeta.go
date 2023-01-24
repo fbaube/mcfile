@@ -12,7 +12,7 @@ func (p *Contentity) RefineDirectives() error {
 
 	var pTag *gtree.GTag
 	for _, pTag = range p.GTags {
-		if pTag.TTType != "Dir" {
+		if pTag.TTType != gtoken.TT_type_DRCTV {
 			continue
 		}
 		// Here are the directives we are dealing with.
@@ -26,17 +26,17 @@ func (p *Contentity) RefineDirectives() error {
 		// NOTATION Name ExtID
 		// ilog.Printf("Dir.PRE |%s|%s|", RT.string1, RT.string2)
 
-		pTag.TTType = gtoken.TTType(pTag.Keyword)
-		if pTag.TTType == "Dir" {
+		pTag.TTType = gtoken.TTType(pTag.TagOrPrcsrDrctv)
+		if pTag.TTType == gtoken.TT_type_DRCTV {
 			panic("YIKES, leftover Dir Tagtype")
 		}
-		pTag.Keyword, pTag.Otherwords = SU.SplitOffFirstWord(pTag.Otherwords)
+		pTag.TagOrPrcsrDrctv, pTag.Datastring = SU.SplitOffFirstWord(pTag.Datastring)
 
-		println("    --> RefineDirectives:", pTag.TTType, ",", pTag.Keyword)
+		println("    --> RefineDirectives:", pTag.TTType, ",", pTag.TagOrPrcsrDrctv)
 
-		if pTag.TTType == "ENTITY" && pTag.Keyword == "%" {
+		if pTag.TTType == "ENTITY" && pTag.TagOrPrcsrDrctv == "%" {
 			pTag.EntityIsParameter = true
-			pTag.Keyword, pTag.Otherwords = SU.SplitOffFirstWord(pTag.Otherwords)
+			pTag.TagOrPrcsrDrctv, pTag.Datastring = SU.SplitOffFirstWord(pTag.Datastring)
 			// pXI.GotDtdDecls = true
 		}
 		// fmt.Printf("Normalized Directive: %+v \n", RT)

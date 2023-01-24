@@ -5,6 +5,7 @@ import (
 	S "strings"
 
 	"github.com/fbaube/gparse"
+	"github.com/fbaube/gtoken"
 	SU "github.com/fbaube/stringutils"
 )
 
@@ -82,8 +83,8 @@ func (p *Contentity) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error
 		} else {
 			newEnt.RefChar = "&"
 		}
-		theSymbol := E.Keyword
-		theRest := SU.NormalizeWhitespace(E.Otherwords)
+		theSymbol := E.TagOrPrcsrDrctv
+		theRest := SU.NormalizeWhitespace(E.Datastring)
 
 		newEnt.NameOnly = theSymbol
 		newEnt.TheRest = theRest
@@ -183,7 +184,6 @@ func (p *Contentity) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error
 // Note that each Token has been normalized. -n-
 // rtType:ENTITY  string1:foo  string2:"FOO"  entityIsParameter:false -n-
 // rtType:ENTITY  string1:bar  string2:"BAR"  entityIsParameter:true
-//
 func (p *Contentity) DoEntitiesList() error {
 	// pX := p.TheXml()
 	println("    ==> DoEntitiesList TODO")
@@ -208,8 +208,8 @@ func (p *Contentity) DoEntitiesList() error {
 		} else {
 			newEnt.RefChar = "&"
 		}
-		theSymbol := E.Keyword
-		theRest := SU.NormalizeWhitespace(E.Otherwords)
+		theSymbol := E.TagOrPrcsrDrctv
+		theRest := SU.NormalizeWhitespace(E.Datastring)
 
 		newEnt.NameOnly = theSymbol
 		newEnt.TheRest = theRest
@@ -349,25 +349,25 @@ func (p *Contentity) SubstituteEntities() error {
 					}
 				*/
 				switch E.TTType {
-				case "Elm":
+				case gtoken.TT_type_ELMNT:
 					continue
-				case "end":
+				case gtoken.TT_type_ENDLM:
 					continue
-				case "PrI":
+				case gtoken.TT_type_PINST:
 					continue
-				case "Cmt":
+				case gtoken.TT_type_COMNT:
 					continue
-				case "Dir":
+				case gtoken.TT_type_DRCTV:
 					continue // panic("WTF")
-				case "DOCTYPE":
+				case gtoken.TT_type_Doctype:
 					continue
 				default:
 					// CD, ELEMENT, ATTLIST, ENTITY, NOTATION
-					if E.TTType == "ChD" {
-						s2check = E.Keyword
+					if E.TTType == gtoken.TT_type_CDATA {
+						s2check = E.TagOrPrcsrDrctv
 						// if s2check != "" { fmt.Printf("SubEnts got CDATA|%v| \n", RT) }
 					} else {
-						s2check = E.Otherwords
+						s2check = E.Datastring
 					}
 					// Check for all the legal entity reference characters.
 					if -1 == S.IndexAny(s2check, "&%;") {
