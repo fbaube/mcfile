@@ -8,6 +8,7 @@ import (
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 	L "github.com/fbaube/mlog"
+	SU "github.com/fbaube/stringutils"
 )
 
 // st2_Tree takes the output of st1_Read - which at a minimum
@@ -44,20 +45,20 @@ func (p *Contentity) st2a_PrepareToTree() *Contentity {
 	}
 	p.logStg = "2a"
 	var e error
-	switch p.FileType() {
-	case "XML":
+	switch p.MarkupType() {
+	case SU.MU_type_XML:
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
 			p.WrapError("can't make gtags from xml gtokens", e)
 			return p
 		}
-	case "MKDN":
+	case SU.MU_type_MKDN:
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
 			p.WrapError("can't make gtags from mkdn gtokens", e)
 			return p
 		}
-	case "HTML":
+	case SU.MU_type_HTML:
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
 			p.WrapError("can't make gtags from html gtokens", e)
@@ -100,12 +101,12 @@ func (p *Contentity) st2c_PostTreeMeta() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.FileType() {
-	case "XML":
+	switch p.MarkupType() {
+	case SU.MU_type_XML:
 		L.L.Warning("TODO> st2c_PostTreeMeta XML")
-	case "MKDN":
+	case SU.MU_type_MKDN:
 		L.L.Warning("TODO> st2c_PostTreeMeta MKDN")
-	case "HTML":
+	case SU.MU_type_HTML:
 		L.L.Warning("TODO> st2c_PostTreeMeta HTML")
 	}
 	return p
@@ -121,8 +122,8 @@ func (p *Contentity) st2d_NormalizeTree() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.FileType() {
-	case "XML":
+	switch p.MarkupType() {
+	case SU.MU_type_XML:
 		L.L.Warning("TODO> 2d. NormalizeTree XML ==> ENTs, etc.!")
 		/*
 			e = p.DoEntitiesList()
@@ -134,9 +135,9 @@ func (p *Contentity) st2d_NormalizeTree() *Contentity {
 				return errors.Wrap(e, "SubstituteEntities")
 			}
 		*/
-	case "MKDN":
+	case SU.MU_type_MKDN:
 		// L.L.Warning("TODO> 2d. NormalizeTree MKDN")
-	case "HTML":
+	case SU.MU_type_HTML:
 		// L.L.Warning("TODO> 2d. NormalizeTree HTML")
 	}
 	return p

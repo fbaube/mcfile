@@ -5,6 +5,7 @@ import (
 
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
+	SU "github.com/fbaube/stringutils"
 	XU "github.com/fbaube/xmlutils"
 	// L "github.com/fbaube/mlog"
 )
@@ -37,7 +38,7 @@ func (p *Contentity) st1_Read() *Contentity {
 	}
 	p.logStg = "11"
 	p.L(LProgress, "=== 11:Read ===")
-	p.L(LInfo, "@entry: FileType:%s MType:%s", p.FileType(), p.MType)
+	p.L(LInfo, "@entry: MarkupType:%s MType:%s", p.MarkupType(), p.MType)
 	return p.
 		st1a_ProcessMetadata().
 		st1b_GetCPR().
@@ -59,35 +60,35 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 		p.L(LInfo, "No metadata found")
 		return p
 	}
-	switch ft := p.FileType(); ft {
-	case "XML", "HTML":
+	switch mut := p.MarkupType(); mut {
+	case SU.MU_type_XML, SU.MU_type_HTML:
 		p.L(LDbg, "MetaPos:%d MetaRaw(): %s",
 			p.Meta.Beg.Pos, metaRaw)
 		if p.Meta.Beg.Pos != 0 {
 			var e error
 			var ct int
-			p.L(LProgress, "Doing "+ft)
-			if ft == "HTML" {
+			p.L(LProgress, "Doing "+string(mut))
+			if mut == SU.MU_type_HTML {
 				var pPR *PU.ParserResults_html
 				pPR, e = PU.GenerateParserResults_html(metaRaw)
 				ct = len(pPR.NodeSlice)
 				p.ParserResults = pPR
 			}
-			if ft == "XML" {
+			if mut == SU.MU_type_XML {
 				var pPR *XU.ParserResults_xml
 				pPR, e = XU.GenerateParserResults_xml(metaRaw)
 				ct = len(pPR.NodeSlice)
 				p.ParserResults = pPR
 			}
 			if e != nil {
-				p.L(LError, "%s tokenization failed: %w", ft, e)
+				p.L(LError, "%s tokenization failed: %w", mut, e)
 				p.ParserResults = nil
 			}
-			p.L(LOkay, "%s tokens: got %d", ft, ct)
+			p.L(LOkay, "%s tokens: got %d", mut, ct)
 			p.L(LWarning, "TODO: Do sthg with XML/HTML metadata")
 			return p
 		}
-	case "MKDN":
+	case SU.MU_type_MKDN:
 		p.L(LWarning, "TODO: Do sthg with YAML metadata")
 	}
 	return p
@@ -111,8 +112,8 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		return p
 	}
 	var e error
-	switch p.FileType() {
-	case "MKDN":
+	switch p.MarkupType() {
+	case SU.MU_type_MKDN:
 		var pPR *PU.ParserResults_mkdn
 		pPR, e = PU.GenerateParserResults_mkdn(textRaw)
 		if e != nil {
@@ -126,7 +127,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		p.L(LOkay, "MKDN tokens: got %d", len(pPR.NodeSlice))
 		// p.TallyTags()
 		return p
-	case "HTML":
+	case SU.MU_type_HTML:
 		var pPR *PU.ParserResults_html
 		pPR, e = PU.GenerateParserResults_html(textRaw)
 		if e != nil {
@@ -137,7 +138,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		p.L(LOkay, "HTML tokens: got %d", len(pPR.NodeSlice))
 		// p.TallyTags()
 		return p
-	case "XML":
+	case SU.MU_type_XML:
 		var pPR *XU.ParserResults_xml
 		pPR, e := XU.GenerateParserResults_xml(textRaw)
 		if e != nil {
@@ -147,7 +148,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		p.L(LOkay, "XML tokens: got %d \n", len(pPR.NodeSlice))
 		return p
 	default:
-		p.SetErrMsg("bad file type: " + p.FileType())
+		p.SetErrMsg("bad file type: " + string(p.MarkupType()))
 	}
 	return p
 }
@@ -165,8 +166,8 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 
 	fmt.Fprintln(p.GTokensWriter, "=== Input file:", p.AbsFP())
 
-	switch p.FileType() {
-	case "MKDN":
+	switch p.MarkupType() {
+	case SU.MU_type_MKDN:
 		var pCPR_M *PU.ParserResults_mkdn
 		if nil == p.ParserResults {
 			p.L(LError, "ParserResults are nil")
@@ -185,7 +186,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 				p.GTokens = append(p.GTokens, GT)
 			}
 		}
-	case "HTML":
+	case SU.MU_type_HTML:
 		var pCPR_H *PU.ParserResults_html
 		pCPR_H = p.ParserResults.(*PU.ParserResults_html)
 		pCPR_H.DiagDest = p.GTokensWriter
@@ -194,7 +195,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 			p.WrapError("html.gtokens", e)
 		}
 		p.GTokens = GTs
-	case "XML":
+	case SU.MU_type_XML:
 		var pCPR_X *XU.ParserResults_xml
 		pCPR_X = p.ParserResults.(*XU.ParserResults_xml)
 		pCPR_X.DiagDest = p.GTokensWriter
@@ -223,18 +224,18 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 		return p
 	}
 	p.logStg = "1d"
-	switch p.FileType() {
-	case "MKDN":
+	switch p.MarkupType() {
+	case SU.MU_type_MKDN:
 		// Markdown YAML metadata was processed in step st1a
 		return p
-	case "HTML": /*
+	case SU.MU_type_HTML: /*
 			var pPR *PU.ParserResults_html
 			pPR = p.CPR.(*PU.ParserResults_html)
 			z := pPR. */
 		// Inside <head>: <meta> <title> <base> <link> <style>
 		// See also: https://gist.github.com/lancejpollard/1978404
 		return p
-	case "XML":
+	case SU.MU_type_XML:
 		// [Lw]DITA stuff, ?DublinCore
 		p.L(LWarning, "cty.st1.TODO: SetMTypePerDoctypeFields:")
 		p.L(LDbg, "     \\ "+p.PathAnalysis.String())

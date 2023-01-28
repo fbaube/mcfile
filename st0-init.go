@@ -1,5 +1,7 @@
 package mcfile
 
+import SU "github.com/fbaube/stringutils"
+
 // st0_Init does pre-processing prep and checks.
 //
 // Input: A `Contentity` that has had its contents analyzed.
@@ -27,33 +29,33 @@ func (p *Contentity) st0_Init() *Contentity {
 	return p.st0a_SanityCheck()
 }
 
-// st0a_SanityCheck checks that `mcfile.FileType()` &
+// st0a_SanityCheck checks that `mcfile.MarkupType()` &
 // `mcfile.IsXML()` are OK and that `MCFile.MType[]` is set.
 func (p *Contentity) st0a_SanityCheck() *Contentity {
 	p.logStg = "0a"
 	if p.MType == "" {
 		p.SetErrMsg("MType is empty")
 	}
-	switch p.FileType() {
-	case "XML":
+	switch p.MarkupType() {
+	case SU.MU_type_XML:
 		if !p.IsXML() {
 			p.SetErrMsg("is XML but: !XML?!")
 		}
-	case "MKDN":
+	case SU.MU_type_MKDN:
 		if p.IsXML() {
 			p.SetErrMsg("is Mkdn but: XML?!")
 		}
-	case "HTML":
+	case SU.MU_type_HTML:
 		if !p.IsXML() {
 			p.SetErrMsg("is HTML but: !XML?!")
 		}
-	case "BIN":
+	case SU.MU_type_BIN:
 		if p.IsXML() {
 			// panic("Init error: is BIN but: XML?!")
 			p.SetErrMsg("is BIN but: XML?!")
 		}
 	default:
-		p.SetErrMsg("bad/missing contentitype: " + p.FileType())
+		p.SetErrMsg("bad/missing contentitype: " + string(p.MarkupType()))
 	}
 	return p
 }

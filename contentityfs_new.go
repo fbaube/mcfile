@@ -38,7 +38,7 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 
 	// DEBUG
 	for _, pp := range pCFS.asSlice {
-		L.L.Dbg("%s ", pp.FileType())
+		L.L.Dbg("%s ", pp.MarkupType())
 	}
 	L.L.Dbg(" END")
 

@@ -1,6 +1,7 @@
 package mcfile
 
 import (
+	SU "github.com/fbaube/stringutils"
 	"runtime/debug"
 )
 
@@ -33,7 +34,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		p.L(LInfo, "Has error: skipping")
 		return p
 	}
-	if p.FileType() == "BIN" {
+	if p.MarkupType() == SU.MU_type_BIN {
 		p.L(LWarning, "Skipping ALL stages for binary file")
 		return p
 	}

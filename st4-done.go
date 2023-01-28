@@ -1,6 +1,9 @@
 package mcfile
 
-import L "github.com/fbaube/mlog"
+import (
+	L "github.com/fbaube/mlog"
+	SU "github.com/fbaube/stringutils"
+)
 
 // st4_Done does final cleanup and beautification.
 // .
@@ -10,12 +13,12 @@ func (p *Contentity) st4_Done() *Contentity {
 	}
 	// p.L(LProgress, "Done")
 	L.L.Progress("=== 44:Done ===")
-	switch p.FileType() {
-	case "XML":
+	switch p.MarkupType() {
+	case SU.MU_type_XML:
 		// L.L.Warning("TODO> 4. Done XML")
-	case "HTML":
+	case SU.MU_type_HTML:
 		// L.L.Warning("TODO> 4. Done HTML")
-	case "MKDN":
+	case SU.MU_type_MKDN:
 		// L.L.Warning("TODO> 4. Done MKDN")
 	}
 	return p

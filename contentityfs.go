@@ -109,7 +109,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		L.L.Error("Skipping this item!")
 		return nil
 	}
-	L.L.Dbg("Directory traverser: FileType: " + p.FileType())
+	L.L.Dbg("Directory traverser: MarkupType: " + string(p.MarkupType()))
 	nxtIdx := len(pCFS.asSlice)
 	pCFS.asSlice = append(pCFS.asSlice, p)
 	p.logIdx = nxtIdx
