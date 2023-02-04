@@ -14,6 +14,10 @@ var pCFS *ContentityFS
 
 // NewContentityFS is duh.
 func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
+
+	L.L.Warning("MUST FILTER! NewContentityFS, " +
+		"mcm/mcfile/contentityfs_new.go L.18")
+
 	pCFS = new(ContentityFS)
 	// Initialize embedded baseFS
 	pCFS.BaseFS = *(FSU.NewBaseFS(path))

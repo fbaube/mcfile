@@ -1,6 +1,9 @@
 package mcfile
 
-import SU "github.com/fbaube/stringutils"
+import (
+	// LU "github.com/fbaube/logutils"
+	SU "github.com/fbaube/stringutils"
+)
 
 // st0_Init does pre-processing prep and checks.
 //
@@ -35,6 +38,9 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 	p.logStg = "0a"
 	if p.MType == "" {
 		p.SetErrMsg("MType is empty")
+	}
+	if len(p.MarkupType()) < 3 || len(p.MarkupType()) > 4 {
+		panic("BAD MarkupType in st0a: " + string(p.MarkupType()))
 	}
 	switch p.MarkupType() {
 	case SU.MU_type_XML:
