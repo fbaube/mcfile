@@ -26,7 +26,7 @@ type Contentity struct { // has has has has Raw
 	logIdx int
 	logStg string
 	// ContentityRecord is what gets persisted to the DB
-	RU.ContentityRecord // has has has Raw
+	RU.ContentityRecord // this has Raw
 	// FU.OutputFiles // NOTE Does this belong here ? Not sure.
 
 	// ParserResults is parseutils.ParserResults_ffs
