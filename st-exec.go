@@ -24,11 +24,9 @@ import (
 // and so this function already has code to catch a panic.
 // .
 func (p *Contentity) ExecuteStages() *Contentity {
-	if p.PathProps == nil {
-		panic("ExecuteStages :: nil PP")
-	}
-	if len(p.PathProps.Raw) == 0 {
-		panic("ExecuteStages :: ZERO-len Raw")
+	if p.PathProps.Raw == "" {
+		p.L(LWarning, "ExecuteStages :: ZERO-len Raw")
+		return p
 	}
 	if p.HasError() {
 		p.L(LInfo, "Has error: skipping")

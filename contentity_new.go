@@ -46,6 +46,10 @@ func NewContentity(aPath string) (*Contentity, error) {
 	if e != nil {
 		return nil, fmt.Errorf("newcontentity: %w", e)
 	}
+	e = pPP.FetchRaw()
+	if e != nil {
+		return nil, fmt.Errorf("newcontentity: %w", e)
+	}
 	// =============================
 	//  "Promote" to a PathAnalysis
 	// =============================
@@ -55,12 +59,11 @@ func NewContentity(aPath string) (*Contentity, error) {
 		return nil, fmt.Errorf(
 			"NewContentity(PP=>PA)<%s>: %w", aPath, e)
 	}
-	pPA.PathProps = pPP
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
 	var pCR *RU.ContentityRecord
-	pCR, e = sqlite.NewContentityRecord(pPA)
+	pCR, e = sqlite.NewContentityRecord(pPP, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewContentity(PA=>CR)<%s>: %s", aPath, e)
 		return nil, fmt.Errorf(
@@ -71,7 +74,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	pNewCty.ContentityRecord = *pCR
 	if pPP.IsOkayDir() {
 		L.L.Info(SU.Ybg(" Directory " + SU.ElideHomeDir(pPP.AbsFP.S())))
-		pNewCty.ContentityRecord.PathProps = pPP
+		pNewCty.ContentityRecord.PathProps = *pPP
 		return pNewCty, nil
 	}
 	L.L.Okay(SU.Gbg(" " + pPP.String() + " "))

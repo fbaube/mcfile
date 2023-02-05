@@ -55,11 +55,10 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 		return nil, fmt.Errorf(
 			"NewRootContentity(PP=>PA)<%s>: %w", aRootPath, e)
 	}
-	pPA.PathProps = pPP
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
-	pCR, e := sqlite.NewContentityRecord(pPA)
+	pCR, e := sqlite.NewContentityRecord(pPP, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewRootContentity(PA=>CR)<%s>: %s", aRootPath, e)
 		return nil, fmt.Errorf(

@@ -109,36 +109,35 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	if S.Contains(path, "/.git") {
 		return nil
 	}
+	var reasonToReject string
+	var ln = len(path)
+
 	if S.HasPrefix(path, ".") || S.HasPrefix(path, "_") ||
 		S.Contains(path, "/.") || S.Contains(path, "/_") {
-		L.L.Dbg("Rejecting (leading . or _ ): " + path)
-		return nil
+		reasonToReject = "leading . or _ "
+	} else if S.HasSuffix(path, "gtk") || S.HasSuffix(path, "gtr") {
+		reasonToReject = "gtk/gtr"
+	} else if ln >= 5 && path[ln-5] == '_' { // debug file via "-t" flag
+		reasonToReject = "_echo,_tkns,_tree"
+	} else if S.Index(FP.Base(path), ".") == -1 { // untyped file
+		reasonToReject = "no dot, untyped"
+	} else if S.HasSuffix(path, "~") {
+		reasonToReject = "emacs"
 	}
-	if S.HasSuffix(path, "gtk") || S.HasSuffix(path, "gtr") {
-		L.L.Dbg("Rejecting (gtX): " + path)
-		return nil
-	}
-	ln := len(path)
-	if ln >= 5 && path[ln-5] == '_' { // debug file via "-t" flag
-		L.L.Dbg("Rejecting (_echo,tkns,tree): " + path)
-	}
-	if S.Index(FP.Base(path), ".") == -1 { // untyped file
-		L.L.Dbg("Rejecting (no dot, untyped): " + path)
-	}
-	if S.HasSuffix(path, "~") {
-		L.L.Dbg("Rejecting (emacs): " + path)
+	if reasonToReject != "" {
+		L.L.Warning("Rejecting (%s): %s", reasonToReject, path)
 		return nil
 	}
 	p, e = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))
 	if p == nil || e != nil {
-		// panic("nil Contentity")
-		L.L.Dbg("Rejecting (no Contentity): " + path)
-		L.L.Error("Skipping this item!")
+		L.L.Warning("Rejecting (no Contentity): " + path)
+		L.L.Error("Skipping this item")
 		return nil
 	}
-	if p.PathAnalysis == nil || len(p.PathAnalysis.Raw) == 0 {
-		L.L.Dbg("Rejecting (len 0 or too short): " + path)
-		L.L.Error("Skipping this item!")
+	if /* p.PathAnalysis == nil || */ p.PathProps.Raw == "" {
+		L.L.Warning("Rejecting (len 0 or too short): " + path)
+		L.L.Error("Skipping this item")
+		return nil
 	}
 	L.L.Dbg("Directory traverser: MarkupType: " + string(p.MarkupType()))
 	nxtIdx := len(pCFS.asSlice)
