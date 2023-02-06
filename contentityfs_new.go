@@ -35,7 +35,7 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 		// panic("mcfile.newContentityFS: " + e.Error())
 		L.L.Panic("mcfile.newContentityFS: " + e.Error())
 	}
-	L.L.Okay("FS walked (%s) OK: got %d nords", path, len(pCFS.asSlice))
+	L.L.Okay("FS walked OK: %d nords: %s", len(pCFS.asSlice), path)
 
 	// DEBUG
 	for _, pp := range pCFS.asSlice {

@@ -25,18 +25,19 @@ type Contentity struct { // has has has has Raw
 	// CFU.GCtx // utils/cliflagutils
 	logIdx int
 	logStg string
-	// ContentityRecord is what gets persisted to the DB
-	RU.ContentityRecord // this has Raw
-	// FU.OutputFiles // NOTE Does this belong here ? Not sure.
+	// ContentityRecord is what gets persisted to the DB (and has Raw)
+	RU.ContentityRecord
+	// FU.OutputFiles // This was useful at one point
 
 	// ParserResults is parseutils.ParserResults_ffs
+	// (ffs = file format -specific)
 	ParserResults interface{}
 
 	GTokens      []*gtoken.GToken
 	GTags        []*gtree.GTag
 	*gtree.GTree // maybe not need GRootTag or RootOfASTptr
-	GTokensWriter, GTreeWriter,
-	EchoWriter io.Writer
+	GTknsWriter, GTreeWriter,
+	GEchoWriter io.Writer
 
 	GLinks
 	// GEnts is "ENTITY"" directives (both with "%" and without).
