@@ -65,41 +65,17 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 				panic(itsDir + " != " + par.Path())
 			}
 			par.AddKid(n)
-			/*
-				plk := par.LastKid()
-				plk2 := plk.(*ON.Nord)
-				if uintptr(unsafe.Pointer(n)) == uintptr(unsafe.Pointer(plk2)) {
-					println("EQUAL!!??")
-				}
-				plk = n.Parent()
-				plk2 = plk.(*ON.Nord)
-				if uintptr(unsafe.Pointer(par)) == uintptr(unsafe.Pointer(plk2)) {
-					println("EQUAL!!??")
-				}
-				if par.LastKid() == n {
-					fmt.Printf("**** OK LINK 1??? %p,%p \n", n, par.LastKid())
-				}
-				if par.LastKid() != n {
-					fmt.Printf("**** FAILED LINK 1??? %p,%p \n", n, par.LastKid())
-				}
-				if n.Parent() == par {
-					fmt.Printf("**** OK LINK 2??? %p,%p \n", par, n.Parent())
-				}
-				if n.Parent() != par {
-					fmt.Printf("**** FAILED LINK 2??? %p,%p \n", par, n.Parent())
-				}
-			*/
 		}
 	}
-	/*
-		println("DUMP LIST")
-		for _, n := range pFTFS.asSlice {
-			println(n.LinePrefixString(), n.LineSummaryString())
-		}
-		println("DUMP MAP")
-		for k, v := range pFTFS.asMap {
-			fmt.Printf("%s\t:: %s %s \n", k, v.LinePrefixString(), v.LineSummaryString())
-		}
+	/* more debugging
+	println("DUMP LIST")
+	for _, n := range pFTFS.asSlice {
+		println(n.LinePrefixString(), n.LineSummaryString())
+	}
+	println("DUMP MAP")
+	for k, v := range pFTFS.asMap {
+		fmt.Printf("%s\t:: %s %s \n", k, v.LinePrefixString(), v.LineSummaryString())
+	}
 	*/
 	// println(SU.Gbg("=== TREE ==="))
 	// pCFS.rootNord.PrintAll(os.Stdout)

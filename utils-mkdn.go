@@ -40,14 +40,14 @@ func ListKids(p AST.Node) string {
 
 func DumpGElm(p AST.Node) string {
 	var s string
-	/*
-		s = fmt.Sprintf("BFnode<%s>: ", gparse.MDnodeType[p.Type])
-		s += "<|" + SU.NormalizeWhitespace(string(p.Literal)) + "|> "
-		s += gparse.DumpHdg(p.HeadingData)
-		s += gparse.DumpList(p.ListData)
-		s += gparse.DumpCdBlk(p.CodeBlockData)
-		s += gparse.DumpLink(p.LinkData)
-		s += gparse.DumpTableCell(p.TableCellData)
+	/* code to use ?
+	s = fmt.Sprintf("BFnode<%s>: ", gparse.MDnodeType[p.Type])
+	s += "<|" + SU.NormalizeWhitespace(string(p.Literal)) + "|> "
+	s += gparse.DumpHdg(p.HeadingData)
+	s += gparse.DumpList(p.ListData)
+	s += gparse.DumpCdBlk(p.CodeBlockData)
+	s += gparse.DumpLink(p.LinkData)
+	s += gparse.DumpTableCell(p.TableCellData)
 	*/
 	return s
 }
@@ -57,6 +57,6 @@ func myGElmVisitor(N AST.Node, entering bool) AST.WalkStatus {
 	if !entering {
 		return AST.WalkContinue // GoToNext
 	}
-	fmt.Printf("%s \n" /* SU.GetIndent(lvl), */, DumpGElm(N))
-	return AST.WalkContinue // GoToNext
+	fmt.Printf("%s \n", DumpGElm(N)) // SU.GetIndent(lvl)
+	return AST.WalkContinue          // GoToNext
 }

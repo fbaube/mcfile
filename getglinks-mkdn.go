@@ -33,11 +33,11 @@ package mcfile
 // - p @conref
 func (p *Contentity) GatherLinks() error {
 	println("    --> MF.GatherLinks TODO")
-	/*
-		// if !pGF.IsXML { return nil }
-		if pGF.Micodo == nil || pGF.Micodo[0] != "lwdita" {
-			return nil
-		}
+	/* code to use ?
+	// if !pGF.IsXML { return nil }
+	if pGF.Micodo == nil || pGF.Micodo[0] != "lwdita" {
+		return nil
+	}
 	*/
 	return nil
 }

@@ -72,7 +72,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		st0_Init().
 		st1_Read().
 		st2_Tree().
-		st3_Refs() /* .
-		// Stage/Step 4 works on all input files at once !
-		st4_Done() */
+		st3_Refs()
+	// Stage/Step 4 works on all input files at once !
+	// st4_Done()
 }

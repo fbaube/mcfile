@@ -228,10 +228,11 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 	case SU.MU_type_MKDN:
 		// Markdown YAML metadata was processed in step st1a
 		return p
-	case SU.MU_type_HTML: /*
-			var pPR *PU.ParserResults_html
-			pPR = p.CPR.(*PU.ParserResults_html)
-			z := pPR. */
+	case SU.MU_type_HTML:
+		/* code to use!
+		var pPR *PU.ParserResults_html
+		pPR = p.CPR.(*PU.ParserResults_html)
+		z := pPR. */
 		// Inside <head>: <meta> <title> <base> <link> <style>
 		// See also: https://gist.github.com/lancejpollard/1978404
 		return p

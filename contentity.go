@@ -67,8 +67,6 @@ var pNCS *norderCreationState = new(norderCreationState)
 // FU.InputFile, FU.OutputFiles, GTree,
 // GRefs, *XmlFileMeta, *XmlItems, *DitaInfo
 func (p Contentity) String() string {
-	// var BF BigFields = p.PushBigFields()
-
 	var sGTree string
 	if p.GTree != nil {
 		sGTree = p.GTree.String()
@@ -77,7 +75,7 @@ func (p Contentity) String() string {
 	s := fmt.Sprintf("||%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
 		SU.Tildotted(p.PathProps.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
 		p.KeyRefncs, p.KeyRefnts, p.UriRefncs, p.UriRefnts)
-	/*
+	/* code to use ?
 			if p.XmlFileMeta != nil {
 				s += fmt.Sprintf("XmlFileMeta|%s||", p.XmlFileMeta.String())
 			}
@@ -85,8 +83,6 @@ func (p Contentity) String() string {
 		if p.IDinfo != nil {
 			s += fmt.Sprintf("xf.IDinfo|%s||", p.IDinfo.String())
 		}
-	*/
-	/* ==
 	if p.GEnts != nil {
 		// FIXME s += fmt.Sprintf("GEnts|%s||", p.GEnts.String())
 		 * 	}
@@ -97,7 +93,5 @@ func (p Contentity) String() string {
 	// if p.DitaInfo != nil {
 	s += fmt.Sprintf("DitaInfo|Flav:%s|Cntp:%s|", p.DitaFlavor, p.DitaContype)
 	// }
-
-	// p.PopBigFields(BF)
 	return s
 }

@@ -125,15 +125,15 @@ func (p *Contentity) st2d_NormalizeTree() *Contentity {
 	switch p.MarkupType() {
 	case SU.MU_type_XML:
 		L.L.Warning("TODO> 2d. NormalizeTree XML ==> ENTs, etc.!")
-		/*
-			e = p.DoEntitiesList()
-			if e != nil {
-				return errors.Wrap(e, "DoEntitiesList")
-			}
-			e = p.SubstituteEntities()
-			if e != nil {
-				return errors.Wrap(e, "SubstituteEntities")
-			}
+		/* code to use !
+		e = p.DoEntitiesList()
+		if e != nil {
+			return errors.Wrap(e, "DoEntitiesList")
+		}
+		e = p.SubstituteEntities()
+		if e != nil {
+			return errors.Wrap(e, "SubstituteEntities")
+		}
 		*/
 	case SU.MU_type_MKDN:
 		// L.L.Warning("TODO> 2d. NormalizeTree MKDN")

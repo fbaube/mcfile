@@ -12,7 +12,7 @@ func NormalizeTextLeaves(rootNode AST.Node) {
 	unlinkList = make([]AST.Node, 0, 64)
 	// rootNode.Walk(func(node AST.Node, entering bool) AST.WalkStatus {
 	AST.Walk(rootNode, func(node AST.Node, entering bool) (AST.WalkStatus, error) {
-		/*
+		/* code to use ?
 		if string(node.Literal) == "" {
 			return AST.WalkContinue // GoToNext
 		}
@@ -21,7 +21,7 @@ func NormalizeTextLeaves(rootNode AST.Node) {
 		}
 		*/
 		var parent = node.Parent()
-		/*
+		/* code to use ?
 		if parent.Type == BF.Paragraph {
 			return AST.WalkContinue // GoToNext
 		}

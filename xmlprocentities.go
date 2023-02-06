@@ -103,24 +103,24 @@ func (p *Contentity) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error
 			continue
 		}
 
-		/*
-			// e.g. "foo"
-			NameOnly string
-			// including "%|&" and ";" i.e. "&foo;" or "%foo;"
-			NameAsRef string
-			// true if parameter entity, false if general entity
-			TypeIsParm bool
-			// "%" if parameter entity, "&" if general entity
-			RefChar    string
-			IsSystemID bool
-			IsPublicID bool
-			// External entities only (PUBLIC, SYSTEM)
-			ID  string
-			URI string
-			// Data model TBD
-			Value interface{}
-			// This appears to be used to hold "the rest".
-			Output string
+		/* old code ?
+		// e.g. "foo"
+		NameOnly string
+		// including "%|&" and ";" i.e. "&foo;" or "%foo;"
+		NameAsRef string
+		// true if parameter entity, false if general entity
+		TypeIsParm bool
+		// "%" if parameter entity, "&" if general entity
+		RefChar    string
+		IsSystemID bool
+		IsPublicID bool
+		// External entities only (PUBLIC, SYSTEM)
+		ID  string
+		URI string
+		// Data model TBD
+		Value interface{}
+		// This appears to be used to hold "the rest".
+		Output string
 		*/
 
 		// Got an ExternalID.
@@ -170,10 +170,10 @@ func (p *Contentity) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error
 		// NOTE fmt.Printf("<<RESOLVE>> %s \n", newEnt.URI)
 		// TODO Process search paths
 	}
-	/*
-		for _,ent := range pRTx.DEnts {
-			ilog.Printf("ENTs-DEF'd: %v \n", ent)
-		}
+	/* more debugging
+	for _,ent := range pRTx.DEnts {
+		ilog.Printf("ENTs-DEF'd: %v \n", ent)
+	}
 	*/
 	return gEnts, nil
 }
@@ -187,11 +187,12 @@ func (p *Contentity) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error
 func (p *Contentity) DoEntitiesList() error {
 	// pX := p.TheXml()
 	println("    ==> DoEntitiesList TODO")
-
-	/* if pGF.XmlItems == nil {
-		pGF.XmlItems = new(XmlItems)
-	}
-	var pXI = pGF.XmlItems */
+	/* code to use ?
+	        if pGF.XmlItems == nil {
+			pGF.XmlItems = new(XmlItems)
+		}
+		var pXI = pGF.XmlItems
+	*/
 	p.GEnts = make(map[string]*gparse.GEnt)
 
 	for _, E := range p.GTags {
@@ -228,24 +229,24 @@ func (p *Contentity) DoEntitiesList() error {
 			continue
 		}
 
-		/*
-			// e.g. "foo"
-			NameOnly string
-			// including "%|&" and ";" i.e. "&foo;" or "%foo;"
-			NameAsRef string
-			// true if parameter entity, false if general entity
-			TypeIsParm bool
-			// "%" if parameter entity, "&" if general entity
-			RefChar    string
-			IsSystemID bool
-			IsPublicID bool
-			// External entities only (PUBLIC, SYSTEM)
-			ID  string
-			URI string
-			// Data model TBD
-			Value interface{}
-			// This appears to be used to hold "the rest".
-			Output string
+		/* old code ?
+		// e.g. "foo"
+		NameOnly string
+		// including "%|&" and ";" i.e. "&foo;" or "%foo;"
+		NameAsRef string
+		// true if parameter entity, false if general entity
+		TypeIsParm bool
+		// "%" if parameter entity, "&" if general entity
+		RefChar    string
+		IsSystemID bool
+		IsPublicID bool
+		// External entities only (PUBLIC, SYSTEM)
+		ID  string
+		URI string
+		// Data model TBD
+		Value interface{}
+		// This appears to be used to hold "the rest".
+		Output string
 		*/
 
 		// Got an ExternalID.
@@ -295,10 +296,10 @@ func (p *Contentity) DoEntitiesList() error {
 		// NOTE fmt.Printf("<<RESOLVE>> %s \n", newEnt.URI)
 		// TODO Process search paths
 	}
-	/*
-		for _,ent := range pRTx.DEnts {
-			ilog.Printf("ENTs-DEF'd: %v \n", ent)
-		}
+	/* more debugging
+	for _,ent := range pRTx.DEnts {
+		ilog.Printf("ENTs-DEF'd: %v \n", ent)
+	}
 	*/
 	return nil
 }
@@ -325,14 +326,15 @@ func (p *Contentity) SubstituteEntities() error {
 
 		// TODO
 
-		// First determine the longest sub string, and pick an arbitrary multiple
-		// of it (such as 20x) as an absolute upper limit for subs done here. Do
-		// this is order to prevent a DOS attack via entity explosion.
+		// First determine the longest sub string, and pick an
+		// arbitrary multiple of it (such as 20x) as an absolute
+		// upper limit for subs done here. Do this is order to
+		// prevent a DOS attack via entity explosion.
 
 		// Then set up two loops that go thru all DEnts.
 
-		// Process all entity definitions and
-		// attribute definitions [and also (most importantly?) transclusions?]
+		// Process all entity definitions and attribute
+		// definitions [and also (most importantly?) transclusions?]
 		for sEnt, E := range p.GEnts {
 
 			// ilog.Printf("SubEntRksvly: chkg: [%s]%s \n", sEnt, E)
@@ -343,10 +345,10 @@ func (p *Contentity) SubstituteEntities() error {
 
 			// First let's identify everything that looks like an entity reference.
 			for _, E := range p.GTags {
-				/*
-					if RT.rtType == "CD" {
-						if RT.string1 != "" { fmt.Printf("CDataDebugNONNIL|%+v| \n", RT) }
-					}
+				/* code to use ?
+				if RT.rtType == "CD" {
+					if RT.string1 != "" { fmt.Printf("CDataDebugNONNIL|%+v| \n", RT) }
+				}
 				*/
 				switch E.TTType {
 				case gtoken.TT_type_ELMNT:
@@ -382,40 +384,40 @@ func (p *Contentity) SubstituteEntities() error {
 
 			// Now let's enumerate all the places where entity substitution is kosher.
 
-			/*
-				chgs = true
-				var pid *DPID
-				var ok bool
-				if pid, ok = pRTx.DPIDs[token]; !ok {
-					panic("Entity not defined (yet?): " + token)
-				}
-				fnam := pid.URI
-				ilog.Printf("ent2sub: |%s| <=> <%s> (%v) \n", token, fnam, pid)
+			/* code to use ?
+			chgs = true
+			var pid *DPID
+			var ok bool
+			if pid, ok = pRTx.DPIDs[token]; !ok {
+				panic("Entity not defined (yet?): " + token)
+			}
+			fnam := pid.URI
+			ilog.Printf("ent2sub: |%s| <=> <%s> (%v) \n", token, fnam, pid)
 
-				frdr, e := os.Open(fnam)
-				defer frdr.Close()
-				if e != nil {
-					panic("Can't open file: " + e.Error())
-				}
-				var r io.Reader = frdr
-				var transclusion *RichTokenization
-				transclusion, e = TokenizeRichly(r)
-				// ilog.Println(transcludedTokens)
+			frdr, e := os.Open(fnam)
+			defer frdr.Close()
+			if e != nil {
+				panic("Can't open file: " + e.Error())
+			}
+			var r io.Reader = frdr
+			var transclusion *RichTokenization
+			transclusion, e = TokenizeRichly(r)
+			// ilog.Println(transcludedTokens)
 
-				// The next token is at iToken, but now we want
-				// to insert the slice of tokens we just redd.
-				var transcludedTokens []RichToken
-				transcludedTokens = transclusion.tokens
-				ilog.Printf("iToken<%d:%s> outa <%d> \n",
-					iToken, token, len(pRTx.tokens))
-				ilog.Printf("iToken<%d> next<%s> all<%d>; inserting<%d>\n",
-					iToken, pRTx.tokens[iToken], len(pRTx.tokens), len(transcludedTokens))
-				var reddd = pRTx.tokens[:iToken]
-				var unred = pRTx.tokens[iToken:]
-				pRTx.tokens = append(reddd, transcludedTokens...)
-				pRTx.tokens = append(pRTx.tokens, unred...)
-				ilog.Printf("iToken<%d> next<%s> all<%d> \n",
-					iToken, pRTx.tokens[iToken], len(pRTx.tokens))
+			// The next token is at iToken, but now we want
+			// to insert the slice of tokens we just redd.
+			var transcludedTokens []RichToken
+			transcludedTokens = transclusion.tokens
+			ilog.Printf("iToken<%d:%s> outa <%d> \n",
+				iToken, token, len(pRTx.tokens))
+			ilog.Printf("iToken<%d> next<%s> all<%d>; inserting<%d>\n",
+				iToken, pRTx.tokens[iToken], len(pRTx.tokens), len(transcludedTokens))
+			var reddd = pRTx.tokens[:iToken]
+			var unred = pRTx.tokens[iToken:]
+			pRTx.tokens = append(reddd, transcludedTokens...)
+			pRTx.tokens = append(pRTx.tokens, unred...)
+			ilog.Printf("iToken<%d> next<%s> all<%d> \n",
+				iToken, pRTx.tokens[iToken], len(pRTx.tokens))
 			*/
 		}
 	}

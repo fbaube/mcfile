@@ -11,11 +11,9 @@ import (
 
 type StringTally map[string]int
 
-/*
-func (tt TagTally) String() string {
-	return "tt"
-}
-*/
+// func (tt TagTally) String() string {
+//	return "tt"
+// }
 
 var GlobalTagTally StringTally
 var GlobalAttTally StringTally
