@@ -7,6 +7,7 @@ import (
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
 	"github.com/fbaube/repo/sqlite"
+	RU "github.com/fbaube/repo/util"
 	FP "path/filepath"
 )
 
@@ -44,7 +45,7 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	pPP, e = FU.NewPathProps(aRootPath)
 	if e != nil || pPP == nil {
 		return nil, FU.WrapAsPathPropsError(
-			e, "NewRootContentity (L45,path=>PP)", pPP)
+			e, "NewRootContentity (L47,path=>PP)", pPP)
 	}
 	// =============================
 	//  "Promote" to a PathAnalysis
@@ -58,15 +59,15 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
-	pCR, e := sqlite.NewContentityRecord(pPP, pPA)
+	var pCR *RU.ContentityRecord
+	pCR, e = sqlite.NewContentityRecord(pPP, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewRootContentity(PA=>CR)<%s>: %s", aRootPath, e)
 		return nil, fmt.Errorf(
 			"NewRootContentity(PA=>CR)<%s>: %w", aRootPath, e)
 	}
-	if pNewCty == nil {
-		panic("pNewCty OOPS")
-	}
+	// L.L.Warning("NewRootCty (PP) %+v", pCR.PathProps)
+	// nil! L.L.Warning("NewRootCty (PA) %+v", *pCR.PathAnalysis)
 	pNewCty.ContentityRecord = *pCR
 	// ==================================
 	//  Now fill in the ContentityRecord
@@ -83,5 +84,8 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// pRC = pNewCty
 	// C = *pNewCty
 	// R = RootContentity(C)
+	if pNewCty == nil {
+		panic("nil pNewCty")
+	}
 	return pNewCty, nil
 }

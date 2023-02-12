@@ -6,12 +6,15 @@ import (
 	FP "path/filepath"
 	S "strings"
 
-	FSU "github.com/fbaube/fsutils"
+	FU "github.com/fbaube/fileutils"
+	// FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
 )
 
 type ContentityFS struct {
-	FSU.BaseFS
+	// fs.FS will be an os.DirFS
+	fs.FS
+	rootAbsPath   string
 	rootNord      *RootContentity
 	asSlice       []*Contentity
 	asMap         map[string]*Contentity // string is Rel.Path
@@ -37,6 +40,11 @@ func (p *ContentityFS) FileCount() int {
 
 func (p *ContentityFS) RootContentity() *RootContentity {
 	return p.rootNord
+}
+
+func (p *ContentityFS) RootAbsPath() string {
+	// return p.rootNord.AbsFP()
+	return p.rootAbsPath
 }
 
 func (p *ContentityFS) AsSlice() []*Contentity {
@@ -73,35 +81,38 @@ func (p *ContentityFS) DoForEvery(stgprocsr ContentityStage) {
 // As path separator, "/" is assumed, not os.Sep
 // .
 func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
+	L.L.Dbg("wfnBuildContentityTree: path: %s", path)
+	// L.L.Warning("wfnBuildContentityTree: dir: %+v", d)
+	if err != nil {
+		L.L.Error("wfnBuildContentityTree: "+
+			"UNHANDLED err: %s", err.Error())
+	}
 	var p *Contentity
 	var e error
 	// ROOT NODE ?
 	if mustInitRoot() {
-		var r *RootContentity
-		if path != "." {
-			println("wfnBuildContentityTree: "+
-				"root path is not dot but instead:", path)
-		}
+		var pRC *RootContentity
 		if pCFS.RootAbsPath() == "" {
-			panic("wfnBuildContentityTree: nil ROOT")
+			panic("wfnBuildContentityTree: no ROOT")
 		}
-		r, e = NewRootContentity(pCFS.RootAbsPath())
-		if e != nil || r == nil {
-			// panic("wfnBuildContentityTree mustInitRoot NewRootContentityNord FAILED")
-			return errors.New("wfnBuildContentityTree mustInitRoot NewRootContentityNord L77")
+		pRC, e = NewRootContentity(pCFS.RootAbsPath())
+		if e != nil || pRC == nil {
+			return errors.New("wfnBuildContentityTree UNHANDLED" +
+				" mustInitRoot NewRootContentityNord L101")
 		}
-		pCFS.rootNord = r
-		r.MimeType = "dir"
-		r.MType = "dir"
+		// Assign to globals (i.e. package vars)
+		pCFS.rootNord = pRC
+		pRC.MimeType = "dir"
+		pRC.MType = "dir"
 		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
 		var p *Contentity
-		p = ((*Contentity)(r))
+		p = ((*Contentity)(pRC))
 		pCFS.asSlice = append(pCFS.asSlice, p)
 		pCFS.asMap[path] = p
 		// println("ADDED TO MAP:", path)
 		pCFS.nDirs = 1
 		pCFS.nFiles = 0
-		return nil
+		return nil // NOT pRC
 	}
 	// Filter out hidden, esp'ly .git & .git* ;
 	// note that "/" is assumed, not os.Sep ;
@@ -109,24 +120,45 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	if S.Contains(path, "/.git") {
 		return nil
 	}
+	/* Old gnarly debuggging
+	// IS USING CWD NOT CLI ARGUMENT ?!
+	L.L.Warning("ROOT: %s", pCFS.RootAbsPath())
+	L.L.Warning("PATH: %s", path)
+	var sfp string
+	var afp FU.AbsFilePath
+	sfp = FP.Join(pCFS.RootAbsPath(), path)
+	L.L.Warning("BOTH: %s", sfp)
+	afp = FU.AbsFilePath(sfp)
+	*/
 	var reasonToReject string
-	var ln = len(path)
-
 	if S.HasPrefix(path, ".") || S.HasPrefix(path, "_") ||
 		S.Contains(path, "/.") || S.Contains(path, "/_") {
 		reasonToReject = "leading . or _ "
-	} else if S.HasSuffix(path, "gtk") || S.HasSuffix(path, "gtr") {
-		reasonToReject = "gtk/gtr"
-	} else if ln >= 5 && path[ln-5] == '_' { // debug file via "-t" flag
-		reasonToReject = "_echo,_tkns,_tree"
-	} else if S.Index(FP.Base(path), ".") == -1 { // untyped file
-		reasonToReject = "no dot, untyped"
-	} else if S.HasSuffix(path, "~") {
-		reasonToReject = "emacs"
-	}
-	if reasonToReject != "" {
 		L.L.Warning("Rejecting (%s): %s", reasonToReject, path)
 		return nil
+	}
+	// Now at this point, if it's a directory, it's OK !
+	sfp := FP.Join(pCFS.RootAbsPath(), path)
+	afp := FU.AbsFilePath(sfp)
+	var isDir = afp.DirExists()
+
+	// And so following code applies only to files, not to directories
+	// TODO: Not sure what happens with symlinks
+	if !isDir {
+		var ln = len(path)
+		if S.HasSuffix(path, "gtk") || S.HasSuffix(path, "gtr") {
+			reasonToReject = "gtk/gtr"
+		} else if ln >= 5 && path[ln-5] == '_' { // debug file via "-t" flag
+			reasonToReject = "_echo,_tkns,_tree"
+		} else if S.Index(FP.Base(path), ".") == -1 { // untyped file
+			reasonToReject = "no dot, untyped"
+		} else if S.HasSuffix(path, "~") {
+			reasonToReject = "emacs"
+		}
+		if reasonToReject != "" {
+			L.L.Warning("Rejecting (%s): %s", reasonToReject, path)
+			return nil
+		}
 	}
 	p, e = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))
 	if p == nil || e != nil {
@@ -134,7 +166,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		L.L.Error("Skipping this item")
 		return nil
 	}
-	if /* p.PathAnalysis == nil || */ p.PathProps.Raw == "" {
+	if /* p.PathAnalysis == nil || */ p.PathProps.Raw == "" && !isDir {
 		L.L.Warning("Rejecting (len 0 or too short): " + path)
 		L.L.Error("Skipping this item")
 		return nil

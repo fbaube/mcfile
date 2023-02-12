@@ -38,7 +38,7 @@ func (p *Contentity) st1_Read() *Contentity {
 	}
 	p.logStg = "11"
 	p.L(LProgress, "=== 11:Read ===")
-	p.L(LInfo, "@entry: MarkupType:%s MType:%s", p.MarkupType(), p.MType)
+	p.L(LInfo, "@entry: MarkupType<%s> MType<%s>", p.MarkupType(), p.MType)
 	return p.
 		st1a_ProcessMetadata().
 		st1b_GetCPR().

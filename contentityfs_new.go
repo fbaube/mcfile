@@ -2,11 +2,12 @@ package mcfile
 
 import (
 	"io/fs"
+	"os"
 	FP "path/filepath"
 	S "strings"
 
 	FU "github.com/fbaube/fileutils"
-	FSU "github.com/fbaube/fsutils"
+	// FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
 )
 
@@ -15,10 +16,16 @@ var pCFS *ContentityFS
 // NewContentityFS is duh.
 func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 
+	var afp FU.AbsFilePath
+	afp = FU.AbsFilePath(path)
+	if !afp.DirExists() {
+		L.L.Error("Not a directory: %s", path)
+		return nil
+	}
 	pCFS = new(ContentityFS)
-	// Initialize embedded baseFS
-	pCFS.BaseFS = *(FSU.NewBaseFS(path))
-	// println("FSU.newContentityFS:", FU.Tildotted(pCFS.BaseFS.RootAbsPath()))
+	pCFS.rootAbsPath = path
+	L.L.Info("PATH for new os.DirFS: %s", path)
+	pCFS.FS = os.DirFS(path) // "T/allConTypes")
 	// Initialize slice & map
 	pCFS.asSlice = make([]*Contentity, 0)
 	pCFS.asMap = make(map[string]*Contentity)
@@ -27,12 +34,11 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 
 	// FIRST PASS
 	// Load slice & map
-	if nil == pCFS.InputFS() {
-		panic("OH SHIT in ctyfsnew")
-	}
-	e := fs.WalkDir(pCFS.InputFS(), ".", wfnBuildContentityTree)
+	// NOTE: rel.paths are necessary here
+	//   or else really weird errors occur.
+	//   In particular, use the "."
+	e := fs.WalkDir(pCFS.FS, ".", wfnBuildContentityTree)
 	if e != nil {
-		// panic("mcfile.newContentityFS: " + e.Error())
 		L.L.Panic("mcfile.newContentityFS: " + e.Error())
 	}
 	L.L.Okay("FS walked OK: %d nords: %s", len(pCFS.asSlice), path)
