@@ -11,22 +11,31 @@ import (
 	L "github.com/fbaube/mlog"
 )
 
+// ContentityFS is an instance of an [fs.FS] where every
+// node is an [mcfile.Contentity].
+//
+// Note that directories ARE included in the tree, because
+// the instances of [orderednodes.Nord] in each [Contentity]
+// must properly interconnect in forming a complete tree.
+// .
 type ContentityFS struct {
-	// fs.FS will be an os.DirFS
+	// FS will be an [os.DirFS]
 	fs.FS
-	rootAbsPath   string
-	rootNord      *RootContentity
-	asSlice       []*Contentity
-	asMap         map[string]*Contentity // string is Rel.Path
+	rootAbsPath string
+	rootNord    *RootContentity
+	asSlice     []*Contentity
+	// The string is the relative filepath w.r.t. the rootAbsPath
+	asMap         map[string]*Contentity
 	nFiles, nDirs int
 }
 
-/* Open is a dummy function, just here to satisfy an interface.
-func (p *ContentityFS) Open(path string) (fs.File, error) {
-	return p. /*inputFS. * / Open(path)
-} */
-
 func (p *ContentityFS) Size() int {
+	// /* Not init'z ?
+	if p.asMap != nil && len(p.asSlice) != len(p.asMap) {
+		L.L.Error("contentityfs size mismatch (slice &d, map %d)",
+			len(p.asSlice), len(p.asMap))
+	}
+	// */
 	return len(p.asSlice)
 }
 

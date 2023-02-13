@@ -13,9 +13,15 @@ import (
 
 var pCFS *ContentityFS
 
-// NewContentityFS is duh.
+// NewContentityFS is always called with path as an absolute filepath.
+// Use of a relative filepath is going to cause major problems.
+// .
 func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
-
+	// NOTE this will fail on Windoze
+	if !S.HasPrefix(path, FU.PathSep) {
+		L.L.Error("Not an abs.FP: %s", path)
+		return nil
+	}
 	var afp FU.AbsFilePath
 	afp = FU.AbsFilePath(path)
 	if !afp.DirExists() {
@@ -34,9 +40,8 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 
 	// FIRST PASS
 	// Load slice & map
-	// NOTE: rel.paths are necessary here
-	//   or else really weird errors occur.
-	//   In particular, use the "."
+	// NOTE that a rel.path (".") is necessary
+	// here or else really weird errors occur.
 	e := fs.WalkDir(pCFS.FS, ".", wfnBuildContentityTree)
 	if e != nil {
 		L.L.Panic("mcfile.newContentityFS: " + e.Error())
