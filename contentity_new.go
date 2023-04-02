@@ -63,7 +63,8 @@ func NewContentity(aPath string) (*Contentity, error) {
 	if e != nil {
 		return nil, fmt.Errorf("newcontentity: %w", e)
 	}
-	e = pPP.FetchRaw()
+	// e = pPP.FetchRaw()
+	e = pPP.GoGetFileContents()
 	if e != nil {
 		return nil, fmt.Errorf("newcontentity: %w", e)
 	}
