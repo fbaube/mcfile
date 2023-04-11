@@ -2,6 +2,7 @@ package mcfile
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
@@ -20,16 +21,16 @@ import (
 //
 // Summary of processing per Contentity type:
 // "XML"
-//   - (§1) Use stdlib `encoding/xml` to get `[]xml.Token`
-//   - (§1) Convert `[]xml.Token` to `[]gparse.GToken`
+//   - (§1) Use stdlib [encoding/xml] to get slice of [xml.Token]
+//   - (§1) Convert [xml.Token] to [gparse.GToken]
 //
 // "MKDN"
-//   - (§1) Use `yuin/goldmark` to get tree of `yuin/goldmark/ast/Node`
-//   - (§1) From each Node make a `MkdnToken` (in a list?) incl. `GToken` and `GTag`
+//   - (§1) Use [yuin/goldmark] to get tree of [yuin/goldmark/ast/Node]
+//   - (§1) From each Node make a [MkdnToken] (in a list?) incl. [GToken] and [GTag]
 //
 // "HTML"
-//   - (§1) Use `golang.org/x/net/html` to get a tree of `html.Node`
-//   - (§1) From each Node make a `HtmlToken` (in a list?) incl. `GToken` and `GTag`
+//   - (§1) Use [golang.org/x/net/html] to get a tree of [html.Node]
+//   - (§1) From each Node make a [HtmlToken] (in a list?) incl. [GToken] and [GTag]
 //
 // .
 func (p *Contentity) st1_Read() *Contentity {
@@ -55,7 +56,6 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 		return p
 	}
 	p.logStg = "1a"
-	// metaRaw := XU.GetSpan(string(p.PathProps.Raw), p.Meta)
 	metaRaw := XU.GetSpan(p.PathProps.TypedRaw.S(), p.Meta)
 	if metaRaw == "" {
 		p.L(LInfo, "No metadata found")
@@ -137,6 +137,11 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		}
 		p.ParserResults = pPR
 		p.L(LOkay, "HTML tokens: got %d", len(pPR.NodeSlice))
+		/* DBG
+		for i, pp := range pPR.NodeSlice {
+			p.L(LWarning, "[%d] %+v \n", i, *pp)
+		}
+		*/
 		// p.TallyTags()
 		return p
 	case SU.MU_type_XML:
@@ -155,7 +160,8 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 }
 
 // st1c_MakeAFLfromCFL is Step 1c:
-// Make Abstract Flat List from Concrete Flat List
+// Make Abstract Flat List (GToken's)
+// from Concrete Flat List (File-Format-Specific tokens).
 // .
 func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	if p.HasError() {
@@ -164,6 +170,8 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	p.logStg = "1c"
 	var e error
 	var GTs []*gtoken.GToken
+	var common XU.CommonCPR
+	var NSer NodeStringser
 
 	fmt.Fprintln(p.GTknsWriter, "=== Input file:", p.AbsFP())
 
@@ -174,12 +182,18 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 			p.L(LError, "ParserResults are nil")
 		}
 		pCPR_M = p.ParserResults.(*PU.ParserResults_mkdn)
-		pCPR_M.DiagDest = p.GTknsWriter
+		common = pCPR_M.CommonCPR
+		// Do this
+		pCPR_M.Writer = io.Discard
+		// instead of this
+		// pCPR_M.Writer = p.GTknsWriter
 		GTs, e = gtoken.DoGTokens_mkdn(pCPR_M)
 		if e != nil {
 			p.WrapError("mkdn.gtokens", e)
 		}
-		// p.GTokens = GTs
+		// Use this
+		p.GTokens = GTs
+		/* instead of this
 		// Compress out nil GTokens
 		p.GTokens = make([]*gtoken.GToken, 0)
 		for _, GT := range GTs {
@@ -187,10 +201,16 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 				p.GTokens = append(p.GTokens, GT)
 			}
 		}
+		*/
 	case SU.MU_type_HTML:
 		var pCPR_H *PU.ParserResults_html
 		pCPR_H = p.ParserResults.(*PU.ParserResults_html)
-		pCPR_H.DiagDest = p.GTknsWriter
+		common = pCPR_H.CommonCPR
+		NSer = pCPR_H
+		// Do this
+		pCPR_H.Writer = io.Discard
+		// instead of this
+		// pCPR_H.Writer = p.GTknsWriter
 		GTs, e = gtoken.DoGTokens_html(pCPR_H)
 		if e != nil {
 			p.WrapError("html.gtokens", e)
@@ -199,7 +219,11 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	case SU.MU_type_XML:
 		var pCPR_X *XU.ParserResults_xml
 		pCPR_X = p.ParserResults.(*XU.ParserResults_xml)
-		pCPR_X.DiagDest = p.GTknsWriter
+		common = pCPR_X.CommonCPR
+		// Do this
+		pCPR_X.Writer = io.Discard
+		// instead of this
+		// pCPR_X.Writer = p.GTknsWriter
 		GTs, e = gtoken.DoGTokens_xml(pCPR_X)
 		if e != nil {
 			p.WrapError("GToken-ization", e)
@@ -209,11 +233,29 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		// fmt.Printf("==> Atts: %v \n", pGF.AttTally)
 		p.GTokens = GTs
 	}
+	ndL := len(common.NodeDepths)
+	fpL := len(common.FilePosns)
+	gtL := len(p.GTokens)
+	nsL := NSer.NodeCount()
 	fmt.Fprintln(p.GTknsWriter, "=== Output:")
-	for i, pGtkn := range p.GTokens {
-		if pGtkn != nil {
-			fmt.Fprintf(p.GTknsWriter, "[%02d:L%d] %s \n", i, p.Level(), pGtkn.String())
-		}
+	fmt.Fprintf(p.GTknsWriter, "=== lengths: %d %d %d %d \n", ndL, fpL, gtL, nsL)
+	count := (ndL + fpL + gtL + nsL + 2) / 4
+	// For every GToken, we should print:
+	//  - original node's original text
+	//  - ditto, but as rendered by node's class
+	//  - original node's NodeEcho(int)
+	//  - original node's NodeInfo(int) and/or NodeDebug(int)
+	//  - the GToken
+	for i := 0; i < count; i++ {
+		tkn := *(p.GTokens[i])
+		fmt.Fprintf(p.GTknsWriter, "[%d]\n", i)
+		fmt.Fprintf(p.GTknsWriter, "echo: %s \n", NSer.NodeEcho(i))
+		fmt.Fprintf(p.GTknsWriter, "info: %s \n", NSer.NodeInfo(i))
+		fmt.Fprintf(p.GTknsWriter, "dbug: %s \n", NSer.NodeDebug(i))
+		// Dump the GToken
+		// fmt.Fprintln(p.GTknsWriter, (*pGtkn).String())
+		// fmt.Fprintf(p.GTknsWriter, "<%+v>\n", *pGtkn)
+		fmt.Fprintf(p.GTknsWriter, "<%s>\n", tkn.Echo())
 	}
 	// fmt.Printf("st1c_MakeAFLfromCFL: nGTokens: %d %d \n", len(p.GTokens), len(GTs))
 	return p
