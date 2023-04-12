@@ -5,8 +5,8 @@ import (
 	S "strings"
 
 	"github.com/fbaube/gparse"
-	"github.com/fbaube/gtoken"
 	SU "github.com/fbaube/stringutils"
+	XU "github.com/fbaube/xmlutils"
 )
 
 // RULES
@@ -71,7 +71,7 @@ func (p *Contentity) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error
 
 	for _, E := range p.GTags {
 
-		if E.TTType != "ENTITY" {
+		if E.TDType != XU.TD_type_Entity {
 			continue
 		}
 		// fmt.Printf("Collecting ENTITY directive: |%+v| \n", T)
@@ -197,7 +197,7 @@ func (p *Contentity) DoEntitiesList() error {
 
 	for _, E := range p.GTags {
 
-		if E.TTType != "ENTITY" {
+		if E.TDType != XU.TD_type_Entity {
 			continue
 		}
 		fmt.Printf("    --> DoEntitiesList: Collecting directive: |%+v| \n", E)
@@ -350,22 +350,22 @@ func (p *Contentity) SubstituteEntities() error {
 					if RT.string1 != "" { fmt.Printf("CDataDebugNONNIL|%+v| \n", RT) }
 				}
 				*/
-				switch E.TTType {
-				case gtoken.TT_type_ELMNT:
+				switch E.TDType {
+				case XU.TD_type_ELMNT:
 					continue
-				case gtoken.TT_type_ENDLM:
+				case XU.TD_type_ENDLM:
 					continue
-				case gtoken.TT_type_PINST:
+				case XU.TD_type_PINST:
 					continue
-				case gtoken.TT_type_COMNT:
+				case XU.TD_type_COMNT:
 					continue
-				case gtoken.TT_type_DRCTV:
+				case XU.TD_type_DRCTV:
 					continue // panic("WTF")
-				case gtoken.TT_type_Doctype:
+				case XU.TD_type_Doctype:
 					continue
 				default:
 					// CD, ELEMENT, ATTLIST, ENTITY, NOTATION
-					if E.TTType == gtoken.TT_type_CDATA {
+					if E.TDType == XU.TD_type_CDATA {
 						s2check = E.TagOrPrcsrDrctv
 						// if s2check != "" { fmt.Printf("SubEnts got CDATA|%v| \n", RT) }
 					} else {

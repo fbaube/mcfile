@@ -1,9 +1,9 @@
 package mcfile
 
 import (
-	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 	SU "github.com/fbaube/stringutils"
+	XU "github.com/fbaube/xmlutils"
 )
 
 // RefineDirectives scans to patch Directives with correct keyword.
@@ -12,7 +12,7 @@ func (p *Contentity) RefineDirectives() error {
 
 	var pTag *gtree.GTag
 	for _, pTag = range p.GTags {
-		if pTag.TTType != gtoken.TT_type_DRCTV {
+		if pTag.TDType != XU.TD_type_DRCTV {
 			continue
 		}
 		// Here are the directives we are dealing with.
@@ -26,15 +26,15 @@ func (p *Contentity) RefineDirectives() error {
 		// NOTATION Name ExtID
 		// ilog.Printf("Dir.PRE |%s|%s|", RT.string1, RT.string2)
 
-		pTag.TTType = gtoken.TTType(pTag.TagOrPrcsrDrctv)
-		if pTag.TTType == gtoken.TT_type_DRCTV {
+		pTag.TDType = XU.TDType(pTag.TagOrPrcsrDrctv)
+		if pTag.TDType == XU.TD_type_DRCTV {
 			panic("YIKES, leftover Dir Tagtype")
 		}
 		pTag.TagOrPrcsrDrctv, pTag.Datastring = SU.SplitOffFirstWord(pTag.Datastring)
 
-		println("    --> RefineDirectives:", pTag.TTType, ",", pTag.TagOrPrcsrDrctv)
+		println("    --> RefineDirectives:", pTag.TDType, ",", pTag.TagOrPrcsrDrctv)
 
-		if pTag.TTType == "ENTITY" && pTag.TagOrPrcsrDrctv == "%" {
+		if pTag.TDType == XU.TD_type_Entity && pTag.TagOrPrcsrDrctv == "%" {
 			pTag.EntityIsParameter = true
 			pTag.TagOrPrcsrDrctv, pTag.Datastring = SU.SplitOffFirstWord(pTag.Datastring)
 			// pXI.GotDtdDecls = true

@@ -7,9 +7,9 @@ import (
 	S "strings"
 
 	FU "github.com/fbaube/fileutils"
-	"github.com/fbaube/gtoken"
 	L "github.com/fbaube/mlog"
 	SU "github.com/fbaube/stringutils"
+	XU "github.com/fbaube/xmlutils"
 )
 
 // TYPES ARE; external+http, file, pure-ID
@@ -93,7 +93,7 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 			continue
 		}
 		// If it's not a Start Element, skip it
-		if GT.TTType != gtoken.TT_type_ELMNT {
+		if GT.TDType != XU.TD_type_ELMNT {
 			continue
 		}
 		GN := GT.XName
