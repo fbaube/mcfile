@@ -7,6 +7,7 @@ import (
 	S "strings"
 
 	"github.com/fbaube/gtoken"
+	XU "github.com/fbaube/xmlutils"
 )
 
 type StringTally map[string]int
@@ -29,29 +30,29 @@ func (p *Contentity) TallyTags() {
 	p.TagTally = make(map[string]int)
 	p.AttTally = make(map[string]int)
 	for _, pGT := range p.GTokens {
-		if pGT.GName.Local == "" {
+		if pGT.XName.Local == "" {
 			continue
 		}
-		AddInGName(p.TagTally, p.AttTally, pGT)
-		AddInGName(GlobalTagTally, GlobalAttTally, pGT)
+		AddInXName(p.TagTally, p.AttTally, pGT)
+		AddInXName(GlobalTagTally, GlobalAttTally, pGT)
 		GlobalTagCount++
-		GlobalAttCount += len(pGT.GAtts)
+		GlobalAttCount += len(pGT.XAtts)
 	}
 }
 
-func AddInGName(ElmT StringTally, AttT StringTally, gT *gtoken.GToken) {
+func AddInXName(ElmT StringTally, AttT StringTally, gT *gtoken.GToken) {
 	// Is there an entry for the tag yet ?
 	// if val, ok := dict["foo"]; ok {
 	var ok bool
 	var n int
-	if n, ok = ElmT[gT.GName.Local]; ok {
-		ElmT[gT.GName.Local] = n + 1
+	if n, ok = ElmT[gT.XName.Local]; ok {
+		ElmT[gT.XName.Local] = n + 1
 	} else {
-		ElmT[gT.GName.Local] = 1
+		ElmT[gT.XName.Local] = 1
 	}
 	// Now process the attributes
-	for _, A := range gT.GAtts { // A is a *GAtt i.e. *xml.Attr
-		var gat gtoken.GAtt = A // *A
+	for _, A := range gT.XAtts { // A is a *XAtt i.e. *xml.Attr
+		var gat XU.XAtt = A // *A
 		var xat = xml.Attr(gat)
 		var sat = xat.Name.Local
 		if n, ok = AttT[sat]; ok {

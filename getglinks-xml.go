@@ -96,11 +96,11 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 		if GT.TTType != gtoken.TT_type_ELMNT {
 			continue
 		}
-		GN := GT.GName
+		GN := GT.XName
 		XN := xml.Name(GN)
 		var theTag string = XN.Local
 		// Iterate over all attributes
-		for _, GA := range GT.GAtts {
+		for _, GA := range GT.XAtts {
 			XA := xml.Attr(GA) // (*GA)
 			if !SU.IsInSliceIgnoreCase(XA.Name.Local, LwDitaAttsForGLinks) {
 				continue
