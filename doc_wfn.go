@@ -64,8 +64,8 @@
 // hierarchy information can be used to help build the `GTree`.)
 //
 // - "XML"
-// - - TextTokensFromString  s => `encoding/xml` => `[]xml.Token`
-// - - GTokensFromTextTokens `[]xml.Token` => `[]gparse.GToken`
+// - - TextTokensFromString  s => `encoding/xml` => `XU.XToken`
+// - - GTokensFromTextTokens `[]XU.XToken` => `[]gparse.GToken`
 // - "MKDN"
 // - - CSTfromString         s => `yuin/goldmark` => `(gm)/ast/Node`-tree
 // - - TreeTokensFromCST     Node-tree => []`MkdnToken`
@@ -81,8 +81,8 @@
 //
 // Suggested signatures (GM = `yuin/goldmark`; not incl. `error` return values):
 //  (Path when there is an explicit tokenization step)
-//   func TokensFromString_xml(s string) ([]xml.Token)
-//        string => []xml.Token
+//   func TokensFromString_xml(s string) ([]XU.XToken)
+//        string => []XU.XToken
 //        scalar => array
 //  (Path when an CST is created directly from the input string)
 //   func CSTfromString_(mkdn|html)(s string) ([]theType)
@@ -93,7 +93,7 @@
 //        tree => array
 //  (Path that is common) (unless having TreeTokens demands a separate func)
 //   func GTokensFromBaseTokens(interface{}) ([]*GToken)
-//        xml.Token, [][]MkdnToken, []HtmlToken => []GToken
+//        XU.XToken, [][]MkdnToken, []HtmlToken => []GToken
 //        array => array
 //   func GTreeFromGTokens([]GToken) GTree
 //        []GToken => GTree

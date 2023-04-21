@@ -1,11 +1,11 @@
 // Package mcfile defines a per-file structure [MCFile] that
 // holds all relevant per-file information. This includes:
 //
-//  - file path info
-//  - file content (UTF-8, tietysti)
-//  - file type information (MIME and more)
-//  - the results of markup-specific file analysis (in the most analysable
-//    case, i.e. XML, this comprises tokens, gtokens, gelms, gtree)
+//   - file path info
+//   - file content (UTF-8, tietysti)
+//   - file type information (MIME and more)
+//   - the results of markup-specific file analysis (in the most analysable
+//     case, i.e. XML, this comprises tokens, gtokens, gelms, gtree)
 //
 // For a discussion of tree walk functions, see `doc_wfn.go`
 //
@@ -36,8 +36,8 @@
 // There are three major types of `MCFile`,
 // corresponding to how we process the file content:
 // - "XML"
-// - - (§1) Use stdlib `encoding/xml` to get `[]xml.Token`
-// - - (§1) Convert `[]xml.Token` to `[]gparse.GToken`
+// - - (§1) Use stdlib `encoding/xml` to get `[]XU.XToken`
+// - - (§1) Convert `[]XU.XToken` to `[]gparse.GToken`
 // - - (§2) Build `GTree`
 // - "MKDN"
 // - - (§1) Use `yuin/goldmark` to get tree of `yuin/goldmark/ast/Node`
@@ -63,5 +63,4 @@
 // NOTE The use of shorthand in variable names: Doc, Elm, Att.
 //
 // NOTE We use `godoc2md`, so we can use Markdown in these code comments.
-//
 package mcfile

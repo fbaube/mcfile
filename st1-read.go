@@ -21,8 +21,8 @@ import (
 //
 // Summary of processing per Contentity type:
 // "XML"
-//   - (§1) Use stdlib [encoding/xml] to get slice of [xml.Token]
-//   - (§1) Convert [xml.Token] to [gparse.GToken]
+//   - (§1) Use stdlib [encoding/xml] to get slice of [XU.XToken]
+//   - (§1) Convert [XU.XToken] to [gparse.GToken]
 //
 // "MKDN"
 //   - (§1) Use [yuin/goldmark] to get tree of [yuin/goldmark/ast/Node]

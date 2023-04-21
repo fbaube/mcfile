@@ -6,10 +6,10 @@ import (
 	FP "path/filepath"
 	S "strings"
 
+	CT "github.com/fbaube/ctoken"
 	FU "github.com/fbaube/fileutils"
 	L "github.com/fbaube/mlog"
 	SU "github.com/fbaube/stringutils"
-	XU "github.com/fbaube/xmlutils"
 )
 
 // TYPES ARE; external+http, file, pure-ID
@@ -93,14 +93,14 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 			continue
 		}
 		// If it's not a Start Element, skip it
-		if GT.TDType != XU.TD_type_ELMNT {
+		if GT.TDType != CT.TD_type_ELMNT {
 			continue
 		}
-		GN := GT.XName
+		GN := GT.CName
 		XN := xml.Name(GN)
 		var theTag string = XN.Local
 		// Iterate over all attributes
-		for _, GA := range GT.XAtts {
+		for _, GA := range GT.CAtts {
 			XA := xml.Attr(GA) // (*GA)
 			if !SU.IsInSliceIgnoreCase(XA.Name.Local, LwDitaAttsForGLinks) {
 				continue

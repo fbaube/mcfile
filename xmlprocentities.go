@@ -4,9 +4,9 @@ import (
 	"fmt"
 	S "strings"
 
+	CT "github.com/fbaube/ctoken"
 	"github.com/fbaube/gparse"
 	SU "github.com/fbaube/stringutils"
-	XU "github.com/fbaube/xmlutils"
 )
 
 // RULES
@@ -71,7 +71,7 @@ func (p *Contentity) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error
 
 	for _, E := range p.GTags {
 
-		if E.TDType != XU.TD_type_Entity {
+		if E.TDType != CT.TD_type_Entity {
 			continue
 		}
 		// fmt.Printf("Collecting ENTITY directive: |%+v| \n", T)
@@ -83,8 +83,9 @@ func (p *Contentity) NewEntitiesList() (gEnts map[string]*gparse.GEnt, err error
 		} else {
 			newEnt.RefChar = "&"
 		}
-		theSymbol := E.TagOrPrcsrDrctv
-		theRest := SU.NormalizeWhitespace(E.Datastring)
+		panic("FIXME mcfile/xmlprocentities.go:L86")
+		theSymbol := E.Text
+		theRest := SU.NormalizeWhitespace(E.Text)
 
 		newEnt.NameOnly = theSymbol
 		newEnt.TheRest = theRest
@@ -197,7 +198,7 @@ func (p *Contentity) DoEntitiesList() error {
 
 	for _, E := range p.GTags {
 
-		if E.TDType != XU.TD_type_Entity {
+		if E.TDType != CT.TD_type_Entity {
 			continue
 		}
 		fmt.Printf("    --> DoEntitiesList: Collecting directive: |%+v| \n", E)
@@ -209,8 +210,10 @@ func (p *Contentity) DoEntitiesList() error {
 		} else {
 			newEnt.RefChar = "&"
 		}
-		theSymbol := E.TagOrPrcsrDrctv
-		theRest := SU.NormalizeWhitespace(E.Datastring)
+		var theSymbol, theRest string
+		panic("mcfile/xmlprocentities.go:L214")
+		// !! theSymbol = E.TagOrPrcsrDrctv
+		// !! theRest = SU.NormalizeWhitespace(E.Datastring)
 
 		newEnt.NameOnly = theSymbol
 		newEnt.TheRest = theRest
@@ -351,25 +354,25 @@ func (p *Contentity) SubstituteEntities() error {
 				}
 				*/
 				switch E.TDType {
-				case XU.TD_type_ELMNT:
+				case CT.TD_type_ELMNT:
 					continue
-				case XU.TD_type_ENDLM:
+				case CT.TD_type_ENDLM:
 					continue
-				case XU.TD_type_PINST:
+				case CT.TD_type_PINST:
 					continue
-				case XU.TD_type_COMNT:
+				case CT.TD_type_COMNT:
 					continue
-				case XU.TD_type_DRCTV:
+				case CT.TD_type_DRCTV:
 					continue // panic("WTF")
-				case XU.TD_type_Doctype:
+				case CT.TD_type_Doctype:
 					continue
 				default:
 					// CD, ELEMENT, ATTLIST, ENTITY, NOTATION
-					if E.TDType == XU.TD_type_CDATA {
-						s2check = E.TagOrPrcsrDrctv
+					if E.TDType == CT.TD_type_CDATA {
+						s2check = E.Text
 						// if s2check != "" { fmt.Printf("SubEnts got CDATA|%v| \n", RT) }
 					} else {
-						s2check = E.Datastring
+						s2check = E.Text // !! E.Datastring
 					}
 					// Check for all the legal entity reference characters.
 					if -1 == S.IndexAny(s2check, "&%;") {
