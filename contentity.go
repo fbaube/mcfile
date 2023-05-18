@@ -50,7 +50,7 @@ type Contentity struct { // has has has has Raw
 }
 
 func (p *Contentity) IsDir() bool {
-	return p.ContentityRecord.PathProps.IsOkayDir()
+	return p.ContentityRecord.PathProps.IsDir()
 }
 
 type norderCreationState struct {

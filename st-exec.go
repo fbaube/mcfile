@@ -16,14 +16,17 @@ import (
 //
 // An interesting question is, how can we indicate an error and
 // terminate a thread prematurely ? The method currently chosen
-// is to use interface [github.com/fbaube/utils/miscutils/Errer].
+// is to use interface [github.com/fbaube/miscutils/Errer].
 // This has to be checked for at the start of a func.
 //
 // We could also pass in a `Context` and use its cancellation
-// capability. Yet another way might be simply to `panic(..)“,
+// capability. Yet another way might be simply to `panic`,
 // and so this function already has code to catch a panic.
 // .
 func (p *Contentity) ExecuteStages() *Contentity {
+	if p.MarkupType() == "UNK" {
+		panic("UNK MarkupType in ExecuteStages")
+	}
 	if p.PathProps.Raw == "" {
 		p.L(LWarning, "ExecuteStages :: ZERO-len Raw")
 		return p

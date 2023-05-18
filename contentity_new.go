@@ -77,6 +77,9 @@ func NewContentity(aPath string) (*Contentity, error) {
 		return nil, fmt.Errorf(
 			"NewContentity(PP=>PA)<%s>: %w", aPath, e)
 	}
+	if pPA.MarkupType() == "UNK" {
+		L.L.Panic("UNK MarkupType in NewContentity L81")
+	}
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
@@ -87,10 +90,13 @@ func NewContentity(aPath string) (*Contentity, error) {
 		return nil, fmt.Errorf(
 			"NewContentity(PA=>CR)<%s>: %w", aPath, e)
 	}
+	if pCR.MarkupType() == "UNK" {
+		panic("UNK MarkupType in NewContentity")
+	}
 	// NOW if we want to exit, we can
 	// do the necessary assignments
 	pNewCnty.ContentityRecord = *pCR
-	if pPP.IsOkayDir() {
+	if pPP.IsDir() {
 		L.L.Info(SU.Ybg(" Directory " + SU.ElideHomeDir(pPP.AbsFP.S())))
 		pNewCnty.ContentityRecord.PathProps = *pPP
 		return pNewCnty, nil

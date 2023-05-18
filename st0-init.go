@@ -1,7 +1,6 @@
 package mcfile
 
 import (
-	// LU "github.com/fbaube/logutils"
 	SU "github.com/fbaube/stringutils"
 )
 
@@ -13,8 +12,8 @@ import (
 //   - the `Contentity` *must* refer to a readable file, and
 //   - the field `Contentity.MType` *must* already be set
 //
-// Output: A `Contentity` that is in-memory and analyzed (shallowly)
-// as `XML` or `MKDN` (Markdown) or `HTML`.
+// Output: A `Contentity` that is in-memory and analyzed
+// (shallowly) as `XML` or `MKDN` (Markdown) or `HTML`.
 //
 // - SetTypeSpecific()
 // - SanityCheck()
