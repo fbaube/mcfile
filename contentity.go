@@ -7,7 +7,7 @@ import (
 	"github.com/fbaube/gtree"
 	MU "github.com/fbaube/miscutils"
 	ON "github.com/fbaube/orderednodes"
-	RU "github.com/fbaube/repo/util"
+	RU "github.com/fbaube/repoutils"
 	SU "github.com/fbaube/stringutils"
 	"io"
 )

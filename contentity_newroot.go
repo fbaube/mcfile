@@ -7,7 +7,7 @@ import (
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
 	"github.com/fbaube/repo/sqlite"
-	RU "github.com/fbaube/repo/util"
+	RU "github.com/fbaube/repoutils"
 	FP "path/filepath"
 )
 
