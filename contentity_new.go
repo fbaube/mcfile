@@ -7,7 +7,7 @@ import (
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
 	"github.com/fbaube/repo/sqlite"
-	RU "github.com/fbaube/repoutils"
+	RM "github.com/fbaube/rowmodels"
 	SU "github.com/fbaube/stringutils"
 	FP "path/filepath"
 )
@@ -83,8 +83,8 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
-	var pCR *RU.ContentityRecord
-	pCR, e = sqlite.NewContentityRecord(pPP, pPA)
+	var pCR *RM.ContentityRow
+	pCR, e = sqlite.NewContentityRow(pPP, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewContentity(PA=>CR)<%s>: %s", aPath, e)
 		return nil, fmt.Errorf(
@@ -95,10 +95,10 @@ func NewContentity(aPath string) (*Contentity, error) {
 	}
 	// NOW if we want to exit, we can
 	// do the necessary assignments
-	pNewCnty.ContentityRecord = *pCR
+	pNewCnty.ContentityRow = *pCR
 	if pPP.IsDir() {
 		L.L.Info(SU.Ybg(" Directory " + SU.ElideHomeDir(pPP.AbsFP.S())))
-		pNewCnty.ContentityRecord.PathProps = *pPP
+		pNewCnty.ContentityRow.PathProps = *pPP
 		return pNewCnty, nil
 	}
 	L.L.Okay(SU.Gbg(" " + pPP.String() + " "))

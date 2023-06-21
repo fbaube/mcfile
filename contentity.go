@@ -7,7 +7,7 @@ import (
 	"github.com/fbaube/gtree"
 	MU "github.com/fbaube/miscutils"
 	ON "github.com/fbaube/orderednodes"
-	RU "github.com/fbaube/repoutils"
+	RM "github.com/fbaube/rowmodels"
 	SU "github.com/fbaube/stringutils"
 	"io"
 )
@@ -25,8 +25,8 @@ type Contentity struct { // has has has has Raw
 	// CFU.GCtx // utils/cliflagutils
 	logIdx int
 	logStg string
-	// ContentityRecord is what gets persisted to the DB (and has Raw)
-	RU.ContentityRecord
+	// ContentityRow is what gets persisted to the DB (and has Raw)
+	RM.ContentityRow
 	// FU.OutputFiles // This was useful at one point
 
 	// ParserResults is parseutils.ParserResults_ffs
@@ -50,7 +50,7 @@ type Contentity struct { // has has has has Raw
 }
 
 func (p *Contentity) IsDir() bool {
-	return p.ContentityRecord.PathProps.IsDir()
+	return p.ContentityRow.PathProps.IsDir()
 }
 
 type norderCreationState struct {
