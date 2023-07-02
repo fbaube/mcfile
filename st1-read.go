@@ -239,6 +239,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	nsL := NSer.NodeCount()
 	fmt.Fprintln(p.GTknsWriter, "=== Output:")
 	fmt.Fprintf(p.GTknsWriter, "=== lengths: %d %d %d %d \n", ndL, fpL, gtL, nsL)
+	fmt.Printf("st1-read: lengths: %d %d %d %d \n", ndL, fpL, gtL, nsL)
 	count := (ndL + fpL + gtL + nsL + 2) / 4
 	// For every GToken, we should print:
 	//  - original node's original text

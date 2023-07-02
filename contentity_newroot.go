@@ -6,7 +6,7 @@ import (
 	FU "github.com/fbaube/fileutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
-	"github.com/fbaube/repo/sqlite"
+	RS "github.com/fbaube/reposqlite"
 	RM "github.com/fbaube/rowmodels"
 	FP "path/filepath"
 )
@@ -60,7 +60,7 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	//  "Promote" to a ContentityRecord
 	// =================================
 	var pCR *RM.ContentityRow
-	pCR, e = sqlite.NewContentityRow(pPP, pPA)
+	pCR, e = RS.NewContentityRow(pPP, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewRootContentity(PA=>CR)<%s>: %s", aRootPath, e)
 		return nil, fmt.Errorf(
