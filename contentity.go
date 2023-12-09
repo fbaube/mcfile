@@ -23,8 +23,11 @@ type Contentity struct { // has has has has Raw
 	ON.Nord
 	MU.Errer
 	// CFU.GCtx // utils/cliflagutils
+
+	LogInfo
 	logIdx int
 	logStg string
+	
 	// ContentityRow is what gets persisted to the DB (and has Raw)
 	RM.ContentityRow
 	// FU.OutputFiles // This was useful at one point
@@ -48,6 +51,21 @@ type Contentity struct { // has has has has Raw
 	TagTally StringTally
 	AttTally StringTally
 }
+
+// LogInfo exists mainly to provide a grep'able string -
+// for example "(01:4a)". The [io.Writer] exists outside
+// of the [github.com/fbaube/mlog] logging subsystem and
+// should only be used if `mlog` is not.
+// 
+type LogInfo struct {
+	index int
+	stage string
+	W io.Writer
+	}
+
+func (p *LogInfo) String() string {
+     return fmt.Sprintf("(%02d:%s)", p.index, p.stage) 
+     }
 
 func (p *Contentity) IsDir() bool {
 	return p.ContentityRow.PathProps.IsDir()

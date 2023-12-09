@@ -1,8 +1,11 @@
 package mcfile
 
 import (
-	SU "github.com/fbaube/stringutils"
+       // "log"
 	"runtime/debug"
+
+	// "github.com/fbaube/must"
+	SU "github.com/fbaube/stringutils"
 )
 
 // ExecuteStages processes a Contentity to completion in an isolated
@@ -24,6 +27,12 @@ import (
 // and so this function already has code to catch a panic.
 // .
 func (p *Contentity) ExecuteStages() *Contentity {
+	// The E family of functions all remove a final error return,
+	// panicking if non-nil.
+	// Handle converts such a panic to a returnable error value.
+	// Other panics are not recovered.
+	// defer must.F(log.Fatal)
+
 	if p.MarkupType() == "UNK" {
 		panic("UNK MarkupType in ExecuteStages")
 	}
@@ -66,7 +75,13 @@ func (p *Contentity) ExecuteStages() *Contentity {
 				sRecovered = eRecovered.Error()
 			}
 			p.L(LError, "defer'd-recover()-string: "+sRecovered)
-			p.L(LError, "stdlib:runtime/debug.Stack(): "+string(debug.Stack()))
+			debug.PrintStack()
+			/* Barfed!
+			bb := debug.Stack()
+			ss := string(bb)
+			p.L(LError, "stdlib:runtime/debug.Stack(): "+
+				ss) // string(debug.Stack()))
+			*/
 			p.L(LError, "= = = = = = = = = = = = = = = = = = = =")
 		}
 	}()
