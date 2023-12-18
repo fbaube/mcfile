@@ -9,6 +9,7 @@ import (
 	RS "github.com/fbaube/reposqlite"
 	RM "github.com/fbaube/rowmodels"
 	SU "github.com/fbaube/stringutils"
+	CA "github.com/fbaube/contentanalysis"
 	FP "path/filepath"
 )
 
@@ -71,7 +72,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// =============================
 	//  "Promote" to a PathAnalysis
 	// =============================
-	pPA, e := FU.NewPathAnalysis(pPP)
+	pPA, e := CA.NewPathAnalysis(pPP)
 	if e != nil || pPA == nil {
 		L.L.Error("NewContentity(PP=>PA)<%s>: %s", aPath, e)
 		return nil, fmt.Errorf(

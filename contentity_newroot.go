@@ -8,6 +8,7 @@ import (
 	ON "github.com/fbaube/orderednodes"
 	RS "github.com/fbaube/reposqlite"
 	RM "github.com/fbaube/rowmodels"
+	CA "github.com/fbaube/contentanalysis"
 	FP "path/filepath"
 )
 
@@ -50,7 +51,7 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// =============================
 	//  "Promote" to a PathAnalysis
 	// =============================
-	pPA, e := FU.NewPathAnalysis(pPP)
+	pPA, e := CA.NewPathAnalysis(pPP)
 	if e != nil || pPA == nil {
 		L.L.Error("NewRootContentity(PP=>PA)<%s>: %s", aRootPath, e)
 		return nil, fmt.Errorf(
