@@ -248,6 +248,10 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	//  - original node's NodeInfo(int) and/or NodeDebug(int)
 	//  - the GToken
 	for i := 0; i < count; i++ {
+	        if p.GTokens[i] == nil {
+		   fmt.Printf("NIL at GTokens[%d] \n", i)
+		   continue
+		   }
 		tkn := *(p.GTokens[i])
 		fmt.Fprintf(p.GTknsWriter, "[%d]\n", i)
 		fmt.Fprintf(p.GTknsWriter, "echo: %s \n", NSer.NodeEcho(i))
