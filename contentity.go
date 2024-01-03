@@ -7,7 +7,7 @@ import (
 	"github.com/fbaube/gtree"
 	MU "github.com/fbaube/miscutils"
 	ON "github.com/fbaube/orderednodes"
-	RM "github.com/fbaube/rowmodels"
+	DRM "github.com/fbaube/datarepo/rowmodels"
 	SU "github.com/fbaube/stringutils"
 	"io"
 )
@@ -29,7 +29,7 @@ type Contentity struct { // has has has has Raw
 	logStg string
 	
 	// ContentityRow is what gets persisted to the DB (and has Raw)
-	RM.ContentityRow
+	DRM.ContentityRow
 	// FU.OutputFiles // This was useful at one point
 
 	// ParserResults is parseutils.ParserResults_ffs

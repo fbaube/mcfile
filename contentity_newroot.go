@@ -6,8 +6,8 @@ import (
 	FU "github.com/fbaube/fileutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
-	RS "github.com/fbaube/reposqlite"
-	RM "github.com/fbaube/rowmodels"
+	DRS "github.com/fbaube/datarepo/sqlite"
+	DRM "github.com/fbaube/datarepo/rowmodels"
 	CA "github.com/fbaube/contentanalysis"
 	FP "path/filepath"
 )
@@ -60,8 +60,8 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
-	var pCR *RM.ContentityRow
-	pCR, e = RS.NewContentityRow(pPP, pPA)
+	var pCR *DRM.ContentityRow
+	pCR, e = DRS.NewContentityRow(pPP, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewRootContentity(PA=>CR)<%s>: %s", aRootPath, e)
 		return nil, fmt.Errorf(
