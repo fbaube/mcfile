@@ -183,6 +183,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		}
 		pCPR_M = p.ParserResults.(*PU.ParserResults_mkdn)
 		common = pCPR_M.CommonCPR
+		NSer = pCPR_M
 		// Do this
 		pCPR_M.Writer = io.Discard
 		// instead of this
@@ -220,6 +221,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 		var pCPR_X *XU.ParserResults_xml
 		pCPR_X = p.ParserResults.(*XU.ParserResults_xml)
 		common = pCPR_X.CommonCPR
+		NSer = pCPR_X
 		// Do this
 		pCPR_X.Writer = io.Discard
 		// instead of this
@@ -238,8 +240,12 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	gtL := len(p.GTokens)
 	nsL := NSer.NodeCount()
 	fmt.Fprintln(p.GTknsWriter, "=== Output:")
-	fmt.Fprintf(p.GTknsWriter, "=== lengths: %d %d %d %d \n", ndL, fpL, gtL, nsL)
-	fmt.Printf("st1-read: lengths: %d %d %d %d \n", ndL, fpL, gtL, nsL)
+	fmt.Fprintf(p.GTknsWriter, "=== array lengths: " +
+		"cmn.NodeDepths<%d> cmn.FilePosns<%d> GTokens<%d> " +
+		"NSer.NodeCount<%d> \n", ndL, fpL, gtL, nsL)
+	fmt.Printf("st1-read: array lengths: " +
+		"cmn.NodeDepths<%d> cmn.FilePosns<%d> GTokens<%d> " +
+		"NSer.NodeCount<%d> \n", ndL, fpL, gtL, nsL)
 	count := (ndL + fpL + gtL + nsL + 2) / 4
 	// For every GToken, we should print:
 	//  - original node's original text
