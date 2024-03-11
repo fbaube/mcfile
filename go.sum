@@ -21,6 +21,10 @@ github.com/fbaube/datarepo v0.0.0-20240204164432-feb1b11ae167 h1:kkjIWVjMohsg6H3
 github.com/fbaube/datarepo v0.0.0-20240204164432-feb1b11ae167/go.mod h1:w7gSnq91VxW9eGizZmHtYUATKVkMfo2nOyoKCWSl1tc=
 github.com/fbaube/datarepo v0.0.0-20240206084457-78cb74dd74f2 h1:rQedKd6iThVjWv9vPX0vjkI/vbX1YQHxiGxrW57/jDk=
 github.com/fbaube/datarepo v0.0.0-20240206084457-78cb74dd74f2/go.mod h1:w7gSnq91VxW9eGizZmHtYUATKVkMfo2nOyoKCWSl1tc=
+github.com/fbaube/datarepo v0.0.0-20240229152658-d3766bce38b9 h1:5uPu8W+vJJGxh467FpnDbrRCiKsUAGUTZBC0u6oFTM8=
+github.com/fbaube/datarepo v0.0.0-20240229152658-d3766bce38b9/go.mod h1:HAAFbUJ2k6UTXV03cWS/YsrV7ie/OEyutCmdNDwc8fI=
+github.com/fbaube/datarepo v0.0.0-20240229192356-de998a4ebd5e h1:m2vUIA9cPwdmfWDSI+v0W1VP2xmme8blXT1h3PnoxvA=
+github.com/fbaube/datarepo v0.0.0-20240229192356-de998a4ebd5e/go.mod h1:HAAFbUJ2k6UTXV03cWS/YsrV7ie/OEyutCmdNDwc8fI=
 github.com/fbaube/dsmnd v0.0.0-20240117202718-156e4507cef4 h1:+yUhwsUjYiPz8zPJdtyzeMZK8wg9b7hwLjWNF6EE8Qo=
 github.com/fbaube/dsmnd v0.0.0-20240117202718-156e4507cef4/go.mod h1:7FFQTZsr7f2vA243fKLohCwszP3Xrzi/xbFkOyPF+YQ=
 github.com/fbaube/dsmnd v0.0.0-20240130143636-adbc149a7741 h1:1qmauz9VF6WcTp4umXA40TQ65UftqHE80pgx4wQSpWo=
@@ -68,6 +72,8 @@ github.com/gabriel-vasile/mimetype v1.4.3/go.mod h1:d8uq/6HKRL6CGdk+aubisF/M5GcP
 github.com/go-git/go-git v4.7.0+incompatible/go.mod h1:6+421e08gnZWn30y26Vchf7efgYLe4dl5OQbBSUXShE=
 github.com/gomarkdown/markdown v0.0.0-20231222211730-1d6d20845b47 h1:k4Tw0nt6lwro3Uin8eqoET7MDA4JnT8YgbCjc/g5E3k=
 github.com/gomarkdown/markdown v0.0.0-20231222211730-1d6d20845b47/go.mod h1:JDGcbDT52eL4fju3sZ4TeHGsQwhG9nbDV21aMyhwPoA=
+github.com/lainio/err2 v0.9.52 h1:o58r5CDrXFpYun4J2Px14yIb+SnG1MISmEbQ++mfqR8=
+github.com/lainio/err2 v0.9.52/go.mod h1:glTVV2qNFbBy6WzZFDP2G5BqMiZI58cudp588cEgCuM=
 github.com/mattn/go-colorable v0.1.9/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope9wVRipJSqc=
 github.com/mattn/go-colorable v0.1.12/go.mod h1:u5H1YNBxpqRaxsYJYSkiCWKzEfiAb1Gb520KVy5xxl4=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=

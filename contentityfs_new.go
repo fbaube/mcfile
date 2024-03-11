@@ -13,12 +13,12 @@ import (
 
 var pCFS *ContentityFS
 
-// NewContentityFS is always called with path as an absolute filepath.
-// Use of a relative filepath is going to cause major problems.
+// NewContentityFS takes an absolute filepath. Passing in 
+// a relative filepath is going to cause major problems.
 // .
 func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	// NOTE this will fail on Windoze
-	if !S.HasPrefix(path, FU.PathSep) {
+	if aa,_ := FP.Abs(path); !S.HasPrefix(aa, FU.PathSep) {
 		L.L.Error("Not an abs.FP: %s", path)
 		return nil
 	}

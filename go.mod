@@ -7,7 +7,7 @@ toolchain go1.22.0
 require (
 	github.com/fbaube/contentanalysis v0.0.0-20240117104147-e12c9546e1cc
 	github.com/fbaube/ctoken v0.0.0-20240117104044-e4c4f08f089a
-	github.com/fbaube/datarepo v0.0.0-20240206084457-78cb74dd74f2
+	github.com/fbaube/datarepo v0.0.0-20240229192356-de998a4ebd5e
 	github.com/fbaube/fileutils v0.0.0-20231218210156-f6a37eab1eae
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
 	github.com/fbaube/gtoken v0.0.0-20231225203128-9dc8ca760381
@@ -19,6 +19,7 @@ require (
 	github.com/fbaube/parseutils v0.0.0-20240117103929-681897b1f883
 	github.com/fbaube/stringutils v0.0.0-20240227182912-df670eade115
 	github.com/fbaube/xmlutils v0.0.0-20240117103856-0d26c14e3769
+	github.com/lainio/err2 v0.9.52
 	github.com/yuin/goldmark v1.7.0
 )
 

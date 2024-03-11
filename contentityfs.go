@@ -16,21 +16,31 @@ import (
 // slice AND as a map. If any of these is modified without 
 // also modifying the others to match, there WILL be problems.
 // For that reason, we use unexported instance variables that
-// are accessible only via getters. It ain't bulletproof tho. 
+// are accessible only via getters.
+//
+// It ain't bulletproof tho. And in any case, users of 
+// a ContentityFS should feel free to use the functions 
+// on the embedded ordered nodes ("Nords"s).
 // .
 type ContentityFS struct {
-	// FS will be an [os.DirFS]
+	// FS will be set from func [os.DirFS]
 	fs.FS
 	rootAbsPath string
 	rootNord    *RootContentity
 	asSlice     []*Contentity
-	// The string is the relative filepath w.r.t. the rootAbsPath
+	// The string is the relative filepath w.r.t. 
+	// the rootAbsPath. But does this index into 
+	// the tree of Nord's or into the slice ?
 	asMap         map[string]*Contentity
-	nFiles, nDirs int
+	nItems, nFiles, nDirs int
+}
+
+func (p *ContentityFS) ItemCount() int {
+     return p.Size()
 }
 
 func (p *ContentityFS) Size() int {
-	// /* Not init'z ?
+	// /* Not init'lzd ?
 	if p.asMap != nil && len(p.asSlice) != len(p.asMap) {
 		L.L.Error("contentityfs size mismatch (slice &d, map %d)",
 			len(p.asSlice), len(p.asMap))

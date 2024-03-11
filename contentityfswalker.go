@@ -9,6 +9,7 @@ import (
 	FU "github.com/fbaube/fileutils"
 	// FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
+	assert "github.com/lainio/err2/assert"
 )
 
 // wfnBuildContentityTree is
@@ -25,82 +26,93 @@ import (
 // As path separator, "/" is assumed, not os.Sep
 // .
 func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
-	L.L.Dbg("wfnBuildContentityTree: path: %s", path)
+        var name = d.Name()
+	var absfp,_ = FP.Abs(path)
+	// If it's a directory, make sure it has a trailing slash
+	if d.IsDir() {
+	   if !S.HasSuffix(path, "/") { path += "/"; println("PATH-SLASH") }
+	   if !S.HasSuffix(name, "/") { name += "/"; println("NAME-SLASH") }
+	   if !S.HasSuffix(absfp,"/") { absfp+= "/"; println("ABS-FP-SLASH") }
+	   assert.That(FU.AbsFilePath(absfp).DirExists())
+	   }
+	L.L.Dbg("wfnBuildContentityTree: path: %s / %s", name, path)
 	// L.L.Warning("wfnBuildContentityTree: dir: %+v", d)
 	if err != nil {
-		L.L.Error("wfnBuildContentityTree: "+
-			"UNHANDLED err: %s", err.Error())
+		L.L.Error("wfnBuildContentityTree: "+ "UNHANDLED err: %w", err)
 	}
 	var p *Contentity
 	var e error
-	// ROOT NODE ?
+	// ==================
+	//  HANDLE ROOT NODE 
+	// ==================
 	if mustInitRoot() {
 		var pRC *RootContentity
-		if pCFS.RootAbsPath() == "" {
+		assert.NotEmpty(pCFS.RootAbsPath())
+		/* if pCFS.RootAbsPath() == "" {
 			panic("wfnBuildContentityTree: no ROOT")
-		}
+		} */
 		pRC, e = NewRootContentity(pCFS.RootAbsPath())
 		if e != nil || pRC == nil {
 			return errors.New("wfnBuildContentityTree UNHANDLED" +
-				" mustInitRoot NewRootContentityNord L101")
+				" mustInitRoot NewRootContentity L64")
 		}
+		assert.That(false)
+		assert.That(pRC.IsDir())
 		// Assign to globals (i.e. package vars)
 		pCFS.rootNord = pRC
 		pRC.MimeType = "dir"
 		pRC.MType = "dir"
 		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
-		var p *Contentity
-		p = ((*Contentity)(pRC))
-		pCFS.asSlice = append(pCFS.asSlice, p)
-		pCFS.asMap[path] = p
+		var pC *Contentity
+		pC = ((*Contentity)(pRC))
+		pCFS.asSlice = append(pCFS.asSlice, pC)
+		pCFS.asMap[path] = pC
 		// println("ADDED TO MAP:", path)
 		pCFS.nDirs = 1
 		pCFS.nFiles = 0
-		return nil // NOT pRC
+		return nil // NOT pRC! This is a walker func 
 	}
-	// Filter out hidden, esp'ly .git & .git* ;
-	// note that "/" is assumed, not os.Sep ;
-	// we issue no message, cos .git/* can be huge.
-	if S.Contains(path, "/.git") {
-		return nil
+	// =====================
+	//  FILTER OUT UNWANTED
+	// =====================
+	// Filter out .git/ and other dot-directories ASAP. 
+	// Note that "/" is assumed, not os.Sep .
+	// Give no reason, cos .git/* et al. can be frickin' huge.
+	if S.HasSuffix (path, "/.git") ||
+	   S.Contains (path, "/.git/") ||
+	  (S.Contains(path, "/.") && d.IsDir()) {
+		return fs.SkipDir
 	}
-	/* Old gnarly debuggging
-	// IS USING CWD NOT CLI ARGUMENT ?!
-	L.L.Warning("ROOT: %s", pCFS.RootAbsPath())
-	L.L.Warning("PATH: %s", path)
-	var sfp string
-	var afp FU.AbsFilePath
-	sfp = FP.Join(pCFS.RootAbsPath(), path)
-	L.L.Warning("BOTH: %s", sfp)
-	afp = FU.AbsFilePath(sfp)
-	*/
-	var reasonToReject string
-	if S.HasPrefix(path, ".") || S.HasPrefix(path, "_") ||
-		S.Contains(path, "/.") || S.Contains(path, "/_") {
-		reasonToReject = "leading . or _ "
-		L.L.Warning("Rejecting (%s): %s", reasonToReject, path)
+	var b1, b2 bool
+	var r1, r2 string
+	b1, r1 = excludeFilenamepath(path)
+	b2, r2 = excludeFilenamepath(name)
+	if b1 || b2 {
+	      if (b1) { r1 = "(file path) " + r1 }
+	      if (b2) { r2 = "(file name) " + r2 }
+		L.L.Warning("Rejecting (%s): %s%s", path, r1, r2)
+		// continue 
 		return nil
 	}
 	// Now at this point, if it's a directory, it's OK !
 	sfp := FP.Join(pCFS.RootAbsPath(), path)
 	afp := FU.AbsFilePath(sfp)
 	var isDir = afp.DirExists()
+	assert.Equal(isDir, d.IsDir())
 
 	// And so following code applies only to files, not to directories
 	// TODO: Not sure what happens with symlinks
 	if !isDir {
+	   	var reason string 
 		var ln = len(path)
 		if S.HasSuffix(path, "gtk") || S.HasSuffix(path, "gtr") {
-			reasonToReject = "gtk/gtr"
+			reason = "gtk/gtr"
 		} else if ln >= 5 && path[ln-5] == '_' { // debug file via "-t" flag
-			reasonToReject = "_echo,_tkns,_tree"
-		} else if S.Index(FP.Base(path), ".") == -1 { // untyped file
-			reasonToReject = "no dot, untyped"
-		} else if S.HasSuffix(path, "~") {
-			reasonToReject = "emacs"
-		}
-		if reasonToReject != "" {
-			L.L.Warning("Rejecting (%s): %s", reasonToReject, path)
+			reason = "_echo,_tkns,_tree"
+		} 
+		if reason != "" {
+			L.L.Warning("Rejecting (%s): %s", path, reason)
+			// continue 
 			return nil
 		}
 	}
@@ -111,7 +123,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		return nil
 	}
 	if /* p.PathAnalysis == nil || */ p.PathProps.Raw == "" && !isDir {
-		L.L.Warning("Rejecting (len 0 or too short): " + path)
+		L.L.Warning("Rejecting (%s): zero length", path)
 		L.L.Error("Skipping this item")
 		return nil
 	}
