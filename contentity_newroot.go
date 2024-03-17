@@ -18,8 +18,8 @@ type RootContentity Contentity
 
 // NewRootContentity returns a RootContentity Nord (i.e. node with
 // ordered children) that can be the root of a new Contentity tree.
-// It requires that argument aRootPath is an absolute filepath AND
-// is NOT a directory.
+// It requires that argument aRootPath is an absolute filepath and
+// is a directory.
 // .
 func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	L.L.Info("NewRootContentity: %s", aRootPath)
@@ -37,7 +37,6 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	if pNCS.nexSeqID != 0 {
 		L.L.Warning("New root cty: seq ID is: %d", pNCS.nexSeqID)
 	}
-
 	// ========================
 	//  Start with a PathProps
 	// ========================
@@ -48,6 +47,15 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 		return nil, FU.WrapAsPathPropsError(
 			e, "NewRootContentity (L47,path=>PP)", pPP)
 	}
+	// ============================
+	//  HAS TO BE A DIR (Well, DUH) 
+	// ============================
+	if !pPP.IsDir() {
+	   return nil, fmt.Errorf("NewCntRoot: not a dir: %s", aRootPath)
+	}
+
+	/*
+
 	// =============================
 	//  "Promote" to a PathAnalysis
 	// =============================
@@ -76,6 +84,9 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	pNewCty.GLinks = *new(GLinks)
 	// println("D=> NewContentity:", pNewCty.String()) // pNewCty.MType, pNewCty.AbsFP())
 	// fmt.Printf("D=> NewContentity: %s / %s \n", pNewCty.MType, pNewCty.AbsFP())
+
+	*/ 
+
 	pNewCty.Nord = *ON.NewRootNord(aRootPath, nil)
 	// println("NewRootContentity:", FU.Tildotted(pNewCty.AbsFP()))
 	// fmt.Printf("\t RootNord seqID %d \n", pNewCty.SeqID())
@@ -85,8 +96,8 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// pRC = pNewCty
 	// C = *pNewCty
 	// R = RootContentity(C)
-	if pNewCty == nil {
+	/* if pNewCty == nil {
 		panic("nil pNewCty")
-	}
+	} */
 	return pNewCty, nil
 }

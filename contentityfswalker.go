@@ -30,9 +30,12 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	var absfp,_ = FP.Abs(path)
 	// If it's a directory, make sure it has a trailing slash
 	if d.IsDir() {
-	   if !S.HasSuffix(path, "/") { path += "/"; println("PATH-SLASH") }
-	   if !S.HasSuffix(name, "/") { name += "/"; println("NAME-SLASH") }
-	   if !S.HasSuffix(absfp,"/") { absfp+= "/"; println("ABS-FP-SLASH") }
+	   if !S.HasSuffix(path, "/") {
+	      path += "/"; L.L.Progress("Dir path gets trlg slash") }
+	   if !S.HasSuffix(name, "/") {
+	      name += "/"; L.L.Progress("Dir name gets trlg slash") }
+	   if !S.HasSuffix(absfp,"/") {
+	      absfp+= "/"; L.L.Progress("Dir abs.path gets trlg slash") }
 	   assert.That(FU.AbsFilePath(absfp).DirExists())
 	   }
 	L.L.Dbg("wfnBuildContentityTree: path: %s / %s", name, path)
