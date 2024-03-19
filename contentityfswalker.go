@@ -125,7 +125,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		L.L.Error("Skipping this item")
 		return nil
 	}
-	if /* p.PathAnalysis == nil || */ p.PathProps.Raw == "" && !isDir {
+	if /* p.PathAnalysis == nil || */ p.FSItem.Raw == "" && !isDir {
 		L.L.Warning("Rejecting (%s): zero length", path)
 		L.L.Error("Skipping this item")
 		return nil

@@ -49,30 +49,30 @@ func NewContentity(aPath string) (*Contentity, error) {
 			"\n\t ===> New Contentity: %s <===           "),
 			SU.ElideHomeDir(aPath))
 	}
-	// ========================
-	//  Start with a PathProps
-	// ========================
-	var pPP *FU.PathProps
+	// ======================
+	//  Start with an FSItem
+	// ======================
+	var pFSI *FU.FSItem
 	var e error
 	if FP.IsAbs(aPath) {
-		pPP, e = FU.NewPathProps(aPath)
+		pFSI, e = FU.NewFSItem(aPath)
 	} else if !FP.IsAbs(pNCS.rootPath) {
 		e = errors.New("rootPath not absolute: " + pNCS.rootPath)
 	} else {
-		pPP, e = FU.NewPathPropsRelativeTo(aPath, pNCS.rootPath)
+		pFSI, e = FU.NewFSItemRelativeTo(aPath, pNCS.rootPath)
 	}
 	if e != nil {
 		return nil, fmt.Errorf("newcontentity: %w", e)
 	}
-	// e = pPP.FetchRaw()
-	e = pPP.GoGetFileContents()
+	// e = pFSI.FetchRaw()
+	e = pFSI.GoGetFileContents()
 	if e != nil {
 		return nil, fmt.Errorf("newcontentity: %w", e)
 	}
 	// =============================
 	//  "Promote" to a PathAnalysis
 	// =============================
-	pPA, e := CA.NewPathAnalysis(pPP)
+	pPA, e := CA.NewPathAnalysis(pFSI)
 	if e != nil || pPA == nil {
 		L.L.Error("NewContentity(PP=>PA)<%s>: %s", aPath, e)
 		return nil, fmt.Errorf(
@@ -85,7 +85,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	//  "Promote" to a ContentityRecord
 	// =================================
 	var pCR *DRM.ContentityRow
-	pCR, e = DRS.NewContentityRow(pPP, pPA)
+	pCR, e = DRS.NewContentityRow(pFSI, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewContentity(PA=>CR)<%s>: %s", aPath, e)
 		return nil, fmt.Errorf(
@@ -97,12 +97,12 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// NOW if we want to exit, we can
 	// do the necessary assignments
 	pNewCnty.ContentityRow = *pCR
-	if pPP.IsDir() {
-		L.L.Info(SU.Ybg(" Directory " + SU.ElideHomeDir(pPP.AbsFP.S())))
-		pNewCnty.ContentityRow.PathProps = *pPP
+	if pFSI.IsDir() {
+		L.L.Info(SU.Ybg(" Directory " + SU.ElideHomeDir(pFSI.FPs.AbsFP.S())))
+		pNewCnty.ContentityRow.FSItem = *pFSI
 		return pNewCnty, nil
 	}
-	L.L.Okay(SU.Gbg(" " + pPP.String() + " "))
+	L.L.Okay(SU.Gbg(" " + pFSI.String() + " "))
 
 	// ==================================
 	//  Now fill in the ContentityRecord

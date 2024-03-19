@@ -68,7 +68,7 @@ func (p *LogInfo) String() string {
      }
 
 func (p *Contentity) IsDir() bool {
-	return p.ContentityRow.PathProps.IsDir()
+	return p.ContentityRow.FSItem.IsDir()
 }
 
 type norderCreationState struct {
@@ -92,7 +92,7 @@ func (p Contentity) String() string {
 	}
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("||%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		SU.Tildotted(p.PathProps.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
+		SU.Tildotted(p.FSItem.FPs.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
 		p.KeyRefncs, p.KeyRefnts, p.UriRefncs, p.UriRefnts)
 	/* code to use ?
 			if p.XmlFileMeta != nil {

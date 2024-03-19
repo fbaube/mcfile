@@ -3,6 +3,7 @@ package mcfile
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	FU "github.com/fbaube/fileutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
@@ -37,15 +38,14 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	if pNCS.nexSeqID != 0 {
 		L.L.Warning("New root cty: seq ID is: %d", pNCS.nexSeqID)
 	}
-	// ========================
-	//  Start with a PathProps
-	// ========================
-	var pPP *FU.PathProps
+	// ======================
+	//  Start with an FSItem
+	// ======================
+	var pPP *FU.FSItem
 	var e error
-	pPP, e = FU.NewPathProps(aRootPath)
+	pPP, e = FU.NewFSItem(aRootPath)
 	if e != nil || pPP == nil {
-		return nil, FU.WrapAsPathPropsError(
-			e, "NewRootContentity (L47,path=>PP)", pPP)
+		return nil, &fs.PathError{Op:"NewFSItem",Err:e,Path:aRootPath}
 	}
 	// ============================
 	//  HAS TO BE A DIR (Well, DUH) 
@@ -75,7 +75,7 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 		return nil, fmt.Errorf(
 			"NewRootContentity(PA=>CR)<%s>: %w", aRootPath, e)
 	}
-	// L.L.Warning("NewRootCty (PP) %+v", pCR.PathProps)
+	// L.L.Warning("NewRootCty (PP) %+v", pCR.FSItem)
 	// nil! L.L.Warning("NewRootCty (PA) %+v", *pCR.PathAnalysis)
 	pNewCty.ContentityRow = *pCR
 	// ==================================

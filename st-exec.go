@@ -36,7 +36,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	if p.MarkupType() == "UNK" {
 		panic("UNK MarkupType in ExecuteStages")
 	}
-	if p.PathProps.Raw == "" {
+	if p.FSItem.Raw == "" {
 		p.L(LWarning, "ExecuteStages :: ZERO-len Raw")
 		return p
 	}
@@ -48,8 +48,8 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		p.L(LWarning, "Skipping ALL stages for binary file")
 		return p
 	}
-	// p.L(LInfo, "LENGTH %d SIZE %d", len(p.PathProps.Raw), p.Size())
-	if len(p.PathProps.Raw) == 0 { // p.Size() == 0 {
+	// p.L(LInfo, "LENGTH %d SIZE %d", len(p.FSItem.Raw), p.Size())
+	if len(p.FSItem.Raw) == 0 { // p.Size() == 0 {
 		p.L(LWarning, "Skipping ALL stages for empty file")
 		return p
 	}

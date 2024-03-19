@@ -56,7 +56,7 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 		return p
 	}
 	p.logStg = "1a"
-	metaRaw := p.Meta.GetSpanOfString(p.PathProps.TypedRaw.S())
+	metaRaw := p.Meta.GetSpanOfString(p.FSItem.TypedRaw.S())
 	if metaRaw == "" {
 		p.L(LInfo, "No metadata found")
 		return p
@@ -101,10 +101,10 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	textRaw := p.Text.GetSpanOfString(p.PathProps.TypedRaw.S())
+	textRaw := p.Text.GetSpanOfString(p.FSItem.TypedRaw.S())
 	if textRaw == "" {
 		p.L(LWarning, "Lame hack in st1-read L105")
-		textRaw = p.PathProps.TypedRaw.S()
+		textRaw = p.FSItem.TypedRaw.S()
 	}
 	p.logStg = "1b"
 	if len(textRaw) == 0 {

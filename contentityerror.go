@@ -26,7 +26,7 @@ func WrapAsContentityError(e error, op string, cty *Contentity) ContentityError 
 	if cty == nil {
 		ce.PE.Path = "(contentity path not found!)"
 	} else {
-		ce.PE.Path = cty.PathProps.AbsFP.S()
+		ce.PE.Path = cty.FSItem.FPs.AbsFP.S()
 	}
 	return ce
 }
@@ -38,7 +38,7 @@ func NewContentityError(ermsg string, op string, cty *Contentity) ContentityErro
 	if cty == nil {
 		ce.PE.Path = "(contentity path not found!)"
 	} else {
-		ce.PE.Path = cty.PathProps.AbsFP.S()
+		ce.PE.Path = cty.FSItem.FPs.AbsFP.S()
 	}
 	return ce
 }
