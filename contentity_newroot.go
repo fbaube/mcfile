@@ -41,16 +41,16 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// ======================
 	//  Start with an FSItem
 	// ======================
-	var pPP *FU.FSItem
+	var pFSI *FU.FSItem
 	var e error
-	pPP, e = FU.NewFSItem(aRootPath)
-	if e != nil || pPP == nil {
+	pFSI, e = FU.NewFSItem(aRootPath)
+	if e != nil || pFSI == nil {
 		return nil, &fs.PathError{Op:"NewFSItem",Err:e,Path:aRootPath}
 	}
 	// ============================
 	//  HAS TO BE A DIR (Well, DUH) 
 	// ============================
-	if !pPP.IsDir() {
+	if !pFSI.IsDir() {
 	   return nil, fmt.Errorf("NewCntRoot: not a dir: %s", aRootPath)
 	}
 
@@ -59,7 +59,7 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// =============================
 	//  "Promote" to a PathAnalysis
 	// =============================
-	pPA, e := CA.NewPathAnalysis(pPP)
+	pPA, e := CA.NewPathAnalysis(pFSI)
 	if e != nil || pPA == nil {
 		L.L.Error("NewRootContentity(PP=>PA)<%s>: %s", aRootPath, e)
 		return nil, fmt.Errorf(
@@ -69,7 +69,7 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	//  "Promote" to a ContentityRecord
 	// =================================
 	var pCR *DRM.ContentityRow
-	pCR, e = DRS.NewContentityRow(pPP, pPA)
+	pCR, e = DRS.NewContentityRow(pFSI, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewRootContentity(PA=>CR)<%s>: %s", aRootPath, e)
 		return nil, fmt.Errorf(

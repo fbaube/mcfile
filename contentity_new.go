@@ -17,7 +17,8 @@ import (
 // ordered children) that can NOT be the root of a Contentity tree.
 //
 // We want everything to be in a nice tree of Nords, and that
-// means that we have to create Contenties for directories too.
+// means that we have to create Contenties for directories too
+// (where MarkupType == SU.MU_type_DIRLIKE). 
 //
 // When this func is called while walking a DIRECTORY given
 // on the command line, aPath is a simple file (or dir) name,
@@ -25,7 +26,7 @@ import (
 //
 // When this func is called for a FILE given on the command line,
 // aPath can be either absolute or relative, depending on what was
-// on the CLI.
+// on the CLI (altho probably a relFP has been upgraded to an absFP).
 //
 // Alternative hack to achieve a similar end:
 // if pPP,e := NewPP(path); e == nil; pPA,e := new PA(pPP);
@@ -33,7 +34,7 @@ import (
 // .
 func NewContentity(aPath string) (*Contentity, error) {
 	if aPath == "" {
-		return nil, errors.New("newcontentity: missing path")
+		return nil, errors.New("NewContentity: missing path")
 	}
 	var pNewCnty *Contentity
 	pNewCnty = new(Contentity)
@@ -62,9 +63,8 @@ func NewContentity(aPath string) (*Contentity, error) {
 		pFSI, e = FU.NewFSItemRelativeTo(aPath, pNCS.rootPath)
 	}
 	if e != nil {
-		return nil, fmt.Errorf("newcontentity: %w", e)
+		return nil, fmt.Errorf("NewContentity: %w", e)
 	}
-	// e = pFSI.FetchRaw()
 	e = pFSI.GoGetFileContents()
 	if e != nil {
 		return nil, fmt.Errorf("newcontentity: %w", e)
