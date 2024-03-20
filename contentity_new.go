@@ -67,7 +67,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	}
 	e = pFSI.GoGetFileContents()
 	if e != nil {
-		return nil, fmt.Errorf("newcontentity: %w", e)
+		return nil, fmt.Errorf("NewContentity: %w", e)
 	}
 	// =============================
 	//  "Promote" to a PathAnalysis

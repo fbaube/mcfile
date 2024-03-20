@@ -6,9 +6,9 @@ toolchain go1.22.0
 
 require (
 	github.com/fbaube/contentanalysis v0.0.0-20240319104033-db838f836ab0
-	github.com/fbaube/ctoken v0.0.0-20240318064251-0d73030038b5
+	github.com/fbaube/ctoken v0.0.0-20240319195511-16f0dbe6e833
 	github.com/fbaube/datarepo v0.0.0-20240319104325-a229aaef21ec
-	github.com/fbaube/fileutils v0.0.0-20240319103908-a02f921e7413
+	github.com/fbaube/fileutils v0.0.0-20240319151704-74389d18b489
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
 	github.com/fbaube/gtoken v0.0.0-20231225203128-9dc8ca760381
 	github.com/fbaube/gtree v0.0.0-20231231104721-1004717d5931
