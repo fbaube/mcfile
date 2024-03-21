@@ -1,7 +1,7 @@
 package mcfile
 
 import (
-	"errors"
+	// "errors"
 	"io/fs"
 	FP "path/filepath"
 	S "strings"
@@ -29,7 +29,10 @@ import (
 func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
         var name, absfp string 
         name = d.Name()
-	absfp,_ = FP.Abs(path)
+	
+	// This absfp is UNreliable !!  WTF.
+	// absfp,_ = FP.Abs(path)
+	
 	// If it's a directory, make sure it has a trailing slash
 	if d.IsDir() {
 	   if !S.HasSuffix(path, "/") {
@@ -38,12 +41,19 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	      name += "/"; L.L.Progress("Dir name gets trlg slash") }
 	   if !S.HasSuffix(absfp,"/") {
 	      absfp+= "/"; L.L.Progress("Dir abs.path gets trlg slash") }
-	   assert.That(FU.AbsFilePath(absfp).DirExists())
+	// L.L.Warning("ASSERTING DIR EXISTS: " + absfp)
+	// if !FU.IsDirAndExists(absfp) {
+	   if !FU.IsDirAndExists(FP.Join(CntyFS.rootAbsPath, path)) {
+	      L.L.Error("OOPS?? rootPath<%s>; path<%s>, absfp<%s>; " +
+	      	"err<%+v> dirEntry<%#v>; TOGETHER<%s>",
+	      	CntyFS.rootAbsPath, path, absfp, err, d, FP.Join(absfp, path))
+		}
 	   }
 	L.L.Progress("wfnBuildContentityTree: path: %s / %s", name, path)
 	L.L.Info("wfnBuildContentityTree: dir: %+v", d)
 	if err != nil {
-		L.L.Error("wfnBuildContentityTree: "+ "UNHANDLED err: %w", err)
+		L.L.Error("wfnBuildContentityTree: "+
+			"UNHANDLED in-arg-err: %w", err)
 	}
 	var p *Contentity
 	var e error
@@ -52,32 +62,30 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	// ==================
 	if mustInitRoot() {
 		var pRC *RootContentity
-		assert.NotEmpty(pCFS.RootAbsPath())
-		/* if pCFS.RootAbsPath() == "" {
+		assert.NotEmpty(CntyFS.RootAbsPath())
+		/* if CntyFS.RootAbsPath() == "" {
 			panic("wfnBuildContentityTree: no ROOT")
 		} */
-		pRC, e = NewRootContentity(pCFS.RootAbsPath())
+		pRC, e = NewRootContentity(CntyFS.RootAbsPath())
 		if e != nil || pRC == nil {
-			return &fs.PathError{Op:"NewRootContentity",
-			Err:errors.New("wfnBuildContentityTree UNHANDLED" +
-			" mustInitRoot NewRootContentity L62"),
-			Path:pCFS.RootAbsPath()}
+			return &fs.PathError{Op:"WalkFn.NewRootContentity",
+			Err:e,Path:CntyFS.RootAbsPath()}
 		}
-		assert.That(false)
-		assert.That(pRC.IsDir())
+		// assert.That(pRC.IsDir()) SHOULD NOT FAIL, BUT DID
 		// Assign to globals (i.e. package vars)
-		pCFS.rootNord = pRC
-		pRC.MimeType = "dir"
-		pRC.MType = "dir"
+		CntyFS.rootNord = pRC
+		// These next two get NPE cos no such struct for a dir 
+		// pRC.MimeType = "dir"
+		// pRC.MType = "dir"
 		pRC.FSItem.MarkupType = SU.MU_type_DIRLIKE
 		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
 		var pC *Contentity
 		pC = ((*Contentity)(pRC))
-		pCFS.asSlice = append(pCFS.asSlice, pC)
-		pCFS.asMap[path] = pC
+		CntyFS.asSlice = append(CntyFS.asSlice, pC)
+		CntyFS.asMap[path] = pC
 		// println("ADDED TO MAP:", path)
-		pCFS.nDirs = 1
-		pCFS.nFiles = 0
+		CntyFS.nDirs = 1
+		CntyFS.nFiles = 0
 		return nil // NOT pRC! This is a walker func 
 	}
 	// =====================
@@ -103,9 +111,9 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		return nil
 	}
 	// Now at this point, if it's a directory, it's OK !
-	sfp := FP.Join(pCFS.RootAbsPath(), path)
-	afp := FU.AbsFilePath(sfp)
-	var isDir = afp.DirExists()
+	sfp := FP.Join(CntyFS.RootAbsPath(), path)
+	// afp := FU.AbsFilePath(sfp)
+	var isDir = FU.IsDirAndExists(sfp) // afp.DirExists()
 	assert.Equal(isDir, d.IsDir())
 
 	{
@@ -123,21 +131,25 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		}
 	}
 
-	p, e = NewContentity(path) // FP.Join(pCFS.RootAbsPath(), path))
-	if p == nil || e != nil {
-		L.L.Warning("Rejecting (new Contentity failed): " + path)
+	// println("PATH TO TRY IS: " + path)
+	tryPath := FP.Join(CntyFS.RootAbsPath(), path)
+	println("PATH TO TRY IS: " + tryPath)
+	p, e = NewContentity(tryPath) // path
+	if p == nil { // || e != nil {
+		L.L.Warning("Rejecting (new Contentity(%s) failed): %T %+v",
+			tryPath, e, e)
 		return nil
 	}
 	// And so following code applies only to files, not to directories
 	// TODO: Not sure what happens with symlinks
 	if isDir {
 	        p.FSItem.MarkupType = SU.MU_type_DIRLIKE
-		pCFS.nDirs++
+		CntyFS.nDirs++
 		// println("================ DIR ========")
 		p.MimeType = "dir"
 		p.MType = "dir"
 	} else {
-		pCFS.nFiles++
+		CntyFS.nFiles++
 	}
 	/*
 	if p.PathAnalysis == nil || p.FSItem.Raw == "" && !isDir {
@@ -147,10 +159,10 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	}
 	*/
 	L.L.Dbg("Directory traverser: MarkupType: " + string(p.MarkupType()))
-	nxtIdx := len(pCFS.asSlice)
-	pCFS.asSlice = append(pCFS.asSlice, p)
+	nxtIdx := len(CntyFS.asSlice)
+	CntyFS.asSlice = append(CntyFS.asSlice, p)
 	p.logIdx = nxtIdx
-	pCFS.asMap[path] = p
+	CntyFS.asMap[path] = p
 	// println("ADDED TO MAP:", path)
 	// println("Path OK:", pN.AbsFilePath)
 	return nil

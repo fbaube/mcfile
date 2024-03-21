@@ -11,69 +11,87 @@ import (
 	L "github.com/fbaube/mlog"
 )
 
-var pCFS *ContentityFS
+// CntyFS is a global, which is a mistake. 
+var CntyFS *ContentityFS
 
-// NewContentityFS takes an absolute filepath. Passing in 
-// a relative filepath is going to cause major problems.
+// (OBS?) NewContentityFS takes an absolute filepath. Passing 
+// in a relative filepath is going to cause major problems.
 // .
-func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
+func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
+     	/*
 	// NOTE this will fail on Windoze
-	if aa,_ := FP.Abs(path); !S.HasPrefix(aa, FU.PathSep) {
-		L.L.Error("Not an abs.FP: %s", path)
+	if aa,_ := FP.Abs(aPath); !S.HasPrefix(aa, FU.PathSep) {
+		L.L.Error("Not an abs.FP: %s", aPath)
 		return nil
 	}
-	var afp FU.AbsFilePath
-	afp = FU.AbsFilePath(path)
-	if !afp.DirExists() {
-		L.L.Error("Not a directory: %s", path)
-		return nil
-	}
-	pCFS = new(ContentityFS)
-	pCFS.rootAbsPath = path
-	L.L.Info("PATH for new os.DirFS: %s", path)
-	pCFS.FS = os.DirFS(path) // "T/allConTypes")
-	// Initialize slice & map
-	pCFS.asSlice = make([]*Contentity, 0)
-	pCFS.asMap = make(map[string]*Contentity)
-
-	// IF path IS A FILE, THIS WILL ALL FAIL !!!!
-
-	// FIRST PASS
-	// Load slice & map
-	// NOTE that a rel.path (".") is necessary
-	// here or else really weird errors occur.
-	e := fs.WalkDir(pCFS.FS, ".", wfnBuildContentityTree)
+	*/
+	var path string
+	var e error 
+	path, e = FP.Abs(aPath) 
 	if e != nil {
-		L.L.Panic("mcfile.newContentityFS: " + e.Error())
+		L.L.Error("NewCntyFS: bad path: %s (absolute:%s)", aPath, path) 
+		return nil
 	}
-	L.L.Okay("FS walked OK: %d nords: %s", len(pCFS.asSlice), path)
+	if !FU.IsDirAndExists(path) {
+		L.L.Error("NewCntyFS: Not a directory: %s", path)
+		return nil
+	}
+	CntyFS = new(ContentityFS)
+	CntyFS.rootAbsPath = path // afp.S() 
+	L.L.Info("Path for new os.DirFS: " + path)
+	CntyFS.FS = os.DirFS(path) // "T/allConTypes")
+	// Initialize slice & map
+	CntyFS.asSlice = make([]*Contentity, 0)
+	CntyFS.asMap = make(map[string]*Contentity)
+
+	// ==================
+	//    FIRST PASS
+	//  Load slice & map
+	// ==================
+	// NOTE that rel.path "." is necessary here 
+	// or else really weird errors occur.
+	e = fs.WalkDir(CntyFS.FS, ".", wfnBuildContentityTree)
+	if e != nil {
+		L.L.Panic("NewCntyFS.WalkDir: " + e.Error())
+	}
+	L.L.Okay("NewCntyFS: walked os.DirFS OK: " +
+		"got %d nords from path %s", len(CntyFS.asSlice), path)
 
 	// DEBUG
-	for _, pp := range pCFS.asSlice {
-		L.L.Dbg("%s ", pp.MarkupType())
+	for ii, cc := range CntyFS.asSlice {
+	    if cc.IsDir() {
+	        L.L.Dbg("[%02d] isDIR - %s", ii, cc.FSItem.FPs.AbsFP)
+	        } else {
+		L.L.Dbg("[%02d] %s - %s", ii, cc.MarkupType())
+		}
 	}
 	L.L.Dbg(" END")
 
-	// SECOND PASS
-	// Go down slice to identify parent nords and link together.
-	for i, n := range pCFS.asSlice {
+	// ================================
+	//        SECOND PASS
+	//    Range over slice to identify
+	//  parent Nords and link together
+	// ================================
+	for i, n := range CntyFS.asSlice {
 		if i == 0 {
 			continue
 		}
 		// Is child of root ?
-		if !S.Contains(n.Path(), FU.PathSep) {
-			pCFS.rootNord.AddKid(n)
+		println(">>> KOSHER? " + n.Nord.RelFP())
+		if !S.Contains(n.RelFP(), FU.PathSep) {
+			CntyFS.rootNord.AddKid(n)
 		} else {
-			itsDir := FP.Dir(n.Path())
+			itsDir := FP.Dir(n.RelFP())
 			// println(n.Path, "|cnex2|", itsDir)
 			var par *Contentity
 			var ok bool
-			if par, ok = pCFS.asMap[itsDir]; !ok {
-				L.L.Error("findParInMap: failed for: " + itsDir + " of " + n.Path())
-				panic(n.Path)
+			if par, ok = CntyFS.asMap[itsDir]; !ok {
+				L.L.Error("findParInMap: failed for: " +
+					itsDir + " of " + n.RelFP())
+				panic(n.RelFP())
 			}
-			if itsDir != par.Path() {
-				panic(itsDir + " != " + par.Path())
+			if itsDir != par.RelFP() {
+				panic(itsDir + " != " + par.RelFP())
 			}
 			par.AddKid(n)
 		}
@@ -89,6 +107,6 @@ func NewContentityFS(path string, okayFilexts []string) *ContentityFS {
 	}
 	*/
 	// println(SU.Gbg("=== TREE ==="))
-	// pCFS.rootNord.PrintAll(os.Stdout)
-	return pCFS
+	// CntyFS.rootNord.PrintAll(os.Stdout)
+	return CntyFS
 }

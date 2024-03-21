@@ -68,7 +68,15 @@ func (p *LogInfo) String() string {
      }
 
 func (p *Contentity) IsDir() bool {
-	return p.ContentityRow.FSItem.IsDir()
+	// return p.ContentityRow.FSItem.IsDir()
+	// return p.FSItem.IsDir()
+	return p.Nord.IsDir()
+}
+
+func (p *Contentity) IsDirlike() bool {
+	// return p.ContentityRow.FSItem.IsDir()
+	return p.FSItem.IsDirlike()
+	// return p.Nord.IsDir()
 }
 
 type norderCreationState struct {

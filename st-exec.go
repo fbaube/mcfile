@@ -53,8 +53,8 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		p.L(LWarning, "Skipping ALL stages for empty file")
 		return p
 	}
-	if p.IsDir() {
-		p.L(LInfo, "Is a dir: skipping content processing")
+	if p.IsDirlike() {
+		p.L(LInfo, "Is dir or similar: skipping content processing")
 		return p
 	}
 	p.logStg = "--"

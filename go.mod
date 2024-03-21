@@ -6,11 +6,11 @@ toolchain go1.22.0
 
 require (
 	github.com/fbaube/contentanalysis v0.0.0-20240319104033-db838f836ab0
-	github.com/fbaube/ctoken v0.0.0-20240319195511-16f0dbe6e833
+	github.com/fbaube/ctoken v0.0.0-20240320075402-d501c60baf3e
 	github.com/fbaube/datarepo v0.0.0-20240319104325-a229aaef21ec
 	github.com/fbaube/fileutils v0.0.0-20240319151704-74389d18b489
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
-	github.com/fbaube/gtoken v0.0.0-20231225203128-9dc8ca760381
+	github.com/fbaube/gtoken v0.0.0-20240320063540-c37d25885062
 	github.com/fbaube/gtree v0.0.0-20231231104721-1004717d5931
 	github.com/fbaube/logutils v0.0.0-20240118190821-fba0e702dd07
 	github.com/fbaube/miscutils v0.0.0-20240307083109-5e380dcbb1e7
@@ -27,7 +27,7 @@ require (
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fbaube/dsmnd v0.0.0-20240130143636-adbc149a7741 // indirect
 	github.com/fbaube/humanbytes v0.0.0-20240227103335-a0b11501ad0e // indirect
-	github.com/fbaube/lwdx v0.0.0-20240311105247-37cbc89f10e3 // indirect
+	github.com/fbaube/lwdx v0.0.0-20240320075621-b207adbb578d // indirect
 	github.com/fbaube/wasmutils v0.0.0-20231209183154-e25018375bc2 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gomarkdown/markdown v0.0.0-20231222211730-1d6d20845b47 // indirect

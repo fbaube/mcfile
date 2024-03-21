@@ -73,8 +73,8 @@ func (p *ContentityFS) AsSlice() []*Contentity {
 
 func mustInitRoot() bool {
 	var needsInit, didDoInit bool
-	needsInit = (len(pCFS.asSlice) == 0 && len(pCFS.asMap) == 0)
-	didDoInit = (len(pCFS.asSlice) > 0 && len(pCFS.asMap) > 0)
+	needsInit = (len(CntyFS.asSlice) == 0 && len(CntyFS.asMap) == 0)
+	didDoInit = (len(CntyFS.asSlice) > 0 && len(CntyFS.asMap) > 0)
 	if !(needsInit || didDoInit) {
 		panic("mustInitRoot: illegal state")
 	}

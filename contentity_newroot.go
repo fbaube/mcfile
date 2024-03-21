@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"os"
 	FU "github.com/fbaube/fileutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
@@ -25,12 +26,13 @@ type RootContentity Contentity
 func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	L.L.Info("NewRootContentity: %s", aRootPath)
 	if aRootPath == "" {
-		return nil, errors.New("newrootcontentity: missing path")
+		return nil, errors.New("NewRootContentity: missing path")
 	}
 	if !FP.IsAbs(aRootPath) {
 		return nil, errors.New(
 			"NewRootContentity: not an abs.fp: " + aRootPath)
 	}
+	// L.L.Info("CHECK-1")
 	var pNewCty *RootContentity
 	pNewCty = new(RootContentity)
 	// Global assignment (oops)
@@ -41,12 +43,16 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// ======================
 	//  Start with an FSItem
 	// ======================
+	// L.L.Info("CHECK-2")
 	var pFSI *FU.FSItem
-	var e error
+	var e *os.PathError
 	pFSI, e = FU.NewFSItem(aRootPath)
+	L.L.Info("pFSI %p *pFSI %T e %T", pFSI, *pFSI, e)
 	if e != nil || pFSI == nil {
-		return nil, &fs.PathError{Op:"NewFSItem",Err:e,Path:aRootPath}
+	   // L.L.Info("CHECK-2b")
+	   return nil, &fs.PathError{Op:"NewFSItem",Err:e,Path:aRootPath}
 	}
+	// L.L.Info("CHECK-2c")
 	// ============================
 	//  HAS TO BE A DIR (Well, DUH) 
 	// ============================
@@ -99,5 +105,6 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	/* if pNewCty == nil {
 		panic("nil pNewCty")
 	} */
+
 	return pNewCty, nil
 }

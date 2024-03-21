@@ -2,7 +2,8 @@ package mcfile
 
 import (
 	"errors"
-	"fmt"
+	// "fmt"
+	"os"
 	FU "github.com/fbaube/fileutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
@@ -15,6 +16,9 @@ import (
 
 // NewContentity returns a Contentity Nord (i.e. node with
 // ordered children) that can NOT be the root of a Contentity tree.
+//
+// NOTE: because of interface hassles, BOTH return values might
+// be non-nil, in which case, ignore the error. 
 //
 // We want everything to be in a nice tree of Nords, and that
 // means that we have to create Contenties for directories too
@@ -32,9 +36,11 @@ import (
 // if pPP,e := NewPP(path); e == nil; pPA,e := new PA(pPP);
 // e == nil; pCR,e := NewCR(pPA); e == nil { ... }
 // .
-func NewContentity(aPath string) (*Contentity, error) {
+func NewContentity(aPath string) (*Contentity, *os.PathError) {
 	if aPath == "" {
-		return nil, errors.New("NewContentity: missing path")
+	   	println("LINE 41")
+		return nil, &os.PathError{Op:"NewContentity",
+		       Err:errors.New("Missing path"),Path:"(nil)"}
 	}
 	var pNewCnty *Contentity
 	pNewCnty = new(Contentity)
@@ -55,19 +61,26 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// ======================
 	var pFSI *FU.FSItem
 	var e error
+	// If we were passed an Abs.FP, it's okay.
 	if FP.IsAbs(aPath) {
 		pFSI, e = FU.NewFSItem(aPath)
 	} else if !FP.IsAbs(pNCS.rootPath) {
-		e = errors.New("rootPath not absolute: " + pNCS.rootPath)
+	// Else if the 
+		e = &os.PathError{Op:"NewContentity.IsAbs",
+		  Err:errors.New("rRootPath is not absolute"),Path:pNCS.rootPath}
 	} else {
 		pFSI, e = FU.NewFSItemRelativeTo(aPath, pNCS.rootPath)
 	}
-	if e != nil {
-		return nil, fmt.Errorf("NewContentity: %w", e)
+	if pFSI == nil { // e != nil {
+	   	println("LINE 75")
+		return nil, &os.PathError{Op:"Path-analysis",
+		       Err:e,Path:pNCS.rootPath}
 	}
 	e = pFSI.GoGetFileContents()
 	if e != nil {
-		return nil, fmt.Errorf("NewContentity: %w", e)
+	   	println("LINE 81")	
+		return nil, &os.PathError{Op:"FSI.GoGetFileContents",
+		       Err:e,Path:pNCS.rootPath}
 	}
 	// =============================
 	//  "Promote" to a PathAnalysis
@@ -75,8 +88,9 @@ func NewContentity(aPath string) (*Contentity, error) {
 	pPA, e := CA.NewPathAnalysis(pFSI)
 	if e != nil || pPA == nil {
 		L.L.Error("NewContentity(PP=>PA)<%s>: %s", aPath, e)
-		return nil, fmt.Errorf(
-			"NewContentity(PP=>PA)<%s>: %w", aPath, e)
+		println("LINE 91")
+		return nil, &os.PathError{Op:"FSI.NewPathAnalysis.(PP=>PA)",
+		       Err:e,Path:aPath}
 	}
 	if pPA.MarkupType() == "UNK" {
 		L.L.Panic("UNK MarkupType in NewContentity L81")
@@ -88,8 +102,9 @@ func NewContentity(aPath string) (*Contentity, error) {
 	pCR, e = DRS.NewContentityRow(pFSI, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewContentity(PA=>CR)<%s>: %s", aPath, e)
-		return nil, fmt.Errorf(
-			"NewContentity(PA=>CR)<%s>: %w", aPath, e)
+	   	println("LINE 105")
+		return nil, &os.PathError{Op:"FSI.NewContentityRow.(PP=>PA)",
+                       Err:e,Path:aPath}
 	}
 	if pCR.MarkupType() == "UNK" {
 		panic("UNK MarkupType in NewContentity")
@@ -97,8 +112,8 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// NOW if we want to exit, we can
 	// do the necessary assignments
 	pNewCnty.ContentityRow = *pCR
-	if pFSI.IsDir() {
-		L.L.Info(SU.Ybg(" Directory " + SU.ElideHomeDir(pFSI.FPs.AbsFP.S())))
+	if pFSI.IsDirlike() {
+		L.L.Info(SU.Ybg(" Directory " + SU.Tildotted(pFSI.FPs.AbsFP.S())))
 		pNewCnty.ContentityRow.FSItem = *pFSI
 		return pNewCnty, nil
 	}
