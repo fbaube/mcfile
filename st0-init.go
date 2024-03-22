@@ -38,10 +38,10 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 	if p.MType == "" {
 		p.SetErrMsg("MType is empty")
 	}
-	if len(p.MarkupType()) < 3 || len(p.MarkupType()) > 4 {
-		panic("BAD MarkupType in st0a: " + string(p.MarkupType()))
+	if len(p.MarkupTypeOfMType()) < 3 || len(p.MarkupTypeOfMType()) > 4 {
+		panic("BAD MarkupTypeOfMType in st0a: " + string(p.MarkupTypeOfMType()))
 	}
-	switch p.MarkupType() {
+	switch p.MarkupTypeOfMType() {
 	case SU.MU_type_XML:
 		if !p.IsXML() {
 			p.SetErrMsg("is XML but: !XML?!")
@@ -60,7 +60,7 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 			p.SetErrMsg("is BIN but: XML?!")
 		}
 	default:
-		p.SetErrMsg("bad/missing contentitype: " + string(p.MarkupType()))
+		p.SetErrMsg("bad/missing contentitype: " + string(p.MarkupTypeOfMType()))
 	}
 	return p
 }

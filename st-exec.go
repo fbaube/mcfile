@@ -33,7 +33,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	// Other panics are not recovered.
 	// defer must.F(log.Fatal)
 
-	if p.MarkupType() == "UNK" {
+	if p.MarkupTypeOfMType() == SU.MU_type_UNK {
 		panic("UNK MarkupType in ExecuteStages")
 	}
 	if p.FSItem.Raw == "" {
@@ -44,7 +44,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		p.L(LInfo, "Has error: skipping")
 		return p
 	}
-	if p.MarkupType() == SU.MU_type_BIN {
+	if p.MarkupTypeOfMType() == SU.MU_type_BIN {
 		p.L(LWarning, "Skipping ALL stages for binary file")
 		return p
 	}

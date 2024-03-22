@@ -3,7 +3,8 @@ package mcfile
 import (
 	"errors"
 	// "fmt"
-	"os"
+	// "os"
+	"io/fs"
 	FU "github.com/fbaube/fileutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
@@ -36,15 +37,15 @@ import (
 // if pPP,e := NewPP(path); e == nil; pPA,e := new PA(pPP);
 // e == nil; pCR,e := NewCR(pPA); e == nil { ... }
 // .
-func NewContentity(aPath string) (*Contentity, *os.PathError) {
+func NewContentity(aPath string) (*Contentity, error) {
 	if aPath == "" {
-	   	println("LINE 41")
-		return nil, &os.PathError{Op:"NewContentity",
+		return nil, &fs.PathError{Op:"NewContentity",
 		       Err:errors.New("Missing path"),Path:"(nil)"}
 	}
 	var pNewCnty *Contentity
 	pNewCnty = new(Contentity)
 	pNewCnty.Nord = *ON.NewNord(aPath)
+
 	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
 	// Try black-on-cyan, cos even for white text, the blue is too dark
 	if true {
@@ -66,35 +67,60 @@ func NewContentity(aPath string) (*Contentity, *os.PathError) {
 		pFSI, e = FU.NewFSItem(aPath)
 	} else if !FP.IsAbs(pNCS.rootPath) {
 	// Else if the 
-		e = &os.PathError{Op:"NewContentity.IsAbs",
+		e = &fs.PathError{Op:"NewContentity.IsAbs",
 		  Err:errors.New("rRootPath is not absolute"),Path:pNCS.rootPath}
 	} else {
 		pFSI, e = FU.NewFSItemRelativeTo(aPath, pNCS.rootPath)
 	}
 	if pFSI == nil { // e != nil {
 	   	println("LINE 75")
-		return nil, &os.PathError{Op:"Path-analysis",
+		return nil, &fs.PathError{Op:"Path-analysis",
 		       Err:e,Path:pNCS.rootPath}
 	}
+	// =========================
+	//  If it's a directory (or
+	//  similar, such as symlink) 
+	// ==========================
+	if pFSI.IsDirlike() {
+		var pCR *DRM.ContentityRow
+		pCR, e = DRS.NewContentityRow(pFSI, nil)
+		if e != nil || pCR == nil {
+			L.L.Error("NewContentity(Dirlike)<%s>: %s", aPath, e)
+			println("LINE 89")
+			return nil, &fs.PathError{Op:"FSI.NewCtyRow.(dirlike)",
+			       Err:e,Path:aPath}
+		}
+		L.L.Info(SU.Ybg(" Dir " + SU.Tildotted(pFSI.FPs.AbsFP.S())))
+                pCR.FSItem = *pFSI
+		pNewCnty.ContentityRow = *pCR
+		return pNewCnty, nil
+        }
+	var pPA *CA.PathAnalysis
 	e = pFSI.GoGetFileContents()
+	// L.L.Warning("LENGTH %d", len(pFSI.TypedRaw.Raw))
 	if e != nil {
-	   	println("LINE 81")	
-		return nil, &os.PathError{Op:"FSI.GoGetFileContents",
-		       Err:e,Path:pNCS.rootPath}
+   	   println("LINE 105")	
+	   return nil, &fs.PathError{Op:"FSI.GoGetFileContents",
+	       	  Err:e,Path:pNCS.rootPath}
 	}
 	// =============================
 	//  "Promote" to a PathAnalysis
 	// =============================
-	pPA, e := CA.NewPathAnalysis(pFSI)
-	if e != nil || pPA == nil {
-		L.L.Error("NewContentity(PP=>PA)<%s>: %s", aPath, e)
-		println("LINE 91")
-		return nil, &os.PathError{Op:"FSI.NewPathAnalysis.(PP=>PA)",
-		       Err:e,Path:aPath}
+	// NewPathAnalysis return (nil,nil) for DIRLIKE 
+	pPA, e = CA.NewPathAnalysis(pFSI)
+	if e != nil { // || pPA == nil {
+	   L.L.Error("NewContentity(PP=>PA)<%s>: %s", aPath, e)
+	   println("LINE 116")
+	   return nil, &fs.PathError{Op:"FSI.NewPathAnalysis.(PP=>PA)",
+	       Err:e,Path:aPath}
 	}
-	if pPA.MarkupType() == "UNK" {
-		L.L.Panic("UNK MarkupType in NewContentity L81")
+	if pPA == nil { panic("WTF") }
+	/*
+	if pPA != nil && pPA.MarkupTypeOfMType() == SU.MU_type_UNK {
+	   	L.L.Panic("UNK MarkupType in NewContentity L121 (%s)",
+			pFSI.FPs.AbsFP)
 	}
+	*/
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
@@ -102,11 +128,11 @@ func NewContentity(aPath string) (*Contentity, *os.PathError) {
 	pCR, e = DRS.NewContentityRow(pFSI, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewContentity(PA=>CR)<%s>: %s", aPath, e)
-	   	println("LINE 105")
-		return nil, &os.PathError{Op:"FSI.NewContentityRow.(PP=>PA)",
+	   	println("LINE 131")
+		return nil, &fs.PathError{Op:"FSI.NewContentityRow.(PP=>PA)",
                        Err:e,Path:aPath}
 	}
-	if pCR.MarkupType() == "UNK" {
+	if pCR.MarkupTypeOfMType() == SU.MU_type_UNK {
 		panic("UNK MarkupType in NewContentity")
 	}
 	// NOW if we want to exit, we can

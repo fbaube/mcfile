@@ -16,6 +16,10 @@ import (
 // wfnBuildContentityTree is
 // type WalkDirFunc func(path string, d DirEntry, err error) error
 //
+// This means that it should NOT be *declared* as returning 
+// a *[fs.PathError]. However it can and does return them, 
+// which has the problems of an interface not nil but also nil.  
+//
 // It filters out several file types:
 //  - (TODO:) zero-length file (no content to analyse)
 //  - hidden (esp'ly .git directory)
@@ -24,10 +28,10 @@ import (
 //  - this app's debug files: "*_(echo,tkns,tree)"
 //  - filenames without a dot (indicating no file extension)
 //
-// As path separator, "/" is assumed, not os.Sep
+// As path separator, "/" is usually assumed, not os.PathSep
 // .
 func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
-        var name, absfp string 
+        var name string 
         name = d.Name()
 	
 	// This absfp is UNreliable !!  WTF.
@@ -35,18 +39,12 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	
 	// If it's a directory, make sure it has a trailing slash
 	if d.IsDir() {
-	   if !S.HasSuffix(path, "/") {
-	      path += "/"; L.L.Progress("Dir path gets trlg slash") }
-	   if !S.HasSuffix(name, "/") {
-	      name += "/"; L.L.Progress("Dir name gets trlg slash") }
-	   if !S.HasSuffix(absfp,"/") {
-	      absfp+= "/"; L.L.Progress("Dir abs.path gets trlg slash") }
-	// L.L.Warning("ASSERTING DIR EXISTS: " + absfp)
-	// if !FU.IsDirAndExists(absfp) {
+	   path = FU.EnsureTrailingPathSep(path)
+	   name = FU.EnsureTrailingPathSep(name)
 	   if !FU.IsDirAndExists(FP.Join(CntyFS.rootAbsPath, path)) {
-	      L.L.Error("OOPS?? rootPath<%s>; path<%s>, absfp<%s>; " +
-	      	"err<%+v> dirEntry<%#v>; TOGETHER<%s>",
-	      	CntyFS.rootAbsPath, path, absfp, err, d, FP.Join(absfp, path))
+	      L.L.Error("IsDir/NonDir: rootPath<%s>; " + 
+	      	"path<%s>; err<%+v> dirEntry<%#v>",
+	      	CntyFS.rootAbsPath, path, err, d)
 		}
 	   }
 	L.L.Progress("wfnBuildContentityTree: path: %s / %s", name, path)
@@ -55,7 +53,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		L.L.Error("wfnBuildContentityTree: "+
 			"UNHANDLED in-arg-err: %w", err)
 	}
-	var p *Contentity
+	// var p *Contentity
 	var e error
 	// ==================
 	//  HANDLE ROOT NODE 
@@ -110,59 +108,63 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		// continue 
 		return nil
 	}
-	// Now at this point, if it's a directory, it's OK !
-	sfp := FP.Join(CntyFS.RootAbsPath(), path)
-	// afp := FU.AbsFilePath(sfp)
-	var isDir = FU.IsDirAndExists(sfp) // afp.DirExists()
-	assert.Equal(isDir, d.IsDir())
+	// =======================================
+	// Now at this point, if it's a directory,
+	// it's OK ! So let's go ahead and form 
+	// the path and make the Contentity
+	// =======================================
+	var pathToUse string
+	var pathIsDir bool 
+	pathToUse = FP.Join(CntyFS.RootAbsPath(), path)
+	pathIsDir = FU.IsDirAndExists(pathToUse)
+	if pathIsDir {
+	   pathToUse = FU.EnsureTrailingPathSep(pathToUse)
+	}
+	assert.Equal(pathIsDir, d.IsDir())
 
 	{
 		var reason string 
-		var ln = len(path)
-		if S.HasSuffix(path, "gtk") || S.HasSuffix(path, "gtr") {
+		var ln = len(pathToUse)
+		if S.HasSuffix(pathToUse, "gtk") ||
+		   S.HasSuffix(pathToUse, "gtr") {
 			reason = "gtk/gtr"
-		} else if ln >= 5 && path[ln-5] == '_' { // debug file via "-t" flag
+		} else if ln >= 5 && pathToUse[ln-5] == '_' {
+		     // debug file via "-t" flag
 			reason = "_echo,_tkns,_tree"
 		} 
 		if reason != "" {
-			L.L.Warning("Rejecting (%s): %s", path, reason)
+			L.L.Warning("Rejecting (%s): %s", pathToUse, reason)
 			// continue 
 			return nil
 		}
 	}
 
-	// println("PATH TO TRY IS: " + path)
-	tryPath := FP.Join(CntyFS.RootAbsPath(), path)
-	println("PATH TO TRY IS: " + tryPath)
-	p, e = NewContentity(tryPath) // path
-	if p == nil { // || e != nil {
+	var pCty *Contentity
+	println("PATH TO TRY IS: " + pathToUse)
+	pCty, e = NewContentity(pathToUse)
+	if pCty == nil { 
 		L.L.Warning("Rejecting (new Contentity(%s) failed): %T %+v",
-			tryPath, e, e)
+			pathToUse, e, e)
 		return nil
 	}
 	// And so following code applies only to files, not to directories
 	// TODO: Not sure what happens with symlinks
-	if isDir {
-	        p.FSItem.MarkupType = SU.MU_type_DIRLIKE
+	if pathIsDir {
+	        pCty.FSItem.MarkupType = SU.MU_type_DIRLIKE
 		CntyFS.nDirs++
 		// println("================ DIR ========")
-		p.MimeType = "dir"
-		p.MType = "dir"
+		// These next two stmts should barf, cos
+		// they should not be allocated for a dir !
+		// p.MimeType = "dir"
+		// p.MType = SU.MU_type_DIRLIKE
 	} else {
 		CntyFS.nFiles++
 	}
-	/*
-	if p.PathAnalysis == nil || p.FSItem.Raw == "" && !isDir {
-		L.L.Warning("Rejecting (%s): zero length", path)
-		L.L.Error("Skipping this item")
-		return nil
-	}
-	*/
-	L.L.Dbg("Directory traverser: MarkupType: " + string(p.MarkupType()))
-	nxtIdx := len(CntyFS.asSlice)
-	CntyFS.asSlice = append(CntyFS.asSlice, p)
-	p.logIdx = nxtIdx
-	CntyFS.asMap[path] = p
+	// L.L.Info("Directory traverser: MarkupType: " + string(p.MarkupType()))
+	// nxtIdx := len(CntyFS.asSlice)
+	CntyFS.asSlice = append(CntyFS.asSlice, pCty)
+	// p.logIdx = nxtIdx // NPE
+	CntyFS.asMap[path] = pCty
 	// println("ADDED TO MAP:", path)
 	// println("Path OK:", pN.AbsFilePath)
 	return nil

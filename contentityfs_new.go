@@ -58,11 +58,23 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 		"got %d nords from path %s", len(CntyFS.asSlice), path)
 
 	// DEBUG
+	L.L.Warning("CntyFS.asSlice has len: %d", len(CntyFS.asSlice))
 	for ii, cc := range CntyFS.asSlice {
-	    if cc.IsDir() {
-	        L.L.Dbg("[%02d] isDIR - %s", ii, cc.FSItem.FPs.AbsFP)
+	    L.L.Warning("[%d]%T...", ii, cc)
+	    if cc == nil {
+	       L.L.Error ("OOPS, CntyFS.asSlice[%02d] is NIL", ii)
+	       continue
+	    }
+	    L.L.Warning("Got here!")
+	    L.L.Warning("[%02d] %+v", ii, cc)
+	    /* if cc.FSItem == nil || cc.FSItem.FileMeta == nil {
+	       L.L.Error("WTF, man!")
+	       continue
+	    } */
+	    if cc.FSItem.FileMeta.IsDir() {
+	        L.L.Dbg("[%02d] isDIRLIKE - %s", ii, cc.FSItem.FPs.AbsFP)
 	        } else {
-		L.L.Dbg("[%02d] %s - %s", ii, cc.MarkupType())
+		L.L.Dbg("[%02d] %s - %s", ii, cc.MarkupTypeOfMType())
 		}
 	}
 	L.L.Dbg(" END")
@@ -85,6 +97,8 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 			// println(n.Path, "|cnex2|", itsDir)
 			var par *Contentity
 			var ok bool
+			L.L.Warning("itsDir: " + itsDir)
+			L.L.Warning("theMap: %+v", CntyFS.asMap)
 			if par, ok = CntyFS.asMap[itsDir]; !ok {
 				L.L.Error("findParInMap: failed for: " +
 					itsDir + " of " + n.RelFP())

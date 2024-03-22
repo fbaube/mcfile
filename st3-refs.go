@@ -31,7 +31,7 @@ func (p *Contentity) DoBlockList() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupType() {
+	switch p.MarkupTypeOfMType() {
 	case SU.MU_type_XML:
 		L.L.Warning("TODO> 3a. DoBlockList XML")
 	case SU.MU_type_HTML:
@@ -48,7 +48,7 @@ func (p *Contentity) DoGLinks() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupType() {
+	switch p.MarkupTypeOfMType() {
 	case SU.MU_type_XML:
 		L.L.Info("Calling GatherXmlGLinks...")
 		p.GatherXmlGLinks()
@@ -67,7 +67,7 @@ func (p *Contentity) DoTableOfContents() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupType() {
+	switch p.MarkupTypeOfMType() {
 	case SU.MU_type_XML:
 		L.L.Warning("TODO> 3c. DoTableOfContents XML")
 	case SU.MU_type_HTML:

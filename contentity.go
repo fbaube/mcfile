@@ -70,7 +70,7 @@ func (p *LogInfo) String() string {
 func (p *Contentity) IsDir() bool {
 	// return p.ContentityRow.FSItem.IsDir()
 	// return p.FSItem.IsDir()
-	return p.Nord.IsDir()
+	return p.FSItem.IsDir()
 }
 
 func (p *Contentity) IsDirlike() bool {
