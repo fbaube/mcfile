@@ -36,6 +36,7 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 		L.L.Error("NewCntyFS: Not a directory: %s", path)
 		return nil
 	}
+	path = FU.EnsureTrailingPathSep(path)
 	CntyFS = new(ContentityFS)
 	CntyFS.rootAbsPath = path // afp.S() 
 	L.L.Info("Path for new os.DirFS: " + path)
@@ -94,19 +95,23 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 			CntyFS.rootNord.AddKid(n)
 		} else {
 			itsDir := FP.Dir(n.RelFP())
+			itsDir = FU.EnsureTrailingPathSep(itsDir)
 			// println(n.Path, "|cnex2|", itsDir)
 			var par *Contentity
 			var ok bool
 			L.L.Warning("itsDir: " + itsDir)
 			L.L.Warning("theMap: %+v", CntyFS.asMap)
+			// PROBLEMS HERE !
 			if par, ok = CntyFS.asMap[itsDir]; !ok {
 				L.L.Error("findParInMap: failed for: " +
 					itsDir + " of " + n.RelFP())
 				panic(n.RelFP())
 			}
-			if itsDir != par.RelFP() {
-				panic(itsDir + " != " + par.RelFP())
+			/*
+			if itsDir != par.AbsFP() {
+				panic(itsDir + " != " + par.AbsFP())
 			}
+			*/
 			par.AddKid(n)
 		}
 	}

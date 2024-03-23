@@ -5,20 +5,20 @@ go 1.22
 toolchain go1.22.0
 
 require (
-	github.com/fbaube/contentanalysis v0.0.0-20240319104033-db838f836ab0
-	github.com/fbaube/ctoken v0.0.0-20240320075402-d501c60baf3e
-	github.com/fbaube/datarepo v0.0.0-20240319104325-a229aaef21ec
-	github.com/fbaube/fileutils v0.0.0-20240321184736-e74b758e4e0d
+	github.com/fbaube/contentanalysis v0.0.0-20240322200038-dcc26d251e02
+	github.com/fbaube/ctoken v0.0.0-20240322195920-6d5d80a301ae
+	github.com/fbaube/datarepo v0.0.0-20240323120743-aad7d4e39fb8
+	github.com/fbaube/fileutils v0.0.0-20240322195951-f7eac492460a
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
 	github.com/fbaube/gtoken v0.0.0-20240320063540-c37d25885062
 	github.com/fbaube/gtree v0.0.0-20231231104721-1004717d5931
 	github.com/fbaube/logutils v0.0.0-20240118190821-fba0e702dd07
 	github.com/fbaube/miscutils v0.0.0-20240307083109-5e380dcbb1e7
 	github.com/fbaube/mlog v0.0.0-20230904080411-cfac35fed413
-	github.com/fbaube/orderednodes v0.0.0-20240321184806-2ee3cb6fd12c
+	github.com/fbaube/orderednodes v0.0.0-20240323120809-05155b0e906c
 	github.com/fbaube/parseutils v0.0.0-20240117103929-681897b1f883
-	github.com/fbaube/stringutils v0.0.0-20240318064103-bf7b5a2b5f11
-	github.com/fbaube/xmlutils v0.0.0-20240117103856-0d26c14e3769
+	github.com/fbaube/stringutils v0.0.0-20240322200159-80cb818c8713
+	github.com/fbaube/xmlutils v0.0.0-20240322200140-f0ad2fb0183d
 	github.com/lainio/err2 v1.0.0
 	github.com/yuin/goldmark v1.7.0
 )

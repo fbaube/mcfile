@@ -87,8 +87,7 @@ type norderCreationState struct {
 
 // pNCS is the (oops, global) state of Contentity creation.
 // FIXME ID assignment should be offloaded to the DB.
-// .
-var pNCS *norderCreationState = new(norderCreationState)
+// var pNCS *norderCreationState = new(norderCreationState)
 
 // String is developer output. Hafta dump:
 // FU.InputFile, FU.OutputFiles, GTree,

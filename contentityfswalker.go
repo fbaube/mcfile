@@ -80,8 +80,8 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		var pC *Contentity
 		pC = ((*Contentity)(pRC))
 		CntyFS.asSlice = append(CntyFS.asSlice, pC)
-		CntyFS.asMap[path] = pC
-		// println("ADDED TO MAP:", path)
+		CntyFS.asMap[CntyFS.RootAbsPath()] = pC
+		L.L.Warning("ADDED TO MAP L84: " + CntyFS.RootAbsPath())
 		CntyFS.nDirs = 1
 		CntyFS.nFiles = 0
 		return nil // NOT pRC! This is a walker func 
@@ -164,8 +164,8 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	// nxtIdx := len(CntyFS.asSlice)
 	CntyFS.asSlice = append(CntyFS.asSlice, pCty)
 	// p.logIdx = nxtIdx // NPE
-	CntyFS.asMap[path] = pCty
-	// println("ADDED TO MAP:", path)
+	CntyFS.asMap[pathToUse] = pCty
+	L.L.Warning("ADDED TO MAP L168: " +pathToUse)
 	// println("Path OK:", pN.AbsFilePath)
 	return nil
 }

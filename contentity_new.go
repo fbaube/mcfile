@@ -51,7 +51,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	if true {
 		L.L.Info(SU.Cyanbg("\n\t ===> crnt RootPath: %s \n"+
 			"\t ===> New Contentity: %s"),
-			pNCS.rootPath, SU.ElideHomeDir(aPath))
+			CntyEng.rootPath, SU.ElideHomeDir(aPath))
 	} else {
 		L.L.Info( /* SU.Wfg( */ SU.Cyanbg( // Blubg(
 			"\n\t ===> New Contentity: %s <===           "),
@@ -65,17 +65,19 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// If we were passed an Abs.FP, it's okay.
 	if FP.IsAbs(aPath) {
 		pFSI, e = FU.NewFSItem(aPath)
-	} else if !FP.IsAbs(pNCS.rootPath) {
+	} else if !FP.IsAbs(CntyEng.rootPath) {
 	// Else if the 
 		e = &fs.PathError{Op:"NewContentity.IsAbs",
-		  Err:errors.New("rRootPath is not absolute"),Path:pNCS.rootPath}
+		  Err:errors.New("rRootPath is not absolute"),Path:CntyEng.rootPath}
 	} else {
-		pFSI, e = FU.NewFSItemRelativeTo(aPath, pNCS.rootPath)
+		// pFSI, e = FU.NewFSItemRelativeTo(aPath, CntyEng.rootPath)
+		ppp := FP.Join(CntyEng.rootPath, aPath)
+		pFSI, e = FU.NewFSItem(ppp)
 	}
 	if pFSI == nil { // e != nil {
 	   	println("LINE 75")
 		return nil, &fs.PathError{Op:"Path-analysis",
-		       Err:e,Path:pNCS.rootPath}
+		       Err:e,Path:CntyEng.rootPath}
 	}
 	// =========================
 	//  If it's a directory (or
@@ -101,7 +103,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	if e != nil {
    	   println("LINE 105")	
 	   return nil, &fs.PathError{Op:"FSI.GoGetFileContents",
-	       	  Err:e,Path:pNCS.rootPath}
+	       	  Err:e,Path:CntyEng.rootPath}
 	}
 	// =============================
 	//  "Promote" to a PathAnalysis
