@@ -36,7 +36,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	if p.MarkupTypeOfMType() == SU.MU_type_UNK {
 		panic("UNK MarkupType in ExecuteStages")
 	}
-	if p.FSItem.Raw == "" {
+	if p.FSItem.Raw == "" && p.MarkupTypeOfMType() != SU.MU_type_DIRLIKE {
 		p.L(LWarning, "ExecuteStages :: ZERO-len Raw")
 		return p
 	}

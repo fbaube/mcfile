@@ -8,7 +8,7 @@ require (
 	github.com/fbaube/contentanalysis v0.0.0-20240322200038-dcc26d251e02
 	github.com/fbaube/ctoken v0.0.0-20240322195920-6d5d80a301ae
 	github.com/fbaube/datarepo v0.0.0-20240323120743-aad7d4e39fb8
-	github.com/fbaube/fileutils v0.0.0-20240322195951-f7eac492460a
+	github.com/fbaube/fileutils v0.0.0-20240325110318-0c80a6fa64f5
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
 	github.com/fbaube/gtoken v0.0.0-20240320063540-c37d25885062
 	github.com/fbaube/gtree v0.0.0-20231231104721-1004717d5931
@@ -35,7 +35,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/mgutz/str v1.2.0 // indirect
-	golang.org/x/exp v0.0.0-20240318143956-a85f2c67cd81 // indirect
+	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/tools v0.19.0 // indirect

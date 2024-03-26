@@ -2,6 +2,7 @@ package mcfile
 
 import (
 	SU "github.com/fbaube/stringutils"
+	L "github.com/fbaube/mlog"
 )
 
 // st0_Init does pre-processing prep and checks.
@@ -23,7 +24,8 @@ func (p *Contentity) st0_Init() *Contentity {
 		return p
 	}
 	if p.MType == "" {
-		panic("st0_Init: nil MType")
+		// panic("st0_Init: nil MType")
+		L.L.Error("st0_Init: nil MType")
 	}
 	p.logStg = "00"
 	p.L(LProgress, "=== 00:Init ===")
@@ -38,7 +40,7 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 	if p.MType == "" {
 		p.SetErrMsg("MType is empty")
 	}
-	if len(p.MarkupTypeOfMType()) < 3 || len(p.MarkupTypeOfMType()) > 4 {
+	if len(p.MarkupTypeOfMType()) < 3 || len(p.MarkupTypeOfMType()) > 7 {
 		panic("BAD MarkupTypeOfMType in st0a: " + string(p.MarkupTypeOfMType()))
 	}
 	switch p.MarkupTypeOfMType() {

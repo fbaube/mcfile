@@ -7,6 +7,7 @@ import (
 	S "strings"
 
 	FU "github.com/fbaube/fileutils"
+	SU "github.com/fbaube/stringutils"
 	// FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
 )
@@ -39,7 +40,7 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 	path = FU.EnsureTrailingPathSep(path)
 	CntyFS = new(ContentityFS)
 	CntyFS.rootAbsPath = path // afp.S() 
-	L.L.Info("Path for new os.DirFS: " + path)
+	L.L.Info("Path for new os.DirFS: " + SU.Tildotted(path))
 	CntyFS.FS = os.DirFS(path) // "T/allConTypes")
 	// Initialize slice & map
 	CntyFS.asSlice = make([]*Contentity, 0)
@@ -55,27 +56,27 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 	if e != nil {
 		L.L.Panic("NewCntyFS.WalkDir: " + e.Error())
 	}
-	L.L.Okay("NewCntyFS: walked os.DirFS OK: " +
-		"got %d nords from path %s", len(CntyFS.asSlice), path)
+	L.L.Okay("NewCntyFS: walked OK %d nords from path %s",
+		 len(CntyFS.asSlice), path)
 
 	// DEBUG
-	L.L.Warning("CntyFS.asSlice has len: %d", len(CntyFS.asSlice))
+	// L.L.Warning("CntyFS.asSlice has len: %d", len(CntyFS.asSlice))
 	for ii, cc := range CntyFS.asSlice {
-	    L.L.Warning("[%d]%T...", ii, cc)
+	    // L.L.Warning("[%d]%T...", ii, cc)
 	    if cc == nil {
 	       L.L.Error ("OOPS, CntyFS.asSlice[%02d] is NIL", ii)
 	       continue
 	    }
-	    L.L.Warning("Got here!")
-	    L.L.Warning("[%02d] %+v", ii, cc)
+	    // L.L.Warning("Got here!")
+	    // L.L.Warning("[%02d] %+v", ii, cc)
 	    /* if cc.FSItem == nil || cc.FSItem.FileMeta == nil {
 	       L.L.Error("WTF, man!")
 	       continue
 	    } */
-	    if cc.FSItem.FileMeta.IsDir() {
-	        L.L.Dbg("[%02d] isDIRLIKE - %s", ii, cc.FSItem.FPs.AbsFP)
+	    if cc.FSItem.FileMeta.IsDirlike() {
+	        L.L.Dbg("[%02d] isDIRLIKE: AbsFP: %s", ii, cc.FSItem.FPs.AbsFP)
 	        } else {
-		L.L.Dbg("[%02d] %s - %s", ii, cc.MarkupTypeOfMType())
+		L.L.Dbg("[%02d] MUT: %s", ii, cc.MarkupTypeOfMType())
 		}
 	}
 	L.L.Dbg(" END")
@@ -90,7 +91,7 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 			continue
 		}
 		// Is child of root ?
-		println(">>> KOSHER? " + n.Nord.RelFP())
+		// println(">>> KOSHER? " + n.Nord.RelFP())
 		if !S.Contains(n.RelFP(), FU.PathSep) {
 			CntyFS.rootNord.AddKid(n)
 		} else {
@@ -99,8 +100,8 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 			// println(n.Path, "|cnex2|", itsDir)
 			var par *Contentity
 			var ok bool
-			L.L.Warning("itsDir: " + itsDir)
-			L.L.Warning("theMap: %+v", CntyFS.asMap)
+			// L.L.Warning("itsDir: " + itsDir)
+			// L.L.Warning("theMap: %+v", CntyFS.asMap)
 			// PROBLEMS HERE !
 			if par, ok = CntyFS.asMap[itsDir]; !ok {
 				L.L.Error("findParInMap: failed for: " +

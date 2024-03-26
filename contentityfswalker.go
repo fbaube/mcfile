@@ -81,7 +81,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		pC = ((*Contentity)(pRC))
 		CntyFS.asSlice = append(CntyFS.asSlice, pC)
 		CntyFS.asMap[CntyFS.RootAbsPath()] = pC
-		L.L.Warning("ADDED TO MAP L84: " + CntyFS.RootAbsPath())
+		// L.L.Warning("ADDED TO MAP L84: " + CntyFS.RootAbsPath())
 		CntyFS.nDirs = 1
 		CntyFS.nFiles = 0
 		return nil // NOT pRC! This is a walker func 
@@ -140,7 +140,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	}
 
 	var pCty *Contentity
-	println("PATH TO TRY IS: " + pathToUse)
+	// println("PATH TO TRY IS: " + pathToUse)
 	pCty, e = NewContentity(pathToUse)
 	if pCty == nil { 
 		L.L.Warning("Rejecting (new Contentity(%s) failed): %T %+v",
@@ -165,7 +165,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	CntyFS.asSlice = append(CntyFS.asSlice, pCty)
 	// p.logIdx = nxtIdx // NPE
 	CntyFS.asMap[pathToUse] = pCty
-	L.L.Warning("ADDED TO MAP L168: " +pathToUse)
+	// L.L.Warning("ADDED TO MAP L168: " +pathToUse)
 	// println("Path OK:", pN.AbsFilePath)
 	return nil
 }

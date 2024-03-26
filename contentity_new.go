@@ -49,13 +49,13 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
 	// Try black-on-cyan, cos even for white text, the blue is too dark
 	if true {
-		L.L.Info(SU.Cyanbg("\n\t ===> crnt RootPath: %s \n"+
-			"\t ===> New Contentity: %s"),
-			CntyEng.rootPath, SU.ElideHomeDir(aPath))
+		L.L.Info(SU.Cyanbg("\n  ===> crnt RootPath: %s \n"+
+			"  ===> New Contentity: %s"),
+			CntyEng.rootPath, SU.Tildotted(aPath))
 	} else {
 		L.L.Info( /* SU.Wfg( */ SU.Cyanbg( // Blubg(
-			"\n\t ===> New Contentity: %s <===           "),
-			SU.ElideHomeDir(aPath))
+			"\n  ===> New Contentity: %s <===           "),
+			SU.Tildotted(aPath))
 	}
 	// ======================
 	//  Start with an FSItem
