@@ -47,8 +47,8 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	      	CntyFS.rootAbsPath, path, err, d)
 		}
 	   }
-	L.L.Progress("wfnBuildContentityTree: path: %s / %s", name, path)
-	L.L.Info("wfnBuildContentityTree: dir: %+v", d)
+	L.L.Dbg("wfnBuildContentityTree: path: %s / %s", name, path)
+	L.L.Dbg("wfnBuildContentityTree: dir: %+v", d)
 	if err != nil {
 		L.L.Error("wfnBuildContentityTree: "+
 			"UNHANDLED in-arg-err: %w", err)
@@ -104,7 +104,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	if b1 || b2 {
 	      if (b1) { r1 = "(file path) " + r1 }
 	      if (b2) { r2 = "(file name) " + r2 }
-		L.L.Warning("Rejecting (%s): %s%s", path, r1, r2)
+		L.L.Dbg("Rejecting (%s): %s%s", path, r1, r2)
 		// continue 
 		return nil
 	}
@@ -133,7 +133,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 			reason = "_echo,_tkns,_tree"
 		} 
 		if reason != "" {
-			L.L.Warning("Rejecting (%s): %s", pathToUse, reason)
+			L.L.Dbg("Rejecting (%s): %s", pathToUse, reason)
 			// continue 
 			return nil
 		}

@@ -10,8 +10,8 @@ require (
 	github.com/fbaube/datarepo v0.0.0-20240326135244-220c48afa52c
 	github.com/fbaube/fileutils v0.0.0-20240326135138-a85c3bc4c0ed
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
-	github.com/fbaube/gtoken v0.0.0-20240320063540-c37d25885062
-	github.com/fbaube/gtree v0.0.0-20231231104721-1004717d5931
+	github.com/fbaube/gtoken v0.0.0-20240326202203-4d8380e83252
+	github.com/fbaube/gtree v0.0.0-20240326202334-f3d75c2d5e8d
 	github.com/fbaube/logutils v0.0.0-20240118190821-fba0e702dd07
 	github.com/fbaube/miscutils v0.0.0-20240307083109-5e380dcbb1e7
 	github.com/fbaube/mlog v0.0.0-20230904080411-cfac35fed413

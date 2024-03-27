@@ -101,8 +101,12 @@ github.com/fbaube/gtoken v0.0.0-20231225203128-9dc8ca760381 h1:/BlIqT2a+czuUbJFe
 github.com/fbaube/gtoken v0.0.0-20231225203128-9dc8ca760381/go.mod h1:L5TPmM5qhEVECO49RCwHxUMIJStcDicDuXPz9VzgyNs=
 github.com/fbaube/gtoken v0.0.0-20240320063540-c37d25885062 h1:L1dvg/D9we7RGm+S648duMfYMsmTK8LtyCVop4VJ1BA=
 github.com/fbaube/gtoken v0.0.0-20240320063540-c37d25885062/go.mod h1:B6ypVL82SXRFPJ+/NcqfFYHbxThNgnhM4sBzEcNM6Po=
+github.com/fbaube/gtoken v0.0.0-20240326202203-4d8380e83252 h1:w2IlO/uLhdx3Dncf+13xx33fG09gG+m0EyeFklAVj9Q=
+github.com/fbaube/gtoken v0.0.0-20240326202203-4d8380e83252/go.mod h1:T4+w4lRk7IYyOT9g2EeVpREJ9hQ7zaqFAPomCQl6FFg=
 github.com/fbaube/gtree v0.0.0-20231231104721-1004717d5931 h1:eUoPIWVorslhzUbUehi3lQDIAd/RBXuHkIcSoj6lOjI=
 github.com/fbaube/gtree v0.0.0-20231231104721-1004717d5931/go.mod h1:/koUFaSIDdIwgaqI6vhhc7PYBggI7Jn/e4MriBbfvT8=
+github.com/fbaube/gtree v0.0.0-20240326202334-f3d75c2d5e8d h1:i2NbtMfkJphEoqm8JAYqRAYzAFuMZ/KM7tWiec/cuZ4=
+github.com/fbaube/gtree v0.0.0-20240326202334-f3d75c2d5e8d/go.mod h1:m1YDPBRyOITF0Xo1MITmpZKCVI9331D/pL5oQpBl9L4=
 github.com/fbaube/humanbytes v0.0.0-20240227103335-a0b11501ad0e h1:2lRZ3QxDYaZ9F7RXLSL3zugdmeQTGOrRddBk+RVTRY0=
 github.com/fbaube/humanbytes v0.0.0-20240227103335-a0b11501ad0e/go.mod h1:WUS3tn4t+FViNsl4VOqYiV51cJNIIeMjLI9fOfm+Ug8=
 github.com/fbaube/logutils v0.0.0-20240118190821-fba0e702dd07 h1:pnt16LF2Gq3myuCjvsTRqc6KUUquBD+gIV9YKHsH+qw=

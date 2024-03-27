@@ -54,7 +54,7 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	var pFSI *FU.FSItem
 	var e error 
 	pFSI, e = FU.NewFSItem(aRootPath)
-	L.L.Info("pFSI %p *pFSI %T e %T", pFSI, *pFSI, e)
+	// L.L.Debug("pFSI %p *pFSI %T e %T", pFSI, *pFSI, e)
 	if e != nil || pFSI == nil {
 	   // L.L.Info("CHECK-2b")
 	   return nil, &fs.PathError{Op:"NewFSItem",Err:e,Path:aRootPath}
