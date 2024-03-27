@@ -245,9 +245,9 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	fmt.Fprintf(p.GTknsWriter, "=== array lengths: " +
 		"cmn.NodeDepths<%d> cmn.FilePosns<%d> GTokens<%d> " +
 		"NSer.NodeCount<%d> \n", ndL, fpL, gtL, nsL)
-	fmt.Printf("st1-read: array lengths: " +
+	/* fmt.Printf("st1-read: array lengths: " +
 		"cmn.NodeDepths<%d> cmn.FilePosns<%d> GTokens<%d> " +
-		"NSer.NodeCount<%d> \n", ndL, fpL, gtL, nsL)
+		"NSer.NodeCount<%d> \n", ndL, fpL, gtL, nsL) */
 	count := (ndL + fpL + gtL + nsL + 2) / 4
 	// For every GToken, we should print:
 	//  - original node's original text

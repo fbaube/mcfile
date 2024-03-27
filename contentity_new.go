@@ -50,9 +50,9 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// Try black-on-cyan, cos even for white text, the blue is too dark
 	if true {
 		// L.L.Info(SU.Cyanbg("\n  ===> crnt RootPath: %s \n"+
-		L.L.Info(SU.Ybg("\n  ===> crnt RootPath: %s \n"+
+		L.L.Info(SU.Ybg("\n  ===> Crnt Root Path: %s \n"+
 			"  ===> New Contentity: %s"),
-			CntyEng.rootPath, SU.Tildotted(aPath))
+			SU.Tildotted(CntyEng.rootPath), SU.Tildotted(aPath))
 	} else {
 		L.L.Info( /* SU.Wfg( */ SU.Cyanbg( // Blubg(
 			"\n  ===> New Contentity: %s <===           "),

@@ -71,6 +71,8 @@ github.com/fbaube/datarepo v0.0.0-20240323120743-aad7d4e39fb8 h1:PlRfoucom492llt
 github.com/fbaube/datarepo v0.0.0-20240323120743-aad7d4e39fb8/go.mod h1:5pA/qXN5NIdUYUUxE5B68Wkj4URKm+g5wPHGK6cI1q0=
 github.com/fbaube/datarepo v0.0.0-20240326135244-220c48afa52c h1:ouTgSEOtrfE9Qfyclw3fGNeVj8G23eMNrHXfsLjVeCU=
 github.com/fbaube/datarepo v0.0.0-20240326135244-220c48afa52c/go.mod h1:YSAlkvgkexGWlJQPyAdAq6Zk1hE9EwOMUhhYxyzHctU=
+github.com/fbaube/datarepo v0.0.0-20240327103543-e67319cad3c8 h1:mx3SGAw4ww6x1utl4cxRh+gylQ20//yMcQ3QyRBx60k=
+github.com/fbaube/datarepo v0.0.0-20240327103543-e67319cad3c8/go.mod h1:chw1tIPt6eGhwP8A1+LvJXgGjzR6ko3pJkf139TMGx0=
 github.com/fbaube/dsmnd v0.0.0-20240117202718-156e4507cef4 h1:+yUhwsUjYiPz8zPJdtyzeMZK8wg9b7hwLjWNF6EE8Qo=
 github.com/fbaube/dsmnd v0.0.0-20240117202718-156e4507cef4/go.mod h1:7FFQTZsr7f2vA243fKLohCwszP3Xrzi/xbFkOyPF+YQ=
 github.com/fbaube/dsmnd v0.0.0-20240130143636-adbc149a7741 h1:1qmauz9VF6WcTp4umXA40TQ65UftqHE80pgx4wQSpWo=
@@ -136,6 +138,8 @@ github.com/fbaube/orderednodes v0.0.0-20240323120809-05155b0e906c h1:KjDFkrJN5Bd
 github.com/fbaube/orderednodes v0.0.0-20240323120809-05155b0e906c/go.mod h1:0chCasJocITmFeyBGYSkZ8VeZ9K7LuAb1YJSLYGyonA=
 github.com/fbaube/orderednodes v0.0.0-20240326135312-a0ebfdbdacb6 h1:waWRorRM4JCcaC4fOP1HDScaq9fJVPbk8cu5saPzh+E=
 github.com/fbaube/orderednodes v0.0.0-20240326135312-a0ebfdbdacb6/go.mod h1:n/vEEAckr1XcH97a/hzzxuX+wqn777SaVHWFFca4ex8=
+github.com/fbaube/orderednodes v0.0.0-20240327103507-96eed71fc379 h1:5u6uxK8UI8tgAVOa0iJqNohRmaB/xmT4t9H2rrEI4to=
+github.com/fbaube/orderednodes v0.0.0-20240327103507-96eed71fc379/go.mod h1:lI8ZmErf5IsksF/faxvrIrGB/nxJ8h1UpvughXdCYtw=
 github.com/fbaube/parseutils v0.0.0-20220310134313-a5d0ceeeabb3/go.mod h1:J3gIK/myAYcFh9jAgVAawRE5iPxor38nmbfNGTnycJU=
 github.com/fbaube/parseutils v0.0.0-20240117103929-681897b1f883 h1:uWst8iOXICKxejsRDU3spW0q4iVMJp87yRCoT9/G+j8=
 github.com/fbaube/parseutils v0.0.0-20240117103929-681897b1f883/go.mod h1:KJMfLJ/C6vsNr2S2/yXCwmDz9BHENg40zTh0lPStijE=
@@ -148,6 +152,8 @@ github.com/fbaube/stringutils v0.0.0-20240318064103-bf7b5a2b5f11 h1:SbTSSAz6W2bk
 github.com/fbaube/stringutils v0.0.0-20240318064103-bf7b5a2b5f11/go.mod h1:5GRMKxtq6rUel/Pwfr7VG0eHVBPITL1UCsHyGHhTo8U=
 github.com/fbaube/stringutils v0.0.0-20240322200159-80cb818c8713 h1:GFdzfzrMWL6CktOMF3WNHsGVYkZG3WqHSieczE2gSSw=
 github.com/fbaube/stringutils v0.0.0-20240322200159-80cb818c8713/go.mod h1:5GRMKxtq6rUel/Pwfr7VG0eHVBPITL1UCsHyGHhTo8U=
+github.com/fbaube/stringutils v0.0.0-20240326203406-bf4fec3db0ff h1:3TAKhiwkOIZoh1oAlTrhmpMcwA2YMjulPnWj93PJM+Y=
+github.com/fbaube/stringutils v0.0.0-20240326203406-bf4fec3db0ff/go.mod h1:5GRMKxtq6rUel/Pwfr7VG0eHVBPITL1UCsHyGHhTo8U=
 github.com/fbaube/wasmutils v0.0.0-20210130165146-e84dfddef26c/go.mod h1:zvSKkP2Q1b0bu5IuwmY0b2x4ZXEZMYcG0ClOKublfR0=
 github.com/fbaube/wasmutils v0.0.0-20231209183154-e25018375bc2 h1:c2o0/6fIdaGD9G84GUFg41qHYPWqfKO0HD8G9KLJQH4=
 github.com/fbaube/wasmutils v0.0.0-20231209183154-e25018375bc2/go.mod h1:Yv24ab7DbaTunolfMWqQVI0g8yCNFu8y5IHxLbwZ0ZE=
