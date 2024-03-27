@@ -7,6 +7,7 @@ import (
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
 	SU "github.com/fbaube/stringutils"
+L "github.com/fbaube/mlog"
 	XU "github.com/fbaube/xmlutils"
 	// L "github.com/fbaube/mlog"
 )
@@ -257,7 +258,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	//  - the GToken
 	for i := 0; i < count; i++ {
 	        if p.GTokens[i] == nil {
-		   fmt.Printf("NIL at GTokens[%d] \n", i)
+		   L.L.Warning("NIL at GTokens[%d]", i)
 		   continue
 		   }
 		tkn := *(p.GTokens[i])
