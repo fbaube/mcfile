@@ -37,7 +37,7 @@ func (p *Contentity) st0_Init() *Contentity {
 // `mcfile.IsXML()` are OK and that `MCFile.MType[]` is set.
 func (p *Contentity) st0a_SanityCheck() *Contentity {
 	p.logStg = "0a"
-	if p.MType == "" {
+	if p.MarkupType != SU.MU_type_DIRLIKE && p.MType == "" {
 		p.SetErrMsg("MType is empty")
 	}
 	if len(p.MarkupTypeOfMType()) < 3 || len(p.MarkupTypeOfMType()) > 7 {
@@ -61,8 +61,11 @@ func (p *Contentity) st0a_SanityCheck() *Contentity {
 			// panic("Init error: is BIN but: XML?!")
 			p.SetErrMsg("is BIN but: XML?!")
 		}
+	case SU.MU_type_SQL, SU.MU_type_DIRLIKE:
+	     // No problem!
 	default:
-		p.SetErrMsg("bad/missing contentitype: " + string(p.MarkupTypeOfMType()))
+		p.SetErrMsg("bad/missing contentitype: " +
+			string(p.MarkupTypeOfMType()))
 	}
 	return p
 }
