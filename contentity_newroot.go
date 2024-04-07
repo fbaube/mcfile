@@ -3,14 +3,11 @@ package mcfile
 import (
 	"errors"
 	"io/fs"
-	// "os"
 	"fmt"
 	FU "github.com/fbaube/fileutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
-	DRS "github.com/fbaube/datarepo/sqlite"
-	DRM "github.com/fbaube/datarepo/rowmodels"
-	// CA "github.com/fbaube/contentanalysis"
+	"github.com/fbaube/m5db"
 	FP "path/filepath"
 )
 
@@ -76,8 +73,8 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
-	var pCR *DRM.ContentityRow
-	pCR, e = DRS.NewContentityRow(pFSI, nil)
+	var pCR *m5db.ContentityRow
+	pCR, e = m5db.NewContentityRow(pFSI, nil)
 	if e != nil || pCR == nil {
 		L.L.Error("NewRootContentity(PA=>CR)<%s>: %s", aRootPath, e)
 		return nil, fmt.Errorf(

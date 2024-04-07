@@ -2,14 +2,11 @@ package mcfile
 
 import (
 	"errors"
-	// "fmt"
-	// "os"
 	"io/fs"
 	FU "github.com/fbaube/fileutils"
 	L "github.com/fbaube/mlog"
 	ON "github.com/fbaube/orderednodes"
-	DRS "github.com/fbaube/datarepo/sqlite"
-	DRM "github.com/fbaube/datarepo/rowmodels"
+	"github.com/fbaube/m5db"
 	SU "github.com/fbaube/stringutils"
 	CA "github.com/fbaube/contentanalysis"
 	FP "path/filepath"
@@ -85,8 +82,8 @@ func NewContentity(aPath string) (*Contentity, error) {
 	//  similar, such as symlink) 
 	// ==========================
 	if pFSI.IsDirlike() {
-		var pCR *DRM.ContentityRow
-		pCR, e = DRS.NewContentityRow(pFSI, nil)
+		var pCR *m5db.ContentityRow
+		pCR, e = m5db.NewContentityRow(pFSI, nil)
 		if e != nil || pCR == nil {
 			L.L.Error("NewContentity(Dirlike)<%s>: %s", aPath, e)
 			println("LINE 89")
@@ -127,8 +124,8 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
-	var pCR *DRM.ContentityRow
-	pCR, e = DRS.NewContentityRow(pFSI, pPA)
+	var pCR *m5db.ContentityRow
+	pCR, e = m5db.NewContentityRow(pFSI, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewContentity(PA=>CR)<%s>: %s", aPath, e)
 	   	println("LINE 131")
