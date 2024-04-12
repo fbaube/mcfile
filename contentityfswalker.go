@@ -157,8 +157,11 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		// they should not be allocated for a dir !
 		// p.MimeType = "dir"
 		// p.MType = SU.MU_type_DIRLIKE
+		L.L.Okay("Item (DIR) OK; CntyPtr nil") // : MType<%s>", pCty.MType)
 	} else {
 		CntyFS.nFiles++
+		L.L.Okay("Item OK: MType<%s> MarkupType<%s>",
+			pCty.MType, pCty.MarkupTypeOfMType())
 	}
 	// L.L.Info("Directory traverser: MarkupType: " + string(p.MarkupType()))
 	// nxtIdx := len(CntyFS.asSlice)
