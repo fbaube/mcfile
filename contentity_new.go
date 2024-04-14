@@ -144,7 +144,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 		pNewCnty.ContentityRow.FSItem = *pFSI
 		return pNewCnty, nil
 	}
-	L.L.Okay(SU.Gbg(" " + pFSI.String() + " "))
+	L.L.Info(SU.Gbg(" " + pFSI.String() + " "))
 
 	// ==================================
 	//  Now fill in the ContentityRecord
