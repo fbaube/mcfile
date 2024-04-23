@@ -45,7 +45,7 @@ func (p *Contentity) st2a_PrepareToTree() *Contentity {
 	}
 	p.logStg = "2a"
 	var e error
-	switch p.MarkupTypeOfMType() {
+	switch p.MarkupType() {
 	case SU.MU_type_XML:
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
@@ -101,7 +101,7 @@ func (p *Contentity) st2c_PostTreeMeta() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupTypeOfMType() {
+	switch p.MarkupType() {
 	case SU.MU_type_XML:
 		L.L.Warning("TODO> st2c_PostTreeMeta XML")
 	case SU.MU_type_MKDN:
@@ -122,7 +122,7 @@ func (p *Contentity) st2d_NormalizeTree() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupTypeOfMType() {
+	switch p.MarkupType() {
 	case SU.MU_type_XML:
 		L.L.Warning("TODO> 2d. NormalizeTree XML ==> ENTs, etc.!")
 		/* code to use !

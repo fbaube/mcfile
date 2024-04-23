@@ -76,7 +76,7 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 	    if cc.FSItem.FileMeta.IsDirlike() {
 	        L.L.Dbg("[%02d] isDIRLIKE: AbsFP: %s", ii, cc.FSItem.FPs.AbsFP)
 	        } else {
-		L.L.Dbg("[%02d] MUT: %s", ii, cc.MarkupTypeOfMType())
+		L.L.Dbg("[%02d] MarkupType: %s", ii, cc.MarkupType())
 		}
 	}
 	L.L.Dbg(" END")

@@ -75,7 +75,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		// These next two get NPE cos no such struct for a dir 
 		// pRC.MimeType = "dir"
 		// pRC.MType = "dir"
-		pRC.FSItem.MarkupType = SU.MU_type_DIRLIKE
+		pRC.FSItem.RawMT = SU.MU_type_DIRLIKE
 		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
 		var pC *Contentity
 		pC = ((*Contentity)(pRC))
@@ -150,7 +150,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	// And so following code applies only to files, not to directories
 	// TODO: Not sure what happens with symlinks
 	if pathIsDir {
-	        pCty.FSItem.MarkupType = SU.MU_type_DIRLIKE
+	        pCty.FSItem.RawMT = SU.MU_type_DIRLIKE
 		CntyFS.nDirs++
 		// println("================ DIR ========")
 		// These next two stmts should barf, cos
@@ -161,7 +161,7 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	} else {
 		CntyFS.nFiles++
 		L.L.Okay("Item OK: MType<%s> MarkupType<%s>",
-			pCty.MType, pCty.MarkupTypeOfMType())
+			pCty.MType, pCty.MarkupType())
 	}
 	// L.L.Info("Directory traverser: MarkupType: " + string(p.MarkupType()))
 	// nxtIdx := len(CntyFS.asSlice)

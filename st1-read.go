@@ -41,7 +41,7 @@ func (p *Contentity) st1_Read() *Contentity {
 	p.logStg = "11"
 	p.L(LProgress, "=== 11:Read ===")
 	p.L(LInfo, "@entry: MarkupType<%s> MType<%s>",
-		p.MarkupTypeOfMType(), p.MType)
+		p.MarkupType(), p.MType)
 	return p.
 		st1a_ProcessMetadata().
 		st1b_GetCPR().
@@ -63,7 +63,7 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 		p.L(LInfo, "No metadata found")
 		return p
 	}
-	switch mut := p.MarkupTypeOfMType(); mut {
+	switch mut := p.MarkupType(); mut {
 	case SU.MU_type_XML, SU.MU_type_HTML:
 		p.L(LDbg, "MetaPos:%d MetaRaw(): %s",
 			p.Meta.Beg.Pos, metaRaw)
@@ -111,11 +111,11 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	p.logStg = "1b"
 	if len(textRaw) == 0 {
 		p.L(LWarning, "Zero-length content")
-		p.SetErrMsg("no content")
+		p.SetError("no content")
 		return p
 	}
 	var e error
-	switch p.MarkupTypeOfMType() {
+	switch p.MarkupType() {
 	case SU.MU_type_MKDN:
 		var pPR *PU.ParserResults_mkdn
 		pPR, e = PU.GenerateParserResults_mkdn(textRaw)
@@ -124,7 +124,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 			return p
 		}
 		if pPR == nil {
-			p.SetErrMsg("nil ParserResults_mkdn")
+			p.SetError("nil ParserResults_mkdn")
 		}
 		p.ParserResults = pPR
 		p.L(LOkay, "MKDN tokens: got %d", len(pPR.NodeSlice))
@@ -156,8 +156,8 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		p.L(LOkay, "XML tokens: got %d \n", len(pPR.NodeSlice))
 		return p
 	default:
-		p.SetErrMsg("bad file markup type: " +
-			string(p.MarkupTypeOfMType()))
+		p.SetError("bad file markup type: " +
+			string(p.MarkupType()))
 	}
 	return p
 }
@@ -178,7 +178,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 
 	fmt.Fprintln(p.GTknsWriter, "=== Input file:", p.AbsFP())
 
-	switch p.MarkupTypeOfMType() {
+	switch p.MarkupType() {
 	case SU.MU_type_MKDN:
 		var pCPR_M *PU.ParserResults_mkdn
 		if nil == p.ParserResults {
@@ -281,7 +281,7 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 		return p
 	}
 	p.logStg = "1d"
-	switch p.MarkupTypeOfMType() {
+	switch p.MarkupType() {
 	case SU.MU_type_MKDN:
 		// Markdown YAML metadata was processed in step st1a
 		return p
