@@ -105,7 +105,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	}
 	textRaw := p.Text.GetSpanOfString(p.FSItem.TypedRaw.S())
 	if textRaw == "" {
-		p.L(LWarning, "Lame hack in st1-read L105")
+		p.L(LWarning, "TypedRaw lame hack in st1-read L108")
 		textRaw = p.FSItem.TypedRaw.S()
 	}
 	p.logStg = "1b"
@@ -153,7 +153,11 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 			p.WrapError("GenerateParserResults_xml", e)
 		}
 		p.ParserResults = pPR
-		p.L(LOkay, "XML tokens: got %d \n", len(pPR.NodeSlice))
+		if pPR == nil {
+		   p.L(LError, "Nil ptr XML parser results (st1b_GetCPR)")
+		} else {
+		   p.L(LOkay, "XML tokens: got %d \n", len(pPR.NodeSlice))
+		}
 		return p
 	default:
 		p.SetError("bad file markup type: " +
