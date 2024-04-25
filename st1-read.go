@@ -39,7 +39,7 @@ func (p *Contentity) st1_Read() *Contentity {
 		return p
 	}
 	p.logStg = "11"
-	p.L(LProgress, "=== 11:Read ===")
+	p.L(LDebug, "=== 11:Read ===")
 	p.L(LInfo, "@entry: MarkupType<%s> MType<%s>",
 		p.MarkupType(), p.MType)
 	return p.
@@ -65,12 +65,12 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 	}
 	switch mut := p.MarkupType(); mut {
 	case SU.MU_type_XML, SU.MU_type_HTML:
-		p.L(LDbg, "MetaPos:%d MetaRaw(): %s",
+		p.L(LDebug, "MetaPos:%d MetaRaw(): %s",
 			p.Meta.Beg.Pos, metaRaw)
 		if p.Meta.Beg.Pos != 0 {
 			var e error
 			var ct int
-			p.L(LProgress, "Doing "+string(mut))
+			p.L(LDebug, "Doing "+string(mut))
 			if mut == SU.MU_type_HTML {
 				var pPR *PU.ParserResults_html
 				pPR, e = PU.GenerateParserResults_html(metaRaw)

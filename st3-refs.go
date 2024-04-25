@@ -19,7 +19,7 @@ func (p *Contentity) st3_Refs() *Contentity {
 		return p
 	}
 	p.logStg = "33"
-	p.L(LProgress, "=== 33:Refs ===")
+	p.L(LDebug, "=== 33:Refs ===")
 	return p.DoBlockList().DoGLinks().DoTableOfContents()
 }
 

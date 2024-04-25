@@ -126,12 +126,12 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 				} else {
 					pGL.RelFP = pGL.Link_raw
 				}
-				p.L(LDbg, "KEY: %s#%s", pGL.RelFP, pGL.FragID)
+				p.L(LDebug, "KEY: %s#%s", pGL.RelFP, pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
 				s, _ := FP.Abs(FP.Join(p.FSItem.FPs.AbsFP.S(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
-				p.L(LDbg, "2.AbsFP: "+pGL.AbsFP.S())
+				p.L(LDebug, "2.AbsFP: "+pGL.AbsFP.S())
 			} else if S.HasPrefix(pGL.Att, "idref") {
 				pGL.AddressMode = "idref"
 				if i := S.Index(pGL.Link_raw, "#"); i != -1 {
@@ -146,12 +146,12 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 				} else {
 					pGL.RelFP = pGL.Link_raw
 				}
-				L.L.Dbg("URI: " + pGL.RelFP + "#" + pGL.FragID)
+				L.L.Debug("URI: " + pGL.RelFP + "#" + pGL.FragID)
 				// p.AbsFP = FU.RelFilePath(FP.Join(
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
 				s, _ := FP.Abs(FP.Join(p.FSItem.FPs.AbsFP.S(), pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
-				L.L.Dbg("URI AbsFP: " + FU.Enhomed(pGL.AbsFP.S()))
+				L.L.Debug("URI AbsFP: " + FU.Enhomed(pGL.AbsFP.S()))
 			}
 			switch pGL.Att {
 			// Link SOURCES

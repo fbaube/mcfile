@@ -27,11 +27,11 @@ func (p *Contentity) LogTextQuote(level LL, textquote string, format string, a .
 
 type LL LU.Level
 
-var LDbg, LProgress, LInfo, LOkay, LWarning, LError, LPanic LL
+var /* LDbg, LProgress, */ LDebug, LInfo, LOkay, LWarning, LError, LPanic LL
 
 func init() {
-	LDbg = LL(LU.LevelDbg)
-	LProgress = LL(LU.LevelProgress)
+	LDebug = LL(LU.LevelDebug)
+	// LProgress = LL(LU.LevelProgress)
 	LInfo = LL(LU.LevelInfo)
 	LOkay = LL(LU.LevelOkay)
 	LWarning = LL(LU.LevelWarning)

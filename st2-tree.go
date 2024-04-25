@@ -27,7 +27,7 @@ func (p *Contentity) st2_Tree() *Contentity {
 		return p
 	}
 	p.logStg = "22"
-	p.L(LProgress, "=== 22:Tree ===")
+	p.L(LDebug, "=== 22:Tree ===")
 	return p.
 		st2a_PrepareToTree().
 		st2b_BuildIntoTree().

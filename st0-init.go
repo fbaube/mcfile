@@ -28,7 +28,7 @@ func (p *Contentity) st0_Init() *Contentity {
 		L.L.Error("st0_Init: nil MType")
 	}
 	p.logStg = "00"
-	p.L(LProgress, "=== 00:Init ===")
+	p.L(LDebug, "=== 00:Init ===")
 	// panic("TEST PANIC in st0")
 	return p.st0a_SanityCheck()
 }

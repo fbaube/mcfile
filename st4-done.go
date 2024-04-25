@@ -12,7 +12,7 @@ func (p *Contentity) st4_Done() *Contentity {
 		return p
 	}
 	// p.L(LProgress, "Done")
-	L.L.Progress("=== 44:Done ===")
+	L.L.Debug("=== 44:Done ===")
 	switch p.MarkupType() {
 	case SU.MU_type_XML:
 		// L.L.Warning("TODO> 4. Done XML")
