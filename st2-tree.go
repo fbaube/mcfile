@@ -3,18 +3,16 @@ package mcfile
 import (
 	"io"
 	"os"
-
-	// "fmt"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
 	L "github.com/fbaube/mlog"
 	SU "github.com/fbaube/stringutils"
 )
 
-// st2_Tree takes the output of st1_Read - which at a minimum
-// is a complete set of `GToken`s - and creates a `GTree`.
-// Note that st1_Read might have already generated a CST
-// (MKDN and HTML do this) but in such cases, st1_Read
+// st2_Tree takes the output of st1_Read - which at a minimum is
+// a complete set of `GToken`s - and creates a `GTree`. Note that
+// st1_Read might have already generated a CST (Concrete Syntax
+// Tree) (MKDN and HTML do this) but in such cases, st1_Read
 // also prepared the list of corresponding `GToken`s.
 // Summary:
 // - 2a PrepareToTree() // make GTags := GTokens
@@ -28,11 +26,13 @@ func (p *Contentity) st2_Tree() *Contentity {
 	}
 	p.logStg = "22"
 	p.L(LDebug, "=== 22:Tree ===")
-	return p.
+	ret := p.
 		st2a_PrepareToTree().
 		st2b_BuildIntoTree().
 		st2c_PostTreeMeta().
 		st2d_NormalizeTree()
+	if !p.HasError() { p.L(LOkay, "=== 22:Tree: Success ===") }
+	return ret
 }
 
 // st2a_PrepareToTree is used when there is some preparation

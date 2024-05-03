@@ -7,32 +7,32 @@ import (
 	"github.com/fbaube/gtoken"
 	PU "github.com/fbaube/parseutils"
 	SU "github.com/fbaube/stringutils"
-L "github.com/fbaube/mlog"
 	XU "github.com/fbaube/xmlutils"
-	// L "github.com/fbaube/mlog"
+	L "github.com/fbaube/mlog"
 )
 
+// Old cryptic notes: 
 // GetParseTokenization_Xml v GetParseCST_nonXml
 // GetNodelistFromCST_NonXml
 // GetGTokensFromParseTokenization_Xml v
 // GetGTokensFromNodelist_NonXml
 
 // st1_Read reads in the file and does what is
-// needed to end up with a list of `GToken`s.
+// needed to end up with a list of [gtoken.GToken]s.
 //
-// Summary of processing per Contentity type:
+// Summary of processing per markup type (SU.MU_type_*):
+//
 // "XML"
-//   - (§1) Use stdlib [encoding/xml] to get slice of [XU.XToken]
-//   - (§1) Convert [XU.XToken] to [gparse.GToken]
+//  - Use stdlib [encoding/xml] to get slice of [XU.XToken]
+//  - Convert [XU.XToken] to [gtoken.GToken]
 //
 // "MKDN"
-//   - (§1) Use [yuin/goldmark] to get tree of [yuin/goldmark/ast/Node]
-//   - (§1) From each Node make a [MkdnToken] (in a list?) incl. [GToken] and [GTag]
+//  - Use [yuin/goldmark] to get tree of [yuin/goldmark/ast/Node]
+//  - From each Node make a [MkdnToken] (in a list?) incl. [GToken] and [GTag]
 //
 // "HTML"
-//   - (§1) Use [golang.org/x/net/html] to get a tree of [html.Node]
-//   - (§1) From each Node make a [HtmlToken] (in a list?) incl. [GToken] and [GTag]
-//
+//  - Use [golang.org/x/net/html] to get a tree of [html.Node]
+//  - From each Node make a [HtmlToken] (in a list?) incl. [GToken] and [GTag]
 // .
 func (p *Contentity) st1_Read() *Contentity {
 	if p.HasError() {
@@ -41,12 +41,14 @@ func (p *Contentity) st1_Read() *Contentity {
 	p.logStg = "11"
 	p.L(LDebug, "=== 11:Read ===")
 	p.L(LInfo, "@entry: MarkupType<%s> MType<%s>",
-		p.MarkupType(), p.MType)
-	return p.
+		p.MarkupType, p.MType)
+	ret := p.
 		st1a_ProcessMetadata().
 		st1b_GetCPR().
 		st1c_MakeAFLfromCFL().
 		st1d_PostMeta_notmkdn() // XML per format; HTML <head>
+	if !p.HasError() { p.L(LOkay, "=== 11:Read: Success ===") }
+	return ret
 }
 
 // st1a_ProcessMetadata processes metadata.
@@ -58,14 +60,16 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 		return p
 	}
 	p.logStg = "1a"
-	metaRaw := p.Meta.GetSpanOfString(p.FSItem.TypedRaw.S())
+	
+	var metaRaw string // ctoken.Span 
+	metaRaw = p.Meta.GetSpanOfString(p.FSItem.TypedRaw.S())
 	if metaRaw == "" {
 		p.L(LInfo, "No metadata found")
 		return p
 	}
 	switch mut := p.MarkupType(); mut {
 	case SU.MU_type_XML, SU.MU_type_HTML:
-		p.L(LDebug, "MetaPos:%d MetaRaw(): %s",
+		p.L(LDebug, "Meta: Pos:%d Raw: %s",
 			p.Meta.Beg.Pos, metaRaw)
 		if p.Meta.Beg.Pos != 0 {
 			var e error
@@ -103,15 +107,17 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	textRaw := p.Text.GetSpanOfString(p.FSItem.TypedRaw.S())
+	p.logStg = "1b"
+
+	var textRaw string // ctoken.Span
+	textRaw = p.Text.GetSpanOfString(p.FSItem.TypedRaw.S())
 	if textRaw == "" {
-		p.L(LWarning, "TypedRaw lame hack in st1-read L108")
+		p.L(LWarning, "TypedRaw lame hack in st1-read L113")
 		textRaw = p.FSItem.TypedRaw.S()
 	}
-	p.logStg = "1b"
 	if len(textRaw) == 0 {
 		p.L(LWarning, "Zero-length content")
-		p.SetError("no content")
+		p.SetError("no content, and/but not previously detected")
 		return p
 	}
 	var e error

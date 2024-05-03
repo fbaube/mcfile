@@ -21,5 +21,6 @@ func (p *Contentity) st4_Done() *Contentity {
 	case SU.MU_type_MKDN:
 		// L.L.Warning("TODO> 4. Done MKDN")
 	}
-	return p
+	if !p.HasError() { p.L(LOkay, "=== 44:Done: Success ===") }
+	return p // ret 
 }

@@ -19,25 +19,26 @@ import (
 //
 // An interesting question is, how can we indicate an error and
 // terminate a thread prematurely ? The method currently chosen
-// is to use interface [github.com/fbaube/miscutils/Errer].
-// This has to be checked for at the start of a func.
+// is to use interface [github.com/fbaube/miscutils/Errer]. This
+// has to be checked for at the start of a func. But then we can
+// chain functions by writing them left-to-right. Winning!
+//
+// (If functions accept and return a ptr+error pair then they
+// chain right-to-left, which is a big fail for readability.) 
 //
 // We could also pass in a `Context` and use its cancellation
 // capability. Yet another way might be simply to `panic`,
-// and so this function already has code to catch a panic.
+// and so this function already has code to catch panics.
 // .
 func (p *Contentity) ExecuteStages() *Contentity {
-	// The E family of functions all remove a final error return,
-	// panicking if non-nil.
-	// Handle converts such a panic to a returnable error value.
-	// Other panics are not recovered.
-	// defer must.F(log.Fatal)
 
+     // Start by filtering out pathological
+     // and uninteresting cases. 
 	if p.MarkupType() == SU.MU_type_UNK {
 		panic("UNK MarkupType in ExecuteStages")
 	}
 	if p.FSItem.Raw == "" && p.MarkupType() != SU.MU_type_DIRLIKE {
-		p.L(LWarning, "ExecuteStages :: zero-len raw content")
+		p.L(LWarning, "Zero-length raw content: skipping")
 		return p
 	}
 	if p.HasError() {
@@ -45,16 +46,12 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		return p
 	}
 	if p.MarkupType() == SU.MU_type_BIN {
-		p.L(LWarning, "Skipping ALL stages for binary file")
+		p.L(LWarning, "Binary file: skipping")
 		return p
 	}
 	// p.L(LInfo, "LENGTH %d SIZE %d", len(p.FSItem.Raw), p.Size())
-	if len(p.FSItem.Raw) == 0 { // p.Size() == 0 {
-		p.L(LWarning, "Skipping ALL stages for empty file")
-		return p
-	}
 	if p.IsDirlike() {
-		p.L(LInfo, "Is dir or similar: skipping content processing")
+		p.L(LInfo, "Is dir (or similar): skipping")
 		return p
 	}
 	p.logStg = "--"

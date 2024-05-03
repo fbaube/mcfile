@@ -5,8 +5,8 @@ import (
 	SU "github.com/fbaube/stringutils"
 )
 
-// st3_Refs gathers all the various types of internal and
-// external references. Summary:
+// st3_Refs gathers all the various types of internal 
+// and external references. Summary:
 //   - 3a DoBlockList() // make list of blocks
 //   - 3b DoGLinks()    // gather links
 //   - 3c DoTableOfContents() // make ToC
@@ -20,7 +20,9 @@ func (p *Contentity) st3_Refs() *Contentity {
 	}
 	p.logStg = "33"
 	p.L(LDebug, "=== 33:Refs ===")
-	return p.DoBlockList().DoGLinks().DoTableOfContents()
+	ret := p.DoBlockList().DoGLinks().DoTableOfContents()
+	if !p.HasError() { p.L(LOkay, "=== 33:Refs: Success ===") }
+	return ret 
 }
 
 // DoBlockList makes a list of all the nodes that are
