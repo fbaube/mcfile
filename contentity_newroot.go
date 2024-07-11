@@ -41,9 +41,9 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	pNewCty = new(RootContentity)
 	// Global assignment (oops)
 	CntyEng.rootPath = aRootPath
-	if CntyEng.nexSeqID != 0 {
+	/* if CntyEng.nexSeqID != 0 {
 		L.L.Warning("New root cty: seq ID is: %d", CntyEng.nexSeqID)
-	}
+	} */
 	// ======================
 	//  Start with an FSItem
 	// ======================

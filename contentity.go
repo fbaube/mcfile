@@ -80,7 +80,7 @@ func (p *Contentity) IsDirlike() bool {
 }
 
 type norderCreationState struct {
-	nexSeqID int // reset to 0 when doing another tree ?
+	// nexSeqID int // reset to 0 when doing another tree ?
 	rootPath string
 	// summaryString StringFunc
 }
