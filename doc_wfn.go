@@ -20,12 +20,13 @@
 //
 //   type WalkFunc func(path string, info os.FileInfo, err error) error
 //
-// In the stdlib it is about walking a file tree, so errors have to bubble up,
-// and sentinel value `SkipDir` says stop processing the current directory.
+// In the stdlib it is about walking a file tree, so errors have to
+// bubble up, and sentinel value `SkipDir` says stop processing the
+// current directory, i.e. skip the subtree. 
 //
-// In our generalized case, we can skip the complexity of SkipDir, but we
-// do need to bubble up errors. So in accordance with the discussoin above,
-// we fill define types that describe genralized functions.
+// In our generalized case, we can skip the complexity of SkipDir, but 
+// we do need to bubble up errors. So in accordance with the discussion 
+// above, we fill define types that describe generalized functions.
 //
 // In the stdlib it looks like this:
 // https://golang.org/src/path/filepath/path.go

@@ -5,7 +5,6 @@ import (
 	"github.com/fbaube/gparse"
 	"github.com/fbaube/gtoken"
 	"github.com/fbaube/gtree"
-	MU "github.com/fbaube/miscutils"
 	ON "github.com/fbaube/orderednodes"
 	"github.com/fbaube/m5db"
 	SU "github.com/fbaube/stringutils"
@@ -21,7 +20,7 @@ type ContentityStage func(*Contentity) *Contentity
 // .
 type Contentity struct { // has has has has Raw
 	ON.Nord
-	MU.Errer
+	// SU.Errer // OBS - is contained in ContentityRow.FSItem
 	// CFU.GCtx // utils/cliflagutils
 
 	LogInfo
@@ -99,7 +98,7 @@ func (p Contentity) String() string {
 	}
 	// s := fmt.Sprintf("[len:%d]", p.Size())
 	s := fmt.Sprintf("||%s||GTree|%s||OutbKeyLinks|%+v|KeyLinkTgts|%+v|OutbUriLinks|%+v|UriLinkTgts|%+v||",
-		SU.Tildotted(p.FSItem.FPs.AbsFP.S()) /* p.OutputFiles.String(), */, sGTree,
+		SU.Tildotted(p.FSItem.FPs.AbsFP) /* p.OutputFiles.String(), */, sGTree,
 		p.KeyRefncs, p.KeyRefnts, p.UriRefncs, p.UriRefnts)
 	/* code to use ?
 			if p.XmlFileMeta != nil {

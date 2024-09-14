@@ -91,13 +91,13 @@ func NewContentity(aPath string) (*Contentity, error) {
 			return nil, &fs.PathError{Op:"FSI.NewCtyRow.(dirlike)",
 			       Err:e,Path:aPath}
 		}
-		L.L.Info(SU.Ybg(" Dir " + SU.Tildotted(pFSI.FPs.AbsFP.S())))
+		L.L.Info(SU.Ybg(" Dir " + SU.Tildotted(pFSI.FPs.AbsFP)))
                 pCR.FSItem = *pFSI
 		pNewCnty.ContentityRow = *pCR
 		return pNewCnty, nil
         }
 	var pPA *CA.PathAnalysis
-	e = pFSI.GoGetFileContents()
+	e = pFSI.LoadContents()
 	// L.L.Warning("LENGTH %d", len(pFSI.TypedRaw.Raw))
 	if e != nil {
    	   println("LINE 105")	
@@ -140,7 +140,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	// do the necessary assignments
 	pNewCnty.ContentityRow = *pCR
 	if pFSI.IsDirlike() {
-		L.L.Info(SU.Ybg(" Directory " + SU.Tildotted(pFSI.FPs.AbsFP.S())))
+		L.L.Info(SU.Ybg(" Directory " + SU.Tildotted(pFSI.FPs.AbsFP)))
 		pNewCnty.ContentityRow.FSItem = *pFSI
 		return pNewCnty, nil
 	}
