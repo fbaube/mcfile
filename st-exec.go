@@ -34,10 +34,10 @@ func (p *Contentity) ExecuteStages() *Contentity {
 
      // Start by filtering out pathological
      // and uninteresting cases. 
-	if p.MarkupType() == SU.MU_type_UNK {
+	if p.RawType() == "" { // or SU.MU_type_UNK {
 		panic("UNK MarkupType in ExecuteStages")
 	}
-	if p.FSItem.Raw == "" && p.MarkupType() != SU.MU_type_DIRLIKE {
+	if p.FSItem.Raw == "" && p.RawType() != SU.Raw_type_DIRLIKE {
 		p.L(LWarning, "Zero-length raw content: skipping")
 		return p
 	}
@@ -45,7 +45,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		p.L(LInfo, "Has error: skipping")
 		return p
 	}
-	if p.MarkupType() == SU.MU_type_BIN {
+	if p.RawType() == SU.Raw_type_BIN {
 		p.L(LWarning, "Binary file: skipping")
 		return p
 	}

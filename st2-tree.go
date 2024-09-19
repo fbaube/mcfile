@@ -45,20 +45,20 @@ func (p *Contentity) st2a_PrepareToTree() *Contentity {
 	}
 	p.logStg = "2a"
 	var e error
-	switch p.MarkupType() {
-	case SU.MU_type_XML:
+	switch p.RawType() {
+	case SU.Raw_type_XML:
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
 			p.WrapError("can't make gtags from xml gtokens", e)
 			return p
 		}
-	case SU.MU_type_MKDN:
+	case SU.Raw_type_MKDN:
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
 			p.WrapError("can't make gtags from mkdn gtokens", e)
 			return p
 		}
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		p.GTags, e = gtree.MakeGTagsFromGTokens(p.GTokens)
 		if e != nil {
 			p.WrapError("can't make gtags from html gtokens", e)
@@ -101,12 +101,12 @@ func (p *Contentity) st2c_PostTreeMeta() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupType() {
-	case SU.MU_type_XML:
+	switch p.RawType() {
+	case SU.Raw_type_XML:
 		L.L.Warning("TODO> st2c_PostTreeMeta XML")
-	case SU.MU_type_MKDN:
+	case SU.Raw_type_MKDN:
 		L.L.Warning("TODO> st2c_PostTreeMeta MKDN")
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		L.L.Warning("TODO> st2c_PostTreeMeta HTML")
 	}
 	return p
@@ -122,8 +122,8 @@ func (p *Contentity) st2d_NormalizeTree() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupType() {
-	case SU.MU_type_XML:
+	switch p.RawType() {
+	case SU.Raw_type_XML:
 		L.L.Warning("TODO> 2d. NormalizeTree XML ==> ENTs, etc.!")
 		/* code to use !
 		e = p.DoEntitiesList()
@@ -135,9 +135,9 @@ func (p *Contentity) st2d_NormalizeTree() *Contentity {
 			return errors.Wrap(e, "SubstituteEntities")
 		}
 		*/
-	case SU.MU_type_MKDN:
+	case SU.Raw_type_MKDN:
 		// L.L.Warning("TODO> 2d. NormalizeTree MKDN")
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		// L.L.Warning("TODO> 2d. NormalizeTree HTML")
 	}
 	return p

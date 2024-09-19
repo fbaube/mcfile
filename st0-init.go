@@ -37,35 +37,35 @@ func (p *Contentity) st0_Init() *Contentity {
 // `mcfile.IsXML()` are OK and that `MCFile.MType[]` is set.
 func (p *Contentity) st0a_SanityCheck() *Contentity {
 	p.logStg = "0a"
-	if p.RawMT != SU.MU_type_DIRLIKE && p.MType == "" {
+	if p.Raw_type != SU.Raw_type_DIRLIKE && p.MType == "" {
 		p.SetError("MType is empty")
 	}
-	if len(p.MarkupType()) < 3 || len(p.MarkupType()) > 7 {
-		panic("BAD MarkupType in st0a: " + string(p.MarkupType()))
+	if len(p.RawType()) < 3 || len(p.RawType()) > 7 {
+		panic("BAD RawType in st0a: " + string(p.RawType()))
 	}
-	switch p.MarkupType() {
-	case SU.MU_type_XML:
+	switch p.RawType() {
+	case SU.Raw_type_XML:
 		if !p.IsXML() {
 			p.SetError("is XML but: !XML?!")
 		}
-	case SU.MU_type_MKDN:
+	case SU.Raw_type_MKDN:
 		if p.IsXML() {
 			p.SetError("is Mkdn but: XML?!")
 		}
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		if !p.IsXML() {
 			p.SetError("is HTML but: !XML?!")
 		}
-	case SU.MU_type_BIN:
+	case SU.Raw_type_BIN:
 		if p.IsXML() {
 			// panic("Init error: is BIN but: XML?!")
 			p.SetError("is BIN but: XML?!")
 		}
-	case SU.MU_type_SQL, SU.MU_type_DIRLIKE:
+	case SU.Raw_type_SQL, SU.Raw_type_DIRLIKE:
 	     // No problem!
 	default:
 		p.SetError("bad/missing markup type: " +
-			string(p.MarkupType()))
+			string(p.RawType()))
 	}
 	return p
 }

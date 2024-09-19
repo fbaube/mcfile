@@ -3,10 +3,10 @@ module github.com/fbaube/mcfile
 go 1.23
 
 require (
-	github.com/fbaube/contentanalysis v0.0.0-20240914143951-fb581625d2e5
-	github.com/fbaube/ctoken v0.0.0-20240423072024-5de83ee55980
+	github.com/fbaube/contentanalysis v0.0.0-20240918141031-44ab592b0b2b
+	github.com/fbaube/ctoken v0.0.0-20240918123605-d4f3b42f3fa7
 	github.com/fbaube/datarepo v0.0.0-20240425064440-c12023629335
-	github.com/fbaube/fileutils v0.0.0-20240914145123-378199e69a1a
+	github.com/fbaube/fileutils v0.0.0-20240918123803-07972037e4ed
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
 	github.com/fbaube/gtoken v0.0.0-20240425064826-9bb2f312e1e8
 	github.com/fbaube/gtree v0.0.0-20240425064859-e2f8bfb263d2
@@ -16,7 +16,7 @@ require (
 	github.com/fbaube/mlog v0.0.0-20240425064535-3b89e3b28a76
 	github.com/fbaube/orderednodes v0.0.0-20240802090809-a9375e1a3ed8
 	github.com/fbaube/parseutils v0.0.0-20240117103929-681897b1f883
-	github.com/fbaube/stringutils v0.0.0-20240326203406-bf4fec3db0ff
+	github.com/fbaube/stringutils v0.0.0-20240918123723-de59284266dd
 	github.com/fbaube/xmlutils v0.0.0-20240425064631-d7c56373bd9a
 	github.com/lainio/err2 v1.0.0
 	github.com/yuin/goldmark v1.7.4
@@ -24,7 +24,7 @@ require (
 
 require (
 	github.com/fatih/color v1.17.0 // indirect
-	github.com/fbaube/dsmnd v0.0.0-20240423072054-b8f88fb1e259 // indirect
+	github.com/fbaube/dsmnd v0.0.0-20240918123654-3b99d9511c64 // indirect
 	github.com/fbaube/humanbytes v0.0.0-20240227103335-a0b11501ad0e // indirect
 	github.com/fbaube/lwdx v0.0.0-20240327195153-e4bf7566f0ba // indirect
 	github.com/fbaube/wasmutils v0.0.0-20231209183154-e25018375bc2 // indirect

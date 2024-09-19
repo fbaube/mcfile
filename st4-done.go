@@ -13,12 +13,12 @@ func (p *Contentity) st4_Done() *Contentity {
 	}
 	// p.L(LProgress, "Done")
 	L.L.Debug("=== 44:Done ===")
-	switch p.MarkupType() {
-	case SU.MU_type_XML:
+	switch p.RawType() {
+	case SU.Raw_type_XML:
 		// L.L.Warning("TODO> 4. Done XML")
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		// L.L.Warning("TODO> 4. Done HTML")
-	case SU.MU_type_MKDN:
+	case SU.Raw_type_MKDN:
 		// L.L.Warning("TODO> 4. Done MKDN")
 	}
 	if !p.HasError() { p.L(LOkay, "=== 44:Done: Success ===") }

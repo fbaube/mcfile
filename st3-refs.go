@@ -33,12 +33,12 @@ func (p *Contentity) DoBlockList() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupType() {
-	case SU.MU_type_XML:
+	switch p.RawType() {
+	case SU.Raw_type_XML:
 		L.L.Warning("TODO> 3a. DoBlockList XML")
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		L.L.Warning("TODO> 3a. DoBlockList HTML")
-	case SU.MU_type_MKDN:
+	case SU.Raw_type_MKDN:
 		L.L.Warning("TODO> 3a. DoBlockList MKDN")
 	}
 	return p
@@ -50,14 +50,14 @@ func (p *Contentity) DoGLinks() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupType() {
-	case SU.MU_type_XML:
+	switch p.RawType() {
+	case SU.Raw_type_XML:
 		L.L.Info("Calling GatherXmlGLinks...")
 		p.GatherXmlGLinks()
 		L.L.Info("Called! GatherXmlGLinks")
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		L.L.Warning("TODO> 3b. DoGLinks HTML")
-	case SU.MU_type_MKDN:
+	case SU.Raw_type_MKDN:
 		L.L.Warning("TODO> 3b. DoGLinks MKDN")
 	}
 	return p
@@ -69,12 +69,12 @@ func (p *Contentity) DoTableOfContents() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	switch p.MarkupType() {
-	case SU.MU_type_XML:
+	switch p.RawType() {
+	case SU.Raw_type_XML:
 		L.L.Warning("TODO> 3c. DoTableOfContents XML")
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		L.L.Warning("TODO> 3c. DoTableOfContents HTML")
-	case SU.MU_type_MKDN:
+	case SU.Raw_type_MKDN:
 		L.L.Warning("TODO> 3c. DoTableOfContents MKDN")
 	}
 	return p

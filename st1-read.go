@@ -40,8 +40,7 @@ func (p *Contentity) st1_Read() *Contentity {
 	}
 	p.logStg = "11"
 	p.L(LDebug, "=== 11:Read ===")
-	p.L(LInfo, "@entry: MarkupType<%s> MType<%s>",
-		p.MarkupType, p.MType)
+	p.L(LInfo, "@entry: RawType<%s> MType<%s>", p.RawType, p.MType)
 	ret := p.
 		st1a_ProcessMetadata().
 		st1b_GetCPR().
@@ -67,21 +66,21 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 		p.L(LInfo, "No metadata found")
 		return p
 	}
-	switch mut := p.MarkupType(); mut {
-	case SU.MU_type_XML, SU.MU_type_HTML:
+	switch mut := p.RawType(); mut {
+	case SU.Raw_type_XML, SU.Raw_type_HTML:
 		p.L(LDebug, "Meta: Pos:%d Raw: %s",
 			p.Meta.Beg.Pos, metaRaw)
 		if p.Meta.Beg.Pos != 0 {
 			var e error
 			var ct int
 			p.L(LDebug, "Doing "+string(mut))
-			if mut == SU.MU_type_HTML {
+			if mut == SU.Raw_type_HTML {
 				var pPR *PU.ParserResults_html
 				pPR, e = PU.GenerateParserResults_html(metaRaw)
 				ct = len(pPR.NodeSlice)
 				p.ParserResults = pPR
 			}
-			if mut == SU.MU_type_XML {
+			if mut == SU.Raw_type_XML {
 				var pPR *XU.ParserResults_xml
 				pPR, e = XU.GenerateParserResults_xml(metaRaw)
 				ct = len(pPR.NodeSlice)
@@ -95,7 +94,7 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 			p.L(LWarning, "TODO: Do sthg with XML/HTML metadata")
 			return p
 		}
-	case SU.MU_type_MKDN:
+	case SU.Raw_type_MKDN:
 		p.L(LWarning, "TODO: Do sthg with YAML metadata")
 	}
 	return p
@@ -121,8 +120,8 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		return p
 	}
 	var e error
-	switch p.MarkupType() {
-	case SU.MU_type_MKDN:
+	switch p.RawType() {
+	case SU.Raw_type_MKDN:
 		var pPR *PU.ParserResults_mkdn
 		pPR, e = PU.GenerateParserResults_mkdn(textRaw)
 		if e != nil {
@@ -136,7 +135,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		p.L(LOkay, "MKDN tokens: got %d", len(pPR.NodeSlice))
 		// p.TallyTags()
 		return p
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		var pPR *PU.ParserResults_html
 		pPR, e = PU.GenerateParserResults_html(textRaw)
 		if e != nil {
@@ -152,7 +151,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		*/
 		// p.TallyTags()
 		return p
-	case SU.MU_type_XML:
+	case SU.Raw_type_XML:
 		var pPR *XU.ParserResults_xml
 		pPR, e := XU.GenerateParserResults_xml(textRaw)
 		if e != nil {
@@ -167,7 +166,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		return p
 	default:
 		p.SetError("bad file markup type: " +
-			string(p.MarkupType()))
+			string(p.RawType()))
 	}
 	return p
 }
@@ -188,8 +187,8 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 
 	fmt.Fprintln(p.GTknsWriter, "=== Input file:", p.AbsFP())
 
-	switch p.MarkupType() {
-	case SU.MU_type_MKDN:
+	switch p.RawType() {
+	case SU.Raw_type_MKDN:
 		var pCPR_M *PU.ParserResults_mkdn
 		if nil == p.ParserResults {
 			p.L(LError, "ParserResults are nil")
@@ -216,7 +215,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 			}
 		}
 		*/
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		var pCPR_H *PU.ParserResults_html
 		pCPR_H = p.ParserResults.(*PU.ParserResults_html)
 		common = pCPR_H.CommonCPR
@@ -230,7 +229,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 			p.WrapError("html.gtokens", e)
 		}
 		p.GTokens = GTs
-	case SU.MU_type_XML:
+	case SU.Raw_type_XML:
 		var pCPR_X *XU.ParserResults_xml
 		pCPR_X = p.ParserResults.(*XU.ParserResults_xml)
 		common = pCPR_X.CommonCPR
@@ -291,11 +290,11 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 		return p
 	}
 	p.logStg = "1d"
-	switch p.MarkupType() {
-	case SU.MU_type_MKDN:
+	switch p.RawType() {
+	case SU.Raw_type_MKDN:
 		// Markdown YAML metadata was processed in step st1a
 		return p
-	case SU.MU_type_HTML:
+	case SU.Raw_type_HTML:
 		/* code to use!
 		var pPR *PU.ParserResults_html
 		pPR = p.CPR.(*PU.ParserResults_html)
@@ -303,7 +302,7 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 		// Inside <head>: <meta> <title> <base> <link> <style>
 		// See also: https://gist.github.com/lancejpollard/1978404
 		return p
-	case SU.MU_type_XML:
+	case SU.Raw_type_XML:
 		// [Lw]DITA stuff, ?DublinCore
 		p.L(LWarning, "cty.st1.TODO: SetMTypePerDoctypeFields:")
 		p.L(LWarning, "     \\ "+p.PathAnalysis.String())

@@ -133,7 +133,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 		return nil, &fs.PathError{Op:"FSI.NewContentityRow.(PP=>PA)",
                        Err:e,Path:aPath}
 	}
-	if pCR.MarkupType() == SU.MU_type_UNK {
+	if pCR.RawType() == "" { // or SU.MU_type_UNK {
 		panic("UNK MarkupType in NewContentity")
 	}
 	// NOW if we want to exit, we can
