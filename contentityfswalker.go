@@ -3,6 +3,7 @@ package mcfile
 import (
 	// "errors"
 	"io/fs"
+	// "fmt"
 	FP "path/filepath"
 	S "strings"
 
@@ -161,6 +162,9 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	// And so following code applies only to files, not to directories
 	// TODO: Not sure what happens with symlinks
 	if pathIsDir {
+	   	if pCty.FSItem.TypedRaw == nil {
+		   pCty.FSItem.TypedRaw = new(CT.TypedRaw)
+		   } 
 	        pCty.FSItem.Raw_type = SU.Raw_type_DIRLIKE
 		CntyFS.nDirs++
 		// println("================ DIR ========")
