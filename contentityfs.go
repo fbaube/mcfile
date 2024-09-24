@@ -12,15 +12,13 @@ import (
 // the instances of [orderednodes.Nord] in each [Contentity]
 // must properly interconnect in forming a complete tree.
 //
-// Note that the file system is stored as a tree AND as a
-// slice AND as a map. If any of these is modified without 
-// also modifying the others to match, there WILL be problems.
-// For that reason, we use unexported instance variables that
-// are accessible only via getters.
+// Note that the file system is stored as a tree AND as a slice AND as a
+// map. If any of these is modified without also modifying the others to
+// match, there WILL be problems. For that reason, [asSlice] and [asMap]
+// are unexported instance variables that are accessible only via getters.
 //
-// It ain't bulletproof tho. And in any case, users of 
-// a ContentityFS should feel free to use the functions 
-// on the embedded ordered nodes ("Nords"s).
+// It ain't bulletproof tho. In any case, users of a ContentityFS should
+// feel free to use the functions on the embedded [Nord] ordered nodes.
 // .
 type ContentityFS struct {
 	// FS will be set from func [os.DirFS]

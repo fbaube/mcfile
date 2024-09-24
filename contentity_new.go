@@ -12,69 +12,57 @@ import (
 	FP "path/filepath"
 )
 
-// NewContentity returns a Contentity Nord (i.e. node with
-// ordered children) that can NOT be the root of a Contentity tree.
+// NewContentity returns a Contentity Nord (i.e. a node with content a
+// and ordered children) that can NOT be the root of a Contentity tree.
 //
-// NOTE: because of interface hassles, BOTH return values might
+// It should accept either an absolute or a relative filepath.
+// 
+// NOTE that because of interface hassles, BOTH return values might
 // be non-nil, in which case, ignore the error. 
 //
-// We want everything to be in a nice tree of Nords, and that
-// means that we have to create Contenties for directories too
-// (where MarkupType == SU.MU_type_DIRLIKE). 
-//
-// When this func is called while walking a DIRECTORY given
-// on the command line, aPath is a simple file (or dir) name,
-// with no path separators.
-//
-// When this func is called for a FILE given on the command line,
-// aPath can be either absolute or relative, depending on what was
-// on the CLI (altho probably a relFP has been upgraded to an absFP).
-//
-// Alternative hack to achieve a similar end:
-// if pPP,e := NewPP(path); e == nil; pPA,e := new PA(pPP);
-// e == nil; pCR,e := NewCR(pPA); e == nil { ... }
+// We want everything to be in a nice tree of Nords, and it means that
+// we have to create Contenties for directories too (where `Raw_type
+// == SU.Raw_type_DIRLIKE`), so we have to handle that case too. 
 // .
 func NewContentity(aPath string) (*Contentity, error) {
 	if aPath == "" {
 		return nil, &fs.PathError{Op:"NewContentity",
 		       Err:errors.New("Missing path"),Path:"(nil)"}
 	}
-	var pNewCnty *Contentity
+	pFPs, e := FU.NewFilepaths(aPath)
+	if e != nil {
+	   return nil, &fs.PathError{ Op:"NewFilepaths", Path:aPath, Err:e }
+	   }
+	L.L.Debug("NewContentity.FPs: %s", pFPs.String())
+	var pNewCnty  *Contentity
 	pNewCnty = new(Contentity)
 	pNewCnty.Nord = *ON.NewNord(aPath)
 
 	// fmt.Printf("\t Nord seqID %d \n", p.SeqID())
-	// Try black-on-cyan, cos even for white text, the blue is too dark
-	if true {
-		// // L.L.Info(SU.Cyanbg("\n  ===> crnt RootPath: %s \n"+
-		L.L.Okay(SU.Ybg( // "\n===> Crnt Root Path: %s \n"+
-			"===> New Contentity: %s"),
-			// SU.Tildotted(CntyEng.rootPath),
-			SU.Tildotted(aPath))
-	} else {
-		L.L.Info( /* SU.Wfg( */ SU.Cyanbg( // Blubg(
-			"\n  ===> New Contentity: %s <===           "),
-			SU.Tildotted(aPath))
-	}
+	L.L.Okay(SU.Ybg("===> New Contentity: %s"), SU.Tildotted(aPath))
+	
 	// ======================
 	//  Start with an FSItem
 	// ======================
 	var pFSI *FU.FSItem
-	var e error
 	// If we were passed an Abs.FP, it's okay.
 	if FP.IsAbs(aPath) {
 		pFSI, e = FU.NewFSItem(aPath)
+	/*
 	} else if !FP.IsAbs(CntyEng.rootPath) {
 	// Else if the 
 		e = &fs.PathError{Op:"NewContentity.IsAbs",
-		  Err:errors.New("rRootPath is not absolute"),Path:CntyEng.rootPath}
+		  Err:errors.New("NewContentity: both input path and " +
+		  "Contentity Engine's RootPath are relative"),
+		  Path:CntyEng.rootPath}
+	*/
 	} else {
 		// pFSI, e = FU.NewFSItemRelativeTo(aPath, CntyEng.rootPath)
 		ppp := FP.Join(CntyEng.rootPath, aPath)
 		pFSI, e = FU.NewFSItem(ppp)
 	}
 	if pFSI == nil { // e != nil {
-	   	println("LINE 75")
+	   	println("NewContentity: got nil FSItem LINE 63")
 		return nil, &fs.PathError{Op:"Path-analysis",
 		       Err:e,Path:CntyEng.rootPath}
 	}
@@ -87,7 +75,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 		pCR, e = m5db.NewContentityRow(pFSI, nil)
 		if e != nil || pCR == nil {
 			L.L.Error("NewContentity(Dirlike)<%s>: %s", aPath, e)
-			println("LINE 89")
+			println("LINE 78")
 			return nil, &fs.PathError{Op:"FSI.NewCtyRow.(dirlike)",
 			       Err:e,Path:aPath}
 		}
@@ -100,7 +88,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	e = pFSI.LoadContents()
 	// L.L.Warning("LENGTH %d", len(pFSI.TypedRaw.Raw))
 	if e != nil {
-   	   println("LINE 105")	
+   	   println("LINE 91")	
 	   return nil, &fs.PathError{Op:"FSI.GoGetFileContents",
 	       	  Err:e,Path:CntyEng.rootPath}
 	}
@@ -111,7 +99,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	pPA, e = CA.NewPathAnalysis(pFSI)
 	if e != nil { // || pPA == nil {
 	   L.L.Error("NewContentity(PP=>PA)<%s>: %s", aPath, e)
-	   println("LINE 116")
+	   println("LINE 102")
 	   return nil, &fs.PathError{Op:"FSI.NewPathAnalysis.(PP=>PA)",
 	       Err:e,Path:aPath}
 	}
@@ -129,7 +117,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	pCR, e = m5db.NewContentityRow(pFSI, pPA)
 	if e != nil || pCR == nil {
 		L.L.Error("NewContentity(PA=>CR)<%s>: %s", aPath, e)
-	   	println("LINE 131")
+	   	println("LINE 120")
 		return nil, &fs.PathError{Op:"FSI.NewContentityRow.(PP=>PA)",
                        Err:e,Path:aPath}
 	}

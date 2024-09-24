@@ -15,8 +15,11 @@ import (
 // CntyFS is a global, which is a mistake. 
 var CntyFS *ContentityFS
 
-// (OBS?) NewContentityFS takes an absolute filepath. Passing 
-// in a relative filepath is going to cause major problems.
+// NewContentityFS probably should take an absolute filepath, 
+// because passing in a relative filepath might cause problems.
+//
+// It uses the global [CntyFS], which precludes
+// re-entrancy and concurrency.
 // .
 func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
      	/*
@@ -26,22 +29,32 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 		return nil
 	}
 	*/
-	var path string
 	var e error 
-	path, e = FP.Abs(aPath) 
+	var pFPs *FU.Filepaths
+	pFPs, e = FU.NewFilepaths(aPath)
 	if e != nil {
-		L.L.Error("NewCntyFS: bad path: %s (absolute:%s)", aPath, path) 
+	     	L.L.Error("NewCntyFS: bad path: %s", aPath)
 		return nil
 	}
+	var path string
+	path = pFPs.CreationPath()
+	
+	// We will allow a symlink here, like most std lib functions,
+	// so ensure trailing slash (or OS sep) before checking for
+	// existence and directoryness.
+	path = FU.EnsureTrailingPathSep(path)
 	if !FU.IsDirAndExists(path) {
 		L.L.Error("NewCntyFS: Not a directory: %s", path)
 		return nil
 	}
-	path = FU.EnsureTrailingPathSep(path)
 	CntyFS = new(ContentityFS)
-	CntyFS.rootAbsPath = path // afp.S() 
+	CntyFS.rootAbsPath = path 
 	L.L.Info("Path for new os.DirFS: " + SU.Tildotted(path))
-	CntyFS.FS = os.DirFS(path) // "T/allConTypes")
+	// NOTE that it appears to make no difference whether path 
+	//  - is relative or absolute
+	//  - ends with a trailing slash or not
+	//  - is a directory or a symlink to a directory 
+	CntyFS.FS = os.DirFS(path) 
 	// Initialize slice & map
 	CntyFS.asSlice = make([]*Contentity, 0)
 	CntyFS.asMap = make(map[string]*Contentity)
@@ -52,6 +65,8 @@ func NewContentityFS(aPath string, okayFilexts []string) *ContentityFS {
 	// ==================
 	// NOTE that rel.path "." is necessary here 
 	// or else really weird errors occur.
+	// Note that this is the place where [CntyFS]
+	// being a global singleton can cause problems. 
 	e = fs.WalkDir(CntyFS.FS, ".", wfnBuildContentityTree)
 	if e != nil {
 		L.L.Panic("NewCntyFS.WalkDir: " + e.Error())

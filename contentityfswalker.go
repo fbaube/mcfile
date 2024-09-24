@@ -8,17 +8,22 @@ import (
 
 	FU "github.com/fbaube/fileutils"
 	SU "github.com/fbaube/stringutils"
+	CT "github.com/fbaube/ctoken"
 	// FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
 	assert "github.com/lainio/err2/assert"
 )
 
 // wfnBuildContentityTree is
-// type WalkDirFunc func(path string, d DirEntry, err error) error
+// type fs.WalkDirFunc func(path string, d DirEntry, err error) error
 //
-// This means that it should NOT be *declared* as returning 
-// a *[fs.PathError]. However it can and does return them, 
-// which has the problems of an interface not nil but also nil.  
+// Therefore it can NOT be declared as returns *[fs.PathError].
+// However it can and does return them, which has the problems
+// of an interface that is both nil and not nil.
+//
+// Here the variable [CntyFS] is used as a global singleton,
+// which is very dodgy and will cause problems if used in a
+// re-entrant way or with concurrency. 
 //
 // It filters out several file types:
 //  - (TODO:) zero-length file (no content to analyse)
@@ -27,17 +32,19 @@ import (
 //  - emacs backup ("myfile~")
 //  - this app's debug files: "*_(echo,tkns,tree)"
 //  - filenames without a dot (indicating no file extension)
+// TODO Make these arguments: filter-out prefixes, midfixes, suffixes. 
 //
-// As path separator, "/" is usually assumed, not os.PathSep
+// As path separator, "/" is usually assumed, not [os.PathSep]. 
 // .
 func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
         var name string 
         name = d.Name()
 	
-	// This absfp is UNreliable !!  WTF.
+	// This is UNreliable. Func [filepath.Abs]
+	// needs more than just a Base file name. 
 	// absfp,_ = FP.Abs(path)
 	
-	// If it's a directory, make sure it has a trailing slash
+	// If it's a directory, make sure it has a trailing slash.
 	if d.IsDir() {
 	   path = FU.EnsureTrailingPathSep(path)
 	   name = FU.EnsureTrailingPathSep(name)
@@ -75,6 +82,10 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 		// These next two get NPE cos no such struct for a dir 
 		// pRC.MimeType = "dir"
 		// pRC.MType = "dir"
+		if pRC.FSItem.TypedRaw == nil {
+		   println("Oops, contentityfswalker, newRoot has no TypedRaw")
+		   pRC.FSItem.TypedRaw = new(CT.TypedRaw)
+		}
 		pRC.FSItem.Raw_type = SU.Raw_type_DIRLIKE
 		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
 		var pC *Contentity

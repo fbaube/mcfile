@@ -3,20 +3,20 @@ module github.com/fbaube/mcfile
 go 1.23
 
 require (
-	github.com/fbaube/contentanalysis v0.0.0-20240918141031-44ab592b0b2b
+	github.com/fbaube/contentanalysis v0.0.0-20240924121349-9f6966a9ad43
 	github.com/fbaube/ctoken v0.0.0-20240918123605-d4f3b42f3fa7
 	github.com/fbaube/datarepo v0.0.0-20240425064440-c12023629335
-	github.com/fbaube/fileutils v0.0.0-20240918123803-07972037e4ed
+	github.com/fbaube/fileutils v0.0.0-20240924121324-223197769dbd
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
-	github.com/fbaube/gtoken v0.0.0-20240425064826-9bb2f312e1e8
-	github.com/fbaube/gtree v0.0.0-20240425064859-e2f8bfb263d2
+	github.com/fbaube/gtoken v0.0.0-20240919113631-c2a0de9ff09f
+	github.com/fbaube/gtree v0.0.0-20240919113749-f4866e52ccbe
 	github.com/fbaube/logutils v0.0.0-20240425064504-eb572963f0fc
 	github.com/fbaube/m5db v0.0.0-20240509180501-84aae2bef357
 	github.com/fbaube/miscutils v0.0.0-20240914143110-b98201fa8b4e
 	github.com/fbaube/mlog v0.0.0-20240425064535-3b89e3b28a76
 	github.com/fbaube/orderednodes v0.0.0-20240802090809-a9375e1a3ed8
 	github.com/fbaube/parseutils v0.0.0-20240117103929-681897b1f883
-	github.com/fbaube/stringutils v0.0.0-20240918123723-de59284266dd
+	github.com/fbaube/stringutils v0.0.0-20240923132734-4299299a2f4d
 	github.com/fbaube/xmlutils v0.0.0-20240425064631-d7c56373bd9a
 	github.com/lainio/err2 v1.0.0
 	github.com/yuin/goldmark v1.7.4
