@@ -37,8 +37,9 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	if p.RawType() == "" { // or SU.MU_type_UNK {
 		panic("UNK MarkupType in ExecuteStages")
 	}
-	if p.FSItem.Raw == "" && p.RawType() != SU.Raw_type_DIRLIKE {
-		p.L(LWarning, "Zero-length raw content: skipping")
+	if p.FSItem.TypedRaw == nil ||
+	   (p.FSItem.Raw == "" && p.RawType() != SU.Raw_type_DIRLIKE) {
+		p.L(LWarning, "No content: skipping")
 		return p
 	}
 	if p.HasError() {
