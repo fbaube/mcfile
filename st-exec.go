@@ -3,7 +3,8 @@ package mcfile
 import (
        // "log"
 	"runtime/debug"
-
+	"fmt"
+	"os"
 	// "github.com/fbaube/must"
 	SU "github.com/fbaube/stringutils"
 )
@@ -58,6 +59,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 	p.logStg = "--"
 	defer func() {
 		if r := recover(); r != nil {
+		     	fmt.Fprintf(os.Stderr, "RECOVER: %v \n", r) 
 			p.L(LPanic, "= = = = = = = = = = = = = = = = = = = =")
 			p.L(LPanic, " ** PANIC caught in ExecuteStages ** ")
 			var sRecovered string
