@@ -14,7 +14,7 @@ require (
 	github.com/fbaube/m5db v0.0.0-20240509180501-84aae2bef357
 	github.com/fbaube/miscutils v0.0.0-20240914143110-b98201fa8b4e
 	github.com/fbaube/mlog v0.0.0-20240425064535-3b89e3b28a76
-	github.com/fbaube/orderednodes v0.0.0-20240802090809-a9375e1a3ed8
+	github.com/fbaube/orderednodes v0.0.0-20241028093454-a486f48b9a79
 	github.com/fbaube/parseutils v0.0.0-20240117103929-681897b1f883
 	github.com/fbaube/stringutils v0.0.0-20240923132734-4299299a2f4d
 	github.com/fbaube/xmlutils v0.0.0-20240425064631-d7c56373bd9a
@@ -26,7 +26,7 @@ require (
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/fbaube/dsmnd v0.0.0-20240918123654-3b99d9511c64 // indirect
 	github.com/fbaube/humanbytes v0.0.0-20240227103335-a0b11501ad0e // indirect
-	github.com/fbaube/lwdx v0.0.0-20240327195153-e4bf7566f0ba // indirect
+	github.com/fbaube/lwdx v0.0.0-20241028093627-8a7133fbc931 // indirect
 	github.com/fbaube/wasmutils v0.0.0-20231209183154-e25018375bc2 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
 	github.com/gomarkdown/markdown v0.0.0-20240930133441-72d49d9543d8 // indirect
