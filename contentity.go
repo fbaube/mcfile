@@ -19,10 +19,14 @@ type ContentityStage func(*Contentity) *Contentity
 // Contentity is awesome.
 // .
 type Contentity struct { // has has has has Raw
-	ON.Nord
-	// SU.Errer // OBS - is contained in ContentityRow.FSItem
-	// CFU.GCtx // utils/cliflagutils
 
+     	// Nord is where the contents of this Content Item live,
+	// parsed into a CST (Concrete Syntax Tree), which is like 
+	// an AST except that it preserves the text of the content.
+	ON.Nord
+
+	// LogInfo is (the index of the Contentity in 
+	// the larger slice) + (the processing stage ID)
 	LogInfo
 	logIdx int
 	logStg string
