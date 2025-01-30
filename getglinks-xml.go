@@ -2,7 +2,7 @@ package mcfile
 
 import (
 	// "github.com/pkg/errors"
-	"encoding/xml"
+	"github.com/nbio/xml"
 	FP "path/filepath"
 	S "strings"
 

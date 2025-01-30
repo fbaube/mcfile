@@ -1,7 +1,7 @@
 package mcfile
 
 import (
-	"encoding/xml"
+	"github.com/nbio/xml"
 	"fmt"
 	"sort"
 	S "strings"

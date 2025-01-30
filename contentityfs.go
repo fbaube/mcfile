@@ -3,7 +3,9 @@ package mcfile
 import (
 	"io/fs"
 	L "github.com/fbaube/mlog"
-)
+	SU "github.com/fbaube/stringutils"
+        CT "github.com/fbaube/ctoken"
+	assert "github.com/lainio/err2/assert")
 
 // ContentityFS is an instance of an [fs.FS] where every
 // node is an [mcfile.Contentity].
@@ -70,17 +72,50 @@ func (p *ContentityFS) AsSlice() []*Contentity {
 	return z // p.AsSlice
 }
 
-func mustInitRoot() bool {
+func (p *ContentityFS) DoForEvery(stgprocsr ContentityStage) {
+     L.L.Warning("mcm.ContentityFS.DoForEvery: not implemented")
+}
+
+func (p *ContentityFS) mustInitRoot() bool {
 	var needsInit, didDoInit bool
-	needsInit = (len(CntyFS.asSlice) == 0 && len(CntyFS.asMap) == 0)
-	didDoInit = (len(CntyFS.asSlice) > 0 && len(CntyFS.asMap) > 0)
+	needsInit = (len(p.asSlice) == 0 && len(p.asMap) == 0)
+	didDoInit = (len(p.asSlice) > 0  && len(p.asMap) > 0)
 	if !(needsInit || didDoInit) {
 		panic("mustInitRoot: illegal state")
 	}
 	return needsInit
 }
 
-func (p *ContentityFS) DoForEvery(stgprocsr ContentityStage) {
-     L.L.Warning("mcm.ContentityFS.DoForEvery: not implemented")
+func (p *ContentityFS) doInitRoot() error {
+	var pRC *RootContentity
+	var e error 
+	assert.NotEmpty(p.RootAbsPath())
+	/* if p.RootAbsPath() == "" {
+		panic("wfnBuildContentityTree: no ROOT")
+	} */
+	pRC, e = NewRootContentity(p.RootAbsPath())
+	if e != nil || pRC == nil {
+		return &fs.PathError{Op:"WalkFn.NewRootContentity",
+		Err:e,Path:p.RootAbsPath()}
+	}
+	// assert.That(pRC.IsDir()) SHOULD NOT FAIL, BUT DID
+	// Assign to globals (i.e. package vars)
+	p.rootNord = pRC
+	// These next two get NPE cos no such struct for a dir 
+	// pRC.MimeType = "dir"
+	// pRC.MType = "dir"
+	if pRC.FSItem.TypedRaw == nil {
+	   println("Oops, contentityfswalker, newRoot has no TypedRaw")
+	   pRC.FSItem.TypedRaw = new(CT.TypedRaw)
+	}
+	pRC.FSItem.Raw_type = SU.Raw_type_DIRLIKE
+	// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
+	var pC *Contentity
+	pC = ((*Contentity)(pRC))
+	p.asSlice = append(p.asSlice, pC)
+	p.asMap[p.RootAbsPath()] = pC
+	// L.L.Warning("ADDED TO MAP L84: " + p.RootAbsPath())
+	p.nDirs = 1
+	p.nFiles = 0
+	return nil // NOT pRC! This is a walker func 
 }
-

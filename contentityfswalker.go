@@ -66,37 +66,13 @@ func wfnBuildContentityTree(path string, d fs.DirEntry, err error) error {
 	// ==================
 	//  HANDLE ROOT NODE 
 	// ==================
-	if mustInitRoot() {
-		var pRC *RootContentity
-		assert.NotEmpty(CntyFS.RootAbsPath())
-		/* if CntyFS.RootAbsPath() == "" {
-			panic("wfnBuildContentityTree: no ROOT")
-		} */
-		pRC, e = NewRootContentity(CntyFS.RootAbsPath())
-		if e != nil || pRC == nil {
-			return &fs.PathError{Op:"WalkFn.NewRootContentity",
+	if CntyFS.mustInitRoot() {
+	   	e = CntyFS.doInitRoot()
+		if e != nil {
+		     	return &fs.PathError{Op:"newrootcnty.walkfn",
 			Err:e,Path:CntyFS.RootAbsPath()}
 		}
-		// assert.That(pRC.IsDir()) SHOULD NOT FAIL, BUT DID
-		// Assign to globals (i.e. package vars)
-		CntyFS.rootNord = pRC
-		// These next two get NPE cos no such struct for a dir 
-		// pRC.MimeType = "dir"
-		// pRC.MType = "dir"
-		if pRC.FSItem.TypedRaw == nil {
-		   println("Oops, contentityfswalker, newRoot has no TypedRaw")
-		   pRC.FSItem.TypedRaw = new(CT.TypedRaw)
-		}
-		pRC.FSItem.Raw_type = SU.Raw_type_DIRLIKE
-		// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
-		var pC *Contentity
-		pC = ((*Contentity)(pRC))
-		CntyFS.asSlice = append(CntyFS.asSlice, pC)
-		CntyFS.asMap[CntyFS.RootAbsPath()] = pC
-		// L.L.Warning("ADDED TO MAP L84: " + CntyFS.RootAbsPath())
-		CntyFS.nDirs = 1
-		CntyFS.nFiles = 0
-		return nil // NOT pRC! This is a walker func 
+		return nil 
 	}
 	// =====================
 	//  FILTER OUT UNWANTED
