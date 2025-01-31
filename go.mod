@@ -5,7 +5,7 @@ go 1.23
 require (
 	github.com/fbaube/contentanalysis v0.0.0-20240924121349-9f6966a9ad43
 	github.com/fbaube/ctoken v0.0.0-20250113212848-89a1656c89a4
-	github.com/fbaube/fileutils v0.0.0-20250108104151-64966db5071b
+	github.com/fbaube/fileutils v0.0.0-20250131051553-89d93af3c09f
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
 	github.com/fbaube/gtoken v0.0.0-20240919113631-c2a0de9ff09f
 	github.com/fbaube/gtree v0.0.0-20240919113749-f4866e52ccbe
@@ -13,7 +13,7 @@ require (
 	github.com/fbaube/m5db v0.0.0-20240509180501-84aae2bef357
 	github.com/fbaube/miscutils v0.0.0-20250126181629-6a2fa9af43b7
 	github.com/fbaube/mlog v0.0.0-20240425064535-3b89e3b28a76
-	github.com/fbaube/orderednodes v0.0.0-20250126193018-b98f383d052a
+	github.com/fbaube/orderednodes v0.0.0-20250131051705-e640c73a37bd
 	github.com/fbaube/parseutils v0.0.0-20250126182432-3beb8a9f0044
 	github.com/fbaube/stringutils v0.0.0-20250120124849-e15d0abeb13c
 	github.com/fbaube/xmlutils v0.0.0-20250118141106-b22aff37b7ef
