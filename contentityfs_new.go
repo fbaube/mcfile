@@ -1,7 +1,6 @@
 package mcfile
 
 import (
-        "fmt"
 	"io/fs"
 	"os"
 	"errors"
@@ -10,15 +9,23 @@ import (
 
 	FU "github.com/fbaube/fileutils"
 	SU "github.com/fbaube/stringutils"
-	// FSU "github.com/fbaube/fsutils"
 	L "github.com/fbaube/mlog"
 )
 
 // CntyFS is a global, which is a mistake. 
 // >> var CntyFS *ContentityFS
 
-// NewContentityFS probably should take an absolute filepath, 
-// because passing in a relative filepath might cause problems.
+// NewContentityFS proceeds as follows:
+//  - initialize
+//  - create an [os.DirFS]
+//  - FIXME: an os.Root
+//  - walk the DirFS, creating Contentities
+//    and appending them to a slice
+//  - process the list to identify and make
+//    parent/child links
+//
+// The path argument should probably be an absolute filepath, 
+// because a relative filepath might cause problems.
 //
 // It uses the global [CntyFS], which precludes
 // re-entrancy and concurrency.
@@ -34,32 +41,34 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	var e error 
 	var pFPs *FU.Filepaths
 	
+	// --------------------
+	//  Prepare filepath(s)
+	// --------------------
 	pFPs, e = FU.NewFilepaths(aPath)
 	if e != nil {
 	     	// L.L.Error("NewCntyFS: bad path: %s", aPath)
-		return nil, errors.New("newcntyfs: bad path: " + aPath)
+		return nil, &os.PathError { Path:aPath, Err:e,
+		       Op:"newcntyfs: bad root path: " + e.Error() }
 	}
-	var path string
-	path = aPath
-	
-	// We will allow a symlink here, like most std lib functions,
-	// so ensure trailing slash (or OS sep) before checking for
-	// existence and directoryness.
-	path = FU.EnsureTrailingPathSep(path)
-	if !FU.IsDirAndExists(path) {
+	pathToUse := FU.EnsureTrailingPathSep(aPath)
+	// os.DirFS(..) does not check or report problems
+	// with the path argument, so we DIY here 
+	if !FU.IsDirAndExists(pathToUse) {
 		// L.L.Error("NewCntyFS: Not a directory: %s", path)
-		return nil, errors.New("newcntyfs: not a directory: " + path)
+		return nil, &os.PathError { Path:aPath, Err:errors.New(
+		       "not a valid directory"), Op:"newcntyfs.root" }
 	}
+	
 	CntyFS = new(ContentityFS)
 	// 2025.01 Change from path to AbsFP
 	CntyFS.rootAbsPath = pFPs.AbsFP // path 
-	L.L.Info("Path for new os.DirFS: " + SU.Tildotted(path))
-	// 2025.01 Change from os.DirFS to os.Root.FS
+	L.L.Info("Path for new os.DirFS: " + SU.Tildotted(aPath))
+	// 2025.01 TODO Change from os.DirFS to os.Root.FS
 	// var osRoot *os.Root 
 	// osRoot, e = os.OpenRoot(path)
 	// CntyFS.FS = osRoot.FS()
-	println("MCFILE contentityfs_new L61 FIXME os.Root")
-	CntyFS.FS = os.DirFS(path) 
+	println("MCFILE contentityfs_new L70 FIXME os.Root")
+	CntyFS.FS = os.DirFS(pathToUse) 
 	// Initialize slice & map
 	CntyFS.asSlice = make([]*Contentity, 0)
 	CntyFS.asMap = make(map[string]*Contentity)
@@ -68,17 +77,18 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	//    FIRST PASS
 	//  Load slice & map
 	// ==================
-	// NOTE that rel.path "." is necessary here 
-	// or else really weird errors occur.
+	// NOTE that rel.path "." seems to be necessary 
+	// here or else really weird errors occur.
 	// Note that this is the place where [CntyFS]
 	// being a global singleton can cause problems. 
 	e = fs.WalkDir(CntyFS.FS, ".", wfnBuildContentityTree)
 	if e != nil {
 		// L.L.Panic("NewCntyFS.WalkDir: " + e.Error())
-		return nil, fmt.Errorf("newcntyfs.walkdir: %w", e)
+		return nil, &fs.PathError { Op:"newcntyfs.walkdir",
+		       Err:e, Path:aPath } 
 	}
 	L.L.Okay("NewCntyFS: walked OK %d nords from path %s",
-		 len(CntyFS.asSlice), path)
+		 len(CntyFS.asSlice), pathToUse)
 
 	// Debuggery 
 	for ii, cc := range CntyFS.asSlice {
