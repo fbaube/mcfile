@@ -14,9 +14,9 @@ import (
 // the instances of [orderednodes.Nord] in each [Contentity]
 // must properly interconnect in forming a complete tree.
 //
-// Note that the file system is stored as a tree AND as a slice AND as a
-// map. If any of these is modified without also modifying the others to
-// match, there WILL be problems. For that reason, [asSlice] and [asMap]
+// Note that the file system is stored as a tree AND as a slice AND as a map.
+// If any of these is modified without also modifying the others to match,
+// there WILL be problems. For that reason, [asSlice] and [asMapOfAbsFP] 
 // are unexported instance variables that are accessible only via getters.
 //
 // It ain't bulletproof tho. In any case, users of a ContentityFS should
@@ -28,10 +28,14 @@ type ContentityFS struct {
 	rootAbsPath string
 	rootNord    *RootContentity
 	asSlice     []*Contentity
-	// The string is the relative filepath w.r.t. 
-	// the rootAbsPath. But does this index into 
-	// the tree of Nord's or into the slice ?
-	asMap         map[string]*Contentity
+	// The string USED TO be the relative filepath w.r.t. the 
+	// rootAbsPath. Now we simplify it to AbsFP. It's not really
+	// critical one way or the other because this map is discarded
+	// when the ContentityFS is saved to disk. But do the ptrs
+	// point into the tree of Nord's or into the slice of Nords ? 
+	// Probably into the slice, beacsue an "arena" is efficient
+	// and it's what all the cool kids are using. 
+	asMapOfAbsFP   map[string]*Contentity
 	nItems, nFiles, nDirs int
 }
 
@@ -41,10 +45,10 @@ func (p *ContentityFS) ItemCount() int {
 
 func (p *ContentityFS) Size() int {
 	// /* Not init'lzd ?
-	if p.asMap != nil &&  p.asSlice != nil &&
-	   len(p.asSlice) != len(p.asMap) {
+	if p.asMapOfAbsFP != nil &&  p.asSlice != nil &&
+	   len(p.asSlice) != len(p.asMapOfAbsFP) {
 		L.L.Error("contentityfs size mismatch (slice &d, map %d)",
-			len(p.asSlice), len(p.asMap))
+			len(p.asSlice), len(p.asMapOfAbsFP))
 	}
 	// */
 	return len(p.asSlice)
@@ -78,8 +82,8 @@ func (p *ContentityFS) DoForEvery(stgprocsr ContentityStage) {
 
 func (p *ContentityFS) mustInitRoot() bool {
 	var needsInit, didDoInit bool
-	needsInit = (len(p.asSlice) == 0 && len(p.asMap) == 0)
-	didDoInit = (len(p.asSlice) > 0  && len(p.asMap) > 0)
+	needsInit = (len(p.asSlice) == 0 && len(p.asMapOfAbsFP) == 0)
+	didDoInit = (len(p.asSlice) > 0  && len(p.asMapOfAbsFP) > 0)
 	if !(needsInit || didDoInit) {
 		panic("mustInitRoot: illegal state")
 	}
@@ -113,7 +117,7 @@ func (p *ContentityFS) doInitRoot() error {
 	var pC *Contentity
 	pC = ((*Contentity)(pRC))
 	p.asSlice = append(p.asSlice, pC)
-	p.asMap[p.RootAbsPath()] = pC
+	p.asMapOfAbsFP[p.RootAbsPath()] = pC
 	// L.L.Warning("ADDED TO MAP L84: " + p.RootAbsPath())
 	p.nDirs = 1
 	p.nFiles = 0

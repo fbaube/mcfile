@@ -71,7 +71,7 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	CntyFS.FS = os.DirFS(pathToUse) 
 	// Initialize slice & map
 	CntyFS.asSlice = make([]*Contentity, 0)
-	CntyFS.asMap = make(map[string]*Contentity)
+	CntyFS.asMapOfAbsFP = make(map[string]*Contentity)
 
 	// ==================
 	//    FIRST PASS
@@ -107,41 +107,52 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	    }
 	}
 
-	// ================================
-	//        SECOND PASS
-	//    Range over slice to identify
-	//  parent Nords and link together
-	// ================================
-	for i, n := range CntyFS.asSlice {
-		if i == 0 {
+	// =========================================
+	//      SECOND PASS
+	//  Range over slice to identify parent/kid 
+	//   Nord relationships and link together
+	// =========================================
+	var i int
+	var pC *Contentity
+	for i, pC = range CntyFS.asSlice {
+		if i == 0 { // skip over root 
 			continue
 		}
-		// Is child of root ?
-		// println(">>> KOSHER? " + n.Nord.RelFP())
-		if !S.Contains(n.RelFP(), FU.PathSep) {
-			CntyFS.rootNord.AddKid(n)
-		} else {
-			itsDir := FP.Dir(n.RelFP())
-			itsDir = FU.EnsureTrailingPathSep(itsDir)
-			// println(n.Path, "|cnex2|", itsDir)
-			var par *Contentity
-			var ok bool
-			// L.L.Warning("itsDir: " + itsDir)
-			// L.L.Warning("theMap: %+v", CntyFS.asMap)
-			// PROBLEMS HERE !
-			if par, ok = CntyFS.asMap[itsDir]; !ok {
-				L.L.Error("findParInMap: failed for: " +
-					itsDir + " of " + n.RelFP())
-				panic(n.RelFP())
-			}
-			/*
-			if itsDir != par.AbsFP() {
-				panic(itsDir + " != " + par.AbsFP())
-			}
-			*/
-			par.AddKid(n)
+		// ---------------------------
+		//  Shortcut if child of root
+		// ---------------------------
+		if !S.Contains(pC.RelFP(), FU.PathSep) {
+			CntyFS.rootNord.AddKid(pC)
+			continue
 		}
+		// --------------------------
+		//   Get dir portion of path
+		// --------------------------
+		itsDir := FP.Dir(pC.RelFP())
+		itsDir = FU.EnsureTrailingPathSep(itsDir)
+		// println(n.Path, "|cnex2|", itsDir)
+		// L.L.Warning("itsDir: " + itsDir)
+		// L.L.Warning("theMap: %+v", CntyFS.asMap)
+		var pPar *Contentity
+		var ok bool
+		// PROBLEMS HERE ?
+		// The parent directory should be in the map.
+		// If it's not, then possibly we have messed
+		// up with trailing separators. 
+		if pPar, ok = CntyFS.asMapOfAbsFP[itsDir]; !ok {
+			L.L.Error("findParentInMap: failed for: " +
+				itsDir + " of " + pC.RelFP())
+			panic(pC.RelFP())
+		}
+		/*
+		if itsDir != par.AbsFP() { // or, Rel? 
+			panic(itsDir + " != " + par.AbsFP())
+		}
+		*/
+		pPar.AddKid(pC)
 	}
+	// TODO Look for entries that do not have a parent assigned !
+	
 	/* more debugging
 	println("DUMP LIST")
 	for _, n := range pFTFS.asSlice {
