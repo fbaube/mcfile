@@ -10,6 +10,8 @@ import (
 	FU "github.com/fbaube/fileutils"
 	SU "github.com/fbaube/stringutils"
 	L "github.com/fbaube/mlog"
+
+	CT "github.com/fbaube/ctoken"
 )
 
 // CntyFS is a global, which is a mistake. 
@@ -80,8 +82,152 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	// NOTE that rel.path "." seems to be necessary 
 	// here or else really weird errors occur.
 	// Note that this is the place where [CntyFS]
-	// being a global singleton can cause problems. 
-	e = fs.WalkDir(CntyFS.FS, ".", wfnBuildContentityTree)
+	// being a global singleton can cause problems.
+// ======================================================================
+//	e = fs.WalkDir(CntyFS.FS, ".", wfnBuildContentityTree)
+/*
+	package mcfile
+import (
+	"io/fs"
+	FP "path/filepath"
+
+	FU "github.com/fbaube/fileutils"
+	SU "github.com/fbaube/stringutils"
+	CT "github.com/fbaube/ctoken"
+	// FSU "github.com/fbaube/fsutils"
+	L "github.com/fbaube/mlog"
+)
+
+// wfnBuildContentityTree is a [fs.WalkDirFunc]
+// 
+// func(path string, d DirEntry, err error) error
+//
+// Altho it returns [*fs.PathError], this has to be declared as error
+// because of the problems of an interface that is both nil and not nil.
+//
+// The basic procedure of the func is is:
+//  - check validity of path argument (and reject if it is a file) 
+//  - filter out unwanted values (and if unwanted dir, return [fs.SkipDir])
+//  - add to slice - and also map - whether dir or file
+//  - use materialised paths in slice to form links to build a tree 
+//
+// FIXME: Here the variable [CntyFS] is used as a global
+// singleton, which is very dodgy and will cause problems
+// if used in a re-entrant way or with concurrency.
+//
+// Note that symlinks are probably not handled correctly. 
+//
+// It filters out several file types:
+//  - hidden (esp'ly .git directory)
+//  - leading underbars ("_")
+//  - emacs backup ("myfile~")
+//  - this app's info  files: "*gtk,*gtr"
+//  - this app's debug files: "*_(echo,tkns,tree)"
+//  - filenames without a dot (indicating no file extension)
+//  - NOTE that zero-length files (no content to analyse)
+//    should NOT be filtered out 
+//
+// Note that as path separator, "/" is usually assumed, not [os.PathSep]. 
+// .
+func wfnBuildContentityTree(inPath string, inDE fs.DirEntry, inErr error) error {
+*/
+e = fs.WalkDir(CntyFS.FS, ".",
+func
+// wfnBuildContentityTree
+(inPath string, inDE fs.DirEntry, inErr error) error {
+	// --------------------------
+	//  Were we passed an error?
+	// --------------------------
+	if inErr != nil {
+	   	 return CntyFS.handleWalkerErrorArgument(inPath, &inDE, inErr)
+	}
+	// --------------------
+	//  Set some variables 
+	// --------------------
+	var needInit = CntyFS.mustInitRoot() // first call ? 
+        var inName   = inDE.Name()
+	var inIsDir  = inDE.IsDir()
+	// func [filepath.Abs] fails here cos it needs more than just 
+	// a Base file name cos it does only lexical processing. 
+	// absfp,_ = FP.Abs(path)
+
+	// --------------------
+	//  root must be a dir 
+	// --------------------
+	if !inIsDir { return &fs.PathError { Path:inPath,
+		   	Op:"cntyfswalker.isdir", Err:inErr } }
+	// If it's a directory, make sure it has a trailing slash.
+	// We also used to check for existence, but this is silly
+	// cos the [fs.DirEntry] argument passed in has the info.
+	inPath = FU.EnsureTrailingPathSep(inPath)
+	inName = FU.EnsureTrailingPathSep(inName)
+	L.L.Debug("wfnBuildContentityTree: path: %s / %s", inName, inPath)
+	L.L.Debug("wfnBuildContentityTree: dir: %+v", inDE)
+	
+	// var p *Contentity
+	var e error 
+	// ==================
+	//  HANDLE ROOT NODE 
+	// (without filtering)
+	// ==================
+	if needInit {
+	   	e = CntyFS.doInitRoot()
+		if e == nil { return nil }
+		return &fs.PathError { Err:e, Path:inPath,
+		       Op:"newrootcnty.doinitroot" }
+	}
+	// ---------------------------
+	//  Filter out unwanted stuff 
+	// ---------------------------
+	bad, rsn := excludeFilenamepath(inPath)
+	if bad {
+		L.L.Debug("Rejecting (%s): %s", inPath, rsn)
+		if inIsDir { return fs.SkipDir } 
+		return nil
+	}
+	// -----------------------------------------------
+	//  Now at this point, even if it's a directory,
+	//  it's OK ! So let's go ahead and form the path
+	//  of the file-or-dir and make the Contentity
+	// -----------------------------------------------
+	absPathToUse := FP.Join(CntyFS.RootAbsPath(), inPath)
+	var pCty *Contentity
+	pCty, e = NewContentity(absPathToUse)
+	if pCty == nil || e != nil { 
+		L.L.Warning("Rejecting (new Contentity(%s) failed): %T %+v",
+			absPathToUse, e, e)
+		return nil
+	}
+	// This is where bugs have appeared when it's a directory,
+	// because other code was assuming a Contentity.
+	// TODO: Not sure what happens with symlinks
+	if inIsDir {
+	   	if pCty.FSItem.TypedRaw == nil {
+		   pCty.FSItem.TypedRaw = new(CT.TypedRaw)
+		   } 
+	        pCty.FSItem.Raw_type = SU.Raw_type_DIRLIKE
+		CntyFS.nDirs++ // just a simple counter
+		// println("================ DIR ========")
+		// These next two stmts should barf, cos
+		// they should not be allocated for a dir !
+		// p.MimeType = "dir"
+		// p.MType = SU.MU_type_DIRLIKE
+		L.L.Okay("Item (DIR) OK; CntyPtr nil") // : MType<%s>", pCty.MType)
+	} else { // non-dir 
+		CntyFS.nFiles++ // just a simple counter 
+		L.L.Okay("Item OK: MType<%s> MarkupType<%s>",
+			pCty.MType, pCty.RawType())
+	}
+	// -------------------------
+	//   Also add it to the
+	//  arena-slice and the map
+	// -------------------------
+	CntyFS.asSlice = append(CntyFS.asSlice, pCty)
+	CntyFS.asMapOfAbsFP[absPathToUse] = pCty
+	// L.L.Info("ADDED TO MAP L227: " + pathToUse)
+	return nil
+})
+// ======================================================================
 	if e != nil {
 		// L.L.Panic("NewCntyFS.WalkDir: " + e.Error())
 		return nil, &fs.PathError { Op:"newcntyfs.walkdir",
@@ -109,8 +255,9 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 
 	// =========================================
 	//      SECOND PASS
-	//  Range over slice to identify parent/kid 
-	//   Nord relationships and link together
+	//  Range over the slice, using the materialised
+	//  paths in asMapToAbsFS to identify parent/kid 
+	//  Nord relationships and link together
 	// =========================================
 	var i int
 	var pC *Contentity
