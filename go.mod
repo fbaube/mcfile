@@ -13,7 +13,7 @@ require (
 	github.com/fbaube/m5db v0.0.0-20240509180501-84aae2bef357
 	github.com/fbaube/miscutils v0.0.0-20250126181629-6a2fa9af43b7
 	github.com/fbaube/mlog v0.0.0-20240425064535-3b89e3b28a76
-	github.com/fbaube/orderednodes v0.0.0-20250131051705-e640c73a37bd
+	github.com/fbaube/orderednodes v0.0.0-20250201094904-a25093888017
 	github.com/fbaube/parseutils v0.0.0-20250126182432-3beb8a9f0044
 	github.com/fbaube/stringutils v0.0.0-20250120124849-e15d0abeb13c
 	github.com/fbaube/xmlutils v0.0.0-20250118141106-b22aff37b7ef
@@ -30,7 +30,7 @@ require (
 	github.com/fbaube/lwdx v0.0.0-20241028093627-8a7133fbc931 // indirect
 	github.com/fbaube/wasmutils v0.0.0-20231209183154-e25018375bc2 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
-	github.com/gomarkdown/markdown v0.0.0-20241205020045-f7e15b2f3e62 // indirect
+	github.com/gomarkdown/markdown v0.0.0-20250202022148-4f606c78d442 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-sqlite3 v1.14.24 // indirect

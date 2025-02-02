@@ -60,6 +60,8 @@ github.com/fbaube/orderednodes v0.0.0-20250126193018-b98f383d052a h1:aixO3T6hJv+
 github.com/fbaube/orderednodes v0.0.0-20250126193018-b98f383d052a/go.mod h1:qsms5cyHHWZS30zTLPUQ7baJCBRFKpeNtJRIqOfxzNo=
 github.com/fbaube/orderednodes v0.0.0-20250131051705-e640c73a37bd h1:gFJX6/NuxudGdNDwBngcvxUEOQLZ4rwOfuNedWKthmI=
 github.com/fbaube/orderednodes v0.0.0-20250131051705-e640c73a37bd/go.mod h1:qsms5cyHHWZS30zTLPUQ7baJCBRFKpeNtJRIqOfxzNo=
+github.com/fbaube/orderednodes v0.0.0-20250201094904-a25093888017 h1:X5tg2AqSOGJkF7cclphD/oB2pQkAyzWkQi1CGq3Hw5Q=
+github.com/fbaube/orderednodes v0.0.0-20250201094904-a25093888017/go.mod h1:qsms5cyHHWZS30zTLPUQ7baJCBRFKpeNtJRIqOfxzNo=
 github.com/fbaube/parseutils v0.0.0-20220310134313-a5d0ceeeabb3/go.mod h1:J3gIK/myAYcFh9jAgVAawRE5iPxor38nmbfNGTnycJU=
 github.com/fbaube/parseutils v0.0.0-20240117103929-681897b1f883 h1:uWst8iOXICKxejsRDU3spW0q4iVMJp87yRCoT9/G+j8=
 github.com/fbaube/parseutils v0.0.0-20240117103929-681897b1f883/go.mod h1:KJMfLJ/C6vsNr2S2/yXCwmDz9BHENg40zTh0lPStijE=
@@ -94,6 +96,8 @@ github.com/gabriel-vasile/mimetype v1.4.8/go.mod h1:ByKUIKGjh1ODkGM1asKUbQZOLGrP
 github.com/go-git/go-git v4.7.0+incompatible/go.mod h1:6+421e08gnZWn30y26Vchf7efgYLe4dl5OQbBSUXShE=
 github.com/gomarkdown/markdown v0.0.0-20241205020045-f7e15b2f3e62 h1:pbAFUZisjG4s6sxvRJvf2N7vhpCvx2Oxb3PmS6pDO1g=
 github.com/gomarkdown/markdown v0.0.0-20241205020045-f7e15b2f3e62/go.mod h1:JDGcbDT52eL4fju3sZ4TeHGsQwhG9nbDV21aMyhwPoA=
+github.com/gomarkdown/markdown v0.0.0-20250202022148-4f606c78d442 h1:lh+tgYKiB5F6PWv2gxb5WuX/nKpx+dDNgXkrguRuoOc=
+github.com/gomarkdown/markdown v0.0.0-20250202022148-4f606c78d442/go.mod h1:JDGcbDT52eL4fju3sZ4TeHGsQwhG9nbDV21aMyhwPoA=
 github.com/lainio/err2 v1.2.0 h1:xSH/d0L2ULejZ9ouvnXjIw7ywUU/nozoE6r4c2FIlUM=
 github.com/lainio/err2 v1.2.0/go.mod h1:glTVV2qNFbBy6WzZFDP2G5BqMiZI58cudp588cEgCuM=
 github.com/mattn/go-colorable v0.1.9/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope9wVRipJSqc=
