@@ -3,6 +3,7 @@ package mcfile
 import (
 	"io/fs"
 	"os"
+	"fmt"
 	"errors"
 	FP "path/filepath"
 	S "strings"
@@ -46,18 +47,19 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	// --------------------
 	//  Prepare filepath(s)
 	// --------------------
+	println("NewContentityFS: " + aPath)
 	pFPs, e = FU.NewFilepaths(aPath)
 	if e != nil {
 	     	// L.L.Error("NewCntyFS: bad path: %s", aPath)
-		return nil, &os.PathError { Path:aPath, Err:e,
-		       Op:"newcntyfs: bad root path: " + e.Error() }
+		return nil, &fs.PathError { Path:aPath, Err:e,
+		       Op:"newcntyfs: bad root path" }
 	}
 	pathToUse := FU.EnsureTrailingPathSep(aPath)
 	// os.DirFS(..) does not check or report problems
 	// with the path argument, so we DIY here 
 	if !FU.IsDirAndExists(pathToUse) {
 		// L.L.Error("NewCntyFS: Not a directory: %s", path)
-		return nil, &os.PathError { Path:aPath, Err:errors.New(
+		return nil, &fs.PathError { Path:aPath, Err:errors.New(
 		       "not a valid directory"), Op:"newcntyfs.root" }
 	}
 	
@@ -71,7 +73,8 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	// CntyFS.FS = osRoot.FS()
 	println("MCFILE contentityfs_new L70 FIXME os.Root")
 	CntyFS.FS = os.DirFS(pathToUse) 
-	// Initialize slice & map
+	// Initialize slice & map. Their length 
+	// 0 will be detected by func [mustInit]
 	CntyFS.asSlice = make([]*Contentity, 0)
 	CntyFS.asMapOfAbsFP = make(map[string]*Contentity)
 
@@ -86,38 +89,24 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 // ======================================================================
 //	e = fs.WalkDir(CntyFS.FS, ".", wfnBuildContentityTree)
 /*
-	package mcfile
-import (
-	"io/fs"
-	FP "path/filepath"
-
-	FU "github.com/fbaube/fileutils"
-	SU "github.com/fbaube/stringutils"
-	CT "github.com/fbaube/ctoken"
-	// FSU "github.com/fbaube/fsutils"
-	L "github.com/fbaube/mlog"
-)
-
 // wfnBuildContentityTree is a [fs.WalkDirFunc]
 // 
-// func(path string, d DirEntry, err error) error
-//
 // Altho it returns [*fs.PathError], this has to be declared as error
 // because of the problems of an interface that is both nil and not nil.
 //
 // The basic procedure of the func is is:
-//  - check validity of path argument (and reject if it is a file) 
+//  - handle an error passed in 
+//  - check validity of path argument (and reject if it is a file)
+//  - handle first time thru (i.e. root node) 
 //  - filter out unwanted values (and if unwanted dir, return [fs.SkipDir])
 //  - add to slice - and also map - whether dir or file
 //  - use materialised paths in slice to form links to build a tree 
 //
-// FIXME: Here the variable [CntyFS] is used as a global
-// singleton, which is very dodgy and will cause problems
-// if used in a re-entrant way or with concurrency.
+// FIXME: Note that symlinks might not be handled securely, 
+// not until [os.Root] is used. And even then, they might
+// not be handled correctly. 
 //
-// Note that symlinks are probably not handled correctly. 
-//
-// It filters out several file types:
+// This func filters out several file types:
 //  - hidden (esp'ly .git directory)
 //  - leading underbars ("_")
 //  - emacs backup ("myfile~")
@@ -132,9 +121,7 @@ import (
 func wfnBuildContentityTree(inPath string, inDE fs.DirEntry, inErr error) error {
 */
 e = fs.WalkDir(CntyFS.FS, ".",
-func
-// wfnBuildContentityTree
-(inPath string, inDE fs.DirEntry, inErr error) error {
+func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	// --------------------------
 	//  Were we passed an error?
 	// --------------------------
@@ -144,33 +131,30 @@ func
 	// --------------------
 	//  Set some variables 
 	// --------------------
-	var needInit = CntyFS.mustInitRoot() // first call ? 
-        var inName   = inDE.Name()
-	var inIsDir  = inDE.IsDir()
+	var isFirst = CntyFS.mustInitRoot() // first call ?
+        var inName  = inDE.Name()
+	var inIsDir = inDE.IsDir()
+	// If it's a directory, make sure it has a trailing slash.
+	if inIsDir {
+	   inPath = FU.EnsureTrailingPathSep(inPath)
+	   inName = FU.EnsureTrailingPathSep(inName)
+	}
 	// func [filepath.Abs] fails here cos it needs more than just 
 	// a Base file name cos it does only lexical processing. 
 	// absfp,_ = FP.Abs(path)
 
-	// --------------------
-	//  root must be a dir 
-	// --------------------
-	if !inIsDir { return &fs.PathError { Path:inPath,
-		   	Op:"cntyfswalker.isdir", Err:inErr } }
-	// If it's a directory, make sure it has a trailing slash.
-	// We also used to check for existence, but this is silly
-	// cos the [fs.DirEntry] argument passed in has the info.
-	inPath = FU.EnsureTrailingPathSep(inPath)
-	inName = FU.EnsureTrailingPathSep(inName)
-	L.L.Debug("wfnBuildContentityTree: path: %s / %s", inName, inPath)
-	L.L.Debug("wfnBuildContentityTree: dir: %+v", inDE)
-	
 	// var p *Contentity
 	var e error 
 	// ==================
 	//  HANDLE ROOT NODE 
 	// (without filtering)
 	// ==================
-	if needInit {
+	if isFirst {
+		L.L.Info("CntyFSWalker: inPath: " + inPath)
+	   	if !inIsDir { return &fs.PathError { Path:inPath,
+		   	Op:"cntyfswalker.root", Err:errors.New("not a dir") } }
+		L.L.Debug("cntyfswalker.root: path: %s / %s", inName, inPath)
+		L.L.Debug("cntyfswalker.root: dirEntry: %+v", inDE)
 	   	e = CntyFS.doInitRoot()
 		if e == nil { return nil }
 		return &fs.PathError { Err:e, Path:inPath,
@@ -190,7 +174,8 @@ func
 	//  it's OK ! So let's go ahead and form the path
 	//  of the file-or-dir and make the Contentity
 	// -----------------------------------------------
-	absPathToUse := FP.Join(CntyFS.RootAbsPath(), inPath)
+	absPathToUse := FU.EnsureTrailingPathSep(
+		        FP.Join(CntyFS.RootAbsPath(), inPath))
 	var pCty *Contentity
 	pCty, e = NewContentity(absPathToUse)
 	if pCty == nil || e != nil { 
@@ -288,8 +273,9 @@ func
 		// up with trailing separators. 
 		if pPar, ok = CntyFS.asMapOfAbsFP[itsDir]; !ok {
 			L.L.Error("findParentInMap: failed for: " +
-				itsDir + " of " + pC.RelFP())
-			panic(pC.RelFP())
+				itsDir + " of " + pC.AbsFP())
+			println(fmt.Sprintf("%+v", CntyFS.asMapOfAbsFP))
+			panic(pC.AbsFP())
 		}
 		/*
 		if itsDir != par.AbsFP() { // or, Rel? 
