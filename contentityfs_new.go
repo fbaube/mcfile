@@ -244,6 +244,9 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	//  paths in asMapToAbsFS to identify parent/kid 
 	//  Nord relationships and link together
 	// =========================================
+	// TODO This needs to be in some generalized 
+	// form, such as TreeFromMaterializedPaths
+	// =========================================
 	var i int
 	var pC *Contentity
 	for i, pC = range CntyFS.asSlice {

@@ -37,6 +37,7 @@ type ContentityFS struct {
 	// Probably into the slice, beacsue an "arena" is efficient
 	// and it's what all the cool kids are using. 
 	asMapOfAbsFP   map[string]*Contentity
+	asMapOfRelFP   map[string]*Contentity // TODO! 
 	nItems, nFiles, nDirs int
 }
 
