@@ -8,8 +8,12 @@ var excludePrefixes = []string { ".", "_" }
 
 var excludeContains = []string { ".." }
 
+// We don't necessarily want to exclude JSON 
+// files, but we have to for now because we
+// are auto-generating them as outputs. 
 var excludeSuffixes = []string {
-    "~", ".sh", ".rc", ".bashrc", "gtk", "gtr", "_echo", "_tkns", "_tree" }
+    "~", ".sh", ".rc", ".bashrc", "gtk", "gtr",
+    "_echo", "_tkns", "_tree", ".json" }
 
 // excludeFilenamepath returns true (plus a reason) for a file base
 // name that matches a blacklist for prefix or "midfix" or suffix.

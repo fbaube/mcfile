@@ -190,7 +190,7 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	   	if pCty.FSItem.TypedRaw == nil {
 		   pCty.FSItem.TypedRaw = new(CT.TypedRaw)
 		   } 
-	        pCty.FSItem.Raw_type = SU.Raw_type_DIRLIKE
+	        pCty.FSItem.TypedRaw.Raw_type = SU.Raw_type_DIRLIKE
 		CntyFS.nDirs++ // just a simple counter
 		// println("================ DIR ========")
 		// These next two stmts should barf, cos

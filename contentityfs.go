@@ -107,9 +107,8 @@ func (p *ContentityFS) doInitRoot() error {
 	   // println("Oops, contentityfswalker, newRoot has no TypedRaw")
 	   L.L.Warning("newcontentityfs: newRoot has no TypedRaw, so adding")
 	   pRC.FSItem.TypedRaw = new(CT.TypedRaw)
-	   // TODO? Set its type to DIRLIKE
 	}
-	pRC.FSItem.Raw_type = SU.Raw_type_DIRLIKE
+	pRC.FSItem.TypedRaw.Raw_type = SU.Raw_type_DIRLIKE
 	// println("wfnBuildContentityTree: root node abs.FP:\n\t", p.AbsFP())
 	var pC *Contentity
 	pC = ((*Contentity)(pRC))
