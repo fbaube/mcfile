@@ -68,11 +68,12 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	CntyFS.rootAbsPath = pFPs.AbsFP // path 
 	L.L.Info("Path for new os.DirFS: " + SU.Tildotted(aPath))
 	// 2025.01 TODO Change from os.DirFS to os.Root.FS
-	// var osRoot *os.Root 
-	// osRoot, e = os.OpenRoot(path)
-	// CntyFS.FS = osRoot.FS()
-	println("MCFILE contentityfs_new L70 FIXME os.Root")
-	CntyFS.FS = os.DirFS(pathToUse) 
+	var osRoot *os.Root 
+	osRoot, e = os.OpenRoot(pathToUse)
+	CntyFS.FS = osRoot.FS()
+	println("MCFILE contentityfs_new L70 FIXED? os.Root")
+	// CntyFS.FS = os.DirFS(pathToUse)
+	
 	// Initialize slice & map. Their length 
 	// 0 will be detected by func [mustInit]
 	CntyFS.asSlice = make([]*Contentity, 0)

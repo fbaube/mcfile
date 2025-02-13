@@ -13,7 +13,7 @@ var excludeContains = []string { ".." }
 // are auto-generating them as outputs. 
 var excludeSuffixes = []string {
     "~", ".sh", ".rc", ".bashrc", "gtk", "gtr",
-    "_echo", "_tkns", "_tree", ".json" }
+    "_echo", "_tkns", "_tree", ".tmp.json" }
 
 // excludeFilenamepath returns true (plus a reason) for a file base
 // name that matches a blacklist for prefix or "midfix" or suffix.
