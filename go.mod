@@ -1,6 +1,8 @@
 module github.com/fbaube/mcfile
 
-go 1.23
+go 1.23.0
+
+toolchain go1.24.0
 
 require (
 	github.com/fbaube/contentanalysis v0.0.0-20250202175856-5d87e8d57fb8
@@ -24,18 +26,18 @@ require (
 
 require (
 	github.com/fatih/color v1.18.0 // indirect
-	github.com/fbaube/datarepo v0.0.0-20250203183823-959ec19c1893 // indirect
-	github.com/fbaube/dsmnd v0.0.0-20250203130738-5e11c27a4664 // indirect
+	github.com/fbaube/datarepo v0.0.0-20250302100552-39f7d2264d21 // indirect
+	github.com/fbaube/dsmnd v0.0.0-20250213154432-24143011da5a // indirect
 	github.com/fbaube/humanbytes v0.0.0-20250119091546-d58fbfdd444c // indirect
 	github.com/fbaube/lwdx v0.0.0-20241028093627-8a7133fbc931 // indirect
-	github.com/fbaube/wasmutils v0.0.0-20231209183154-e25018375bc2 // indirect
+	github.com/fbaube/wasmutils v0.0.0-20250302100751-c3d5b233f416 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/gomarkdown/markdown v0.0.0-20250207164621-7a1f277a159e // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-sqlite3 v1.14.24 // indirect
 	github.com/mgutz/str v1.2.0 // indirect
-	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac // indirect
+	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/tools v0.30.0 // indirect
