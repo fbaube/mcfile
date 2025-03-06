@@ -151,7 +151,8 @@ func (p *Contentity) GatherXmlGLinks() *Contentity {
 				// 	pGF.InputFile.FileFullName.Echo(), p.RelFP.S())).AbsFP()
 				s, _ := FP.Abs(FP.Join(p.FSItem.FPs.AbsFP, pGL.RelFP))
 				pGL.AbsFP = FU.AbsFilePath(s)
-				L.L.Debug("URI AbsFP: " + FU.Enhomed(pGL.AbsFP.S()))
+				// L.L.Debug("URI AbsFP: " +
+				// 	FU.Enhomed(pGL.AbsFP.S()))
 			}
 			switch pGL.Att {
 			// Link SOURCES
