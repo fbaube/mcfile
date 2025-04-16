@@ -19,7 +19,6 @@ require (
 	github.com/fbaube/parseutils v0.0.0-20250126182432-3beb8a9f0044
 	github.com/fbaube/stringutils v0.0.0-20250203130909-339670f598f3
 	github.com/fbaube/xmlutils v0.0.0-20250202175952-00276e6317c7
-	github.com/lainio/err2 v1.2.0
 	github.com/nbio/xml v0.0.0-20250127210239-7f9281fed8c6
 	github.com/yuin/goldmark v1.7.8
 )
@@ -35,11 +34,10 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20250207164621-7a1f277a159e // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-sqlite3 v1.14.24 // indirect
 	github.com/mgutz/str v1.2.0 // indirect
 	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7 // indirect
-	golang.org/x/net v0.36.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/tools v0.30.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
