@@ -94,7 +94,7 @@ func (p *ContentityFS) doInitRoot() error {
 	if arp == "" {
 		panic("wfnBuildContentityTree: no ROOT")
 	}
-	println("ROOT PATH: " + arp)
+	L.L.Debug("contentityfs.doinitroot: " + arp)
 	pRC, e = NewRootContentity(arp)
 	if e != nil || pRC == nil { return &fs.PathError { 
 		Err:e, Path:arp, Op:"doinitroot.newrootcontentity" } }

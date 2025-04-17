@@ -47,7 +47,7 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	// --------------------
 	//  Prepare filepath(s)
 	// --------------------
-	println("NewContentityFS: " + aPath)
+	L.L.Info("Making NewContentityFS: " + aPath)
 	pFPs, e = FU.NewFilepaths(aPath)
 	if e != nil {
 	     	// L.L.Error("NewCntyFS: bad path: %s", aPath)
