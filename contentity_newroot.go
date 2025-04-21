@@ -49,14 +49,14 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// ======================
 	// L.L.Info("CHECK-2")
 	var pFSI *FU.FSItem
-	var e error 
-	pFSI, e = FU.NewFSItem(aRootPath)
+	pFSI = FU.NewFSItem(aRootPath)
 	// L.L.Debug("pFSI %p *pFSI %T e %T", pFSI, *pFSI, e)
-	if e != nil || pFSI == nil {
+	if pFSI.HasError() {
 	   // L.L.Info("CHECK-2b")
-	   return nil, &fs.PathError{Op:"NewFSItem",Err:e,Path:aRootPath}
+	   return nil, &fs.PathError{Op:"newrootfsitem",
+	   	  Err:pFSI.GetError(),Path:aRootPath}
 	}
-
+	var e error
 	/*
 	SKIP this part 
 	// =============================

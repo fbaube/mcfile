@@ -47,7 +47,7 @@ func NewContentity(aPath string) (*Contentity, error) {
 	var pFSI *FU.FSItem
 	// If we were passed an Abs.FP, it's okay.
 	if FP.IsAbs(aPath) {
-		pFSI, e = FU.NewFSItem(aPath)
+		pFSI = FU.NewFSItem(aPath)
 	/*
 	} else if !FP.IsAbs(CntyEng.rootPath) {
 	// Else if the 
@@ -59,12 +59,12 @@ func NewContentity(aPath string) (*Contentity, error) {
 	} else {
 		// pFSI, e = FU.NewFSItemRelativeTo(aPath, CntyEng.rootPath)
 		ppp := FP.Join(CntyEng.rootPath, aPath)
-		pFSI, e = FU.NewFSItem(ppp)
+		pFSI = FU.NewFSItem(ppp)
 	}
-	if pFSI == nil { // e != nil {
-	   	println("NewContentity: got nil FSItem LINE 63")
-		return nil, &fs.PathError{Op:"Path-analysis",
-		       Err:e,Path:CntyEng.rootPath}
+	if pFSI.HasError() { 
+	   	println("NewContentity: error at LINE 65")
+		return nil, pFSI.GetError() // &fs.PathError{Op:"Path-analysis",
+		//       Err:e,Path:CntyEng.rootPath}
 	}
 	// =========================
 	//  If it's a directory (or
