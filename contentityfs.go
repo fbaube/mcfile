@@ -89,15 +89,17 @@ func (p *ContentityFS) mustInitRoot() bool {
 
 func (p *ContentityFS) doInitRoot() error {
 	var pRC *RootContentity
-	var e error
 	var arp = FU.EnsureTrailingPathSep(p.RootAbsPath())
 	if arp == "" {
 		panic("wfnBuildContentityTree: no ROOT")
 	}
 	L.L.Debug("contentityfs.doinitroot: " + arp)
-	pRC, e = NewRootContentity(arp)
-	if e != nil || pRC == nil { return &fs.PathError { 
-		Err:e, Path:arp, Op:"doinitroot.newrootcontentity" } }
+	pRC = NewRootContentity(arp)
+	if pRC.HasError() {
+	   	pRC.SetError(&fs.PathError { Err:pRC.GetError(),
+			Path:arp, Op:"doinitroot.newrootcontentity" })
+		return pRC
+	}
 	// assert.That(pRC.IsDir()) SHOULD NOT FAIL, BUT DID
 	// Assign to globals (i.e. package vars)
 	p.rootNord = pRC

@@ -7,7 +7,7 @@ toolchain go1.24.0
 require (
 	github.com/fbaube/contentanalysis v0.0.0-20250202175856-5d87e8d57fb8
 	github.com/fbaube/ctoken v0.0.0-20250202175820-4a3ade2fbe7c
-	github.com/fbaube/fileutils v0.0.0-20250421105025-accbd6796679
+	github.com/fbaube/fileutils v0.0.0-20250421182953-41f5041f32b9
 	github.com/fbaube/gparse v0.0.0-20230421173125-0aaf74eb920c
 	github.com/fbaube/gtoken v0.0.0-20250202180149-400361451572
 	github.com/fbaube/gtree v0.0.0-20250306092915-45070ddabe0e
@@ -27,7 +27,7 @@ require (
 require (
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/fbaube/datarepo v0.0.0-20250417165238-14c6deb2ec2a // indirect
-	github.com/fbaube/dsmnd v0.0.0-20250305202727-066656bb5c6a // indirect
+	github.com/fbaube/dsmnd v0.0.0-20250421183122-a8998ca05628 // indirect
 	github.com/fbaube/humanbytes v0.0.0-20250119091546-d58fbfdd444c // indirect
 	github.com/fbaube/lwdx v0.0.0-20241028093627-8a7133fbc931 // indirect
 	github.com/fbaube/wasmutils v0.0.0-20250302100751-c3d5b233f416 // indirect

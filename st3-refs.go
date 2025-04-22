@@ -18,7 +18,7 @@ func (p *Contentity) st3_Refs() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	p.logStg = "33"
+	p.Lstage = "33"
 	p.L(LDebug, "=== 33:Refs ===")
 	ret := p.DoBlockList().DoGLinks().DoTableOfContents()
 	if !p.HasError() { p.L(LOkay, "=== 33:Refs: Success ===") }

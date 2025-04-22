@@ -38,9 +38,9 @@ func (p *Contentity) st1_Read() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	p.logStg = "11"
+	p.Lstage = "11"
 	p.L(LDebug, "=== 11:Read ===")
-	p.L(LInfo, "@entry: RawType<%s> MType<%s>", p.RawType, p.MType)
+	p.L(LInfo, "@entry: RawType<%s> MType<%s>", p.RawType(), p.MType)
 	ret := p.
 		st1a_ProcessMetadata().
 		st1b_GetCPR().
@@ -58,7 +58,7 @@ func (p *Contentity) st1a_ProcessMetadata() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	p.logStg = "1a"
+	p.Lstage = "1a"
 	
 	var metaRaw string // ctoken.Span 
 	metaRaw = p.Meta.GetSpanOfString(p.FSItem.TypedRaw.S())
@@ -106,7 +106,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	p.logStg = "1b"
+	p.Lstage = "1b"
 
 	var textRaw string // ctoken.Span
 	textRaw = p.Text.GetSpanOfString(p.FSItem.TypedRaw.S())
@@ -116,7 +116,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 	}
 	if len(textRaw) == 0 {
 		p.L(LWarning, "Zero-length content")
-		p.SetError("no content, and/but not previously detected")
+		p.SetErrorString("no content, and/but not previously detected")
 		return p
 	}
 	var e error
@@ -129,7 +129,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 			return p
 		}
 		if pPR == nil {
-			p.SetError("nil ParserResults_mkdn")
+			p.SetErrorString("nil ParserResults_mkdn")
 		}
 		p.ParserResults = pPR
 		p.L(LOkay, "MKDN tokens: got %d", len(pPR.NodeSlice))
@@ -165,7 +165,7 @@ func (p *Contentity) st1b_GetCPR() *Contentity {
 		}
 		return p
 	default:
-		p.SetError("bad file markup type: " +
+		p.SetErrorString("bad file markup type: " +
 			string(p.RawType()))
 	}
 	return p
@@ -179,7 +179,7 @@ func (p *Contentity) st1c_MakeAFLfromCFL() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	p.logStg = "1c"
+	p.Lstage = "1c"
 	var e error
 	var GTs []*gtoken.GToken
 	var common XU.CommonCPR
@@ -289,7 +289,7 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	p.logStg = "1d"
+	p.Lstage = "1d"
 	switch p.RawType() {
 	case SU.Raw_type_MKDN:
 		// Markdown YAML metadata was processed in step st1a

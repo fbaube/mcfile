@@ -20,70 +20,55 @@ type RootContentity Contentity
 // It requires that argument aRootPath is an absolute filepath and
 // is a directory.
 // .
-func NewRootContentity(aRootPath string) (*RootContentity, error) {
+func NewRootContentity(aRootPath string) *RootContentity {
+     	var Empty *RootContentity
+	Empty = new(RootContentity)
 	L.L.Info("NewRootContentity: %s", aRootPath)
 	if aRootPath == "" {
-                return nil, &fs.PathError{Op:"NewRootContentity",
-                       Err:errors.New("Missing path"),Path:"(nil)"}
+                Empty.SetError(&fs.PathError{Op:"NewRootContentity",
+                       Err:errors.New("Missing path"),Path:"(nil)"})
+		return Empty
         }
 	aRootPath = FU.EnsureTrailingPathSep(aRootPath)
 	if !FP.IsAbs(aRootPath) {
-		return nil, &fs.PathError{Op:"NewRootContentity",
+		Empty.SetError(&fs.PathError{Op:"NewRootContentity",
                        Err:errors.New("Not an absolute filepath"),
-		       Path:aRootPath}
+		       Path:aRootPath})
+		return Empty
 	}
 	if !FU.IsDirAndExists(aRootPath) {
-	   	return nil, &fs.PathError{Op:"NewRootContentity",
-                       Err:errors.New("Not a directory"),Path:aRootPath}
+	   	Empty.SetError(&fs.PathError{Op:"NewRootContentity",
+                       Err:errors.New("Not a directory"),Path:aRootPath})
+		return Empty
 	}
 	// L.L.Info("CHECK-1")
 	var pNewCty *RootContentity
 	pNewCty = new(RootContentity)
 	// Global assignment (oops)
 	CntyEng.rootPath = aRootPath
-	/* if CntyEng.nexSeqID != 0 {
-		L.L.Warning("New root cty: seq ID is: %d", CntyEng.nexSeqID)
-	} */
-	// ======================
-	//  Start with an FSItem
-	// ======================
-	// L.L.Info("CHECK-2")
-	var pFSI *FU.FSItem
-	pFSI = FU.NewFSItem(aRootPath)
-	// L.L.Debug("pFSI %p *pFSI %T e %T", pFSI, *pFSI, e)
-	if pFSI.HasError() {
-	   // L.L.Info("CHECK-2b")
-	   return nil, &fs.PathError{Op:"newrootfsitem",
-	   	  Err:pFSI.GetError(),Path:aRootPath}
-	}
-	var e error
-	/*
-	SKIP this part 
-	// =============================
-	//  "Promote" to a PathAnalysis
-	// =============================
-	// NewPathAnalysis returns (nil,nil) for DIRLIKE 
-	pPA, e := CA.NewPathAnalysis(pFSI)
-	if e != nil { // || pPA == nil {
-		L.L.Error("NewRootContentity(PP=>PA)<%s>: %s", aRootPath, e)
-		return nil, fmt.Errorf(
-			"NewRootContentity(PP=>PA)<%s>: %w", aRootPath, e)
-	}
-	*/
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
 	var pCR *m5db.ContentityRow
-	pCR, e = m5db.NewContentityRow(pFSI, nil)
-	if e != nil || pCR == nil {
+	var pFSI *FU.FSItem
+	var e error
+	pFSI = FU.NewFSItem(aRootPath)
+	if pFSI.HasError() {
+                println("NewRootContentity: NewFSI error at LINE 56")
+		Empty.SetError(pFSI.GetError())
+                return Empty
+        }
+	pCR = m5db.NewContentityRow(pFSI, nil)
+	pCR.FSItem = *pFSI
+	pNewCty.ContentityRow = *pCR
+	if pNewCty.HasError() {
 		L.L.Error("NewRootContentity(PA=>CR)<%s>: %s", aRootPath, e)
-		return nil, fmt.Errorf(
-			"NewRootContentity(PA=>CR)<%s>: %w", aRootPath, e)
+		pNewCty.SetError(fmt.Errorf(
+			"NewRootContentity(PA=>CR)<%s>: %w", aRootPath, e))
+		return pNewCty
 	}
 	// L.L.Warning("NewRootCty (PP) %+v", pCR.FSItem)
 	// nil! L.L.Warning("NewRootCty (PA) %+v", *pCR.PathAnalysis)
-	pCR.FSItem = *pFSI
-	pNewCty.ContentityRow = *pCR
 	// ==================================
 	//  Now fill in the ContentityRecord
 	// ==================================
@@ -92,5 +77,5 @@ func NewRootContentity(aRootPath string) (*RootContentity, error) {
 	// fmt.Printf("D=> NewContentity: %s / %s \n", pNewCty.MType, pNewCty.AbsFP())
 
 	pNewCty.Nord = *ON.NewRootNord(aRootPath, nil)
-	return pNewCty, nil
+	return pNewCty 
 }

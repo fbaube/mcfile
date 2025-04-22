@@ -8,26 +8,28 @@ import (
 )
 
 func (p *Contentity) LogPrefix(mid string) string {
-	return fmt.Sprintf("%02d%sst%s", p.logIdx, mid, p.logStg)
+	return fmt.Sprintf("%02d%sst%s", p.Lindex, mid, p.Lstage)
 }
 
 func (p *Contentity) L(level LL, format string, a ...interface{}) {
 	// L.L.Log(level, format, a...)
 	L.L.LogWithString(LU.Level(level), format,
-		fmt.Sprintf("F%02d", p.logIdx)+"|stg"+p.logStg, a...)
+		fmt.Sprintf("F%02d", p.Lindex)+"|stg"+p.Lstage, a...)
 }
 
+/*
 func (p *Contentity) LogTextQuote(level LL, textquote string, format string, a ...interface{}) {
 	// L.L.Log(level, format, a...)
 	L.L.LogWithString(LU.Level(level), format,
-		fmt.Sprintf("%02d", p.logIdx)+","+p.logStg, a...)
+		fmt.Sprintf("%02d", p.Lindex)+","+p.Lstage, a...)
 	panic("FIXME")
 	// L.L.LogMultilineAsIs(SU.IndentWith("   |  ", textquote))
 }
+*/
 
 type LL LU.Level
 
-var /* LDbg, LProgress, */ LDebug, LInfo, LOkay, LWarning, LError, LPanic LL
+var LDebug, LInfo, LOkay, LWarning, LError, LPanic LL
 
 func init() {
 	LDebug = LL(LU.LevelDebug)

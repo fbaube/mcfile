@@ -180,8 +180,8 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	absPathToUse := FU.EnsureTrailingPathSep(
 		        FP.Join(CntyFS.RootAbsPath(), inPath))
 	var pCty *Contentity
-	pCty, e = NewContentity(absPathToUse)
-	if pCty == nil || e != nil { 
+	pCty = NewContentity(absPathToUse)
+	if pCty.HasError() { 
 		L.L.Warning("Rejecting (new Contentity(%s) failed): %T %+v",
 			absPathToUse, e, e)
 		return nil

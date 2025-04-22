@@ -24,7 +24,7 @@ func (p *Contentity) st2_Tree() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	p.logStg = "22"
+	p.Lstage = "22"
 	p.L(LDebug, "=== 22:Tree ===")
 	ret := p.
 		st2a_PrepareToTree().
@@ -43,7 +43,7 @@ func (p *Contentity) st2a_PrepareToTree() *Contentity {
 	if p.HasError() {
 		return p
 	}
-	p.logStg = "2a"
+	p.Lstage = "2a"
 	var e error
 	switch p.RawType() {
 	case SU.Raw_type_XML:

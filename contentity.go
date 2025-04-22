@@ -16,27 +16,27 @@ type ContentityStage func(*Contentity) *Contentity
 // For the record, ignore the API of
 // https://godoc.org/golang.org/x/net/html#Node
 
-// Contentity is awesome.
+// Contentity is awesome. It includes a ContentityRow,
+// which includes an FSItem, which includes an Errer. 
 // .
-type Contentity struct { // has has has has Raw
+type Contentity struct { // has Raw
 
-     	// Nord is where the contents of this Content Item live,
-	// parsed into a CST (Concrete Syntax Tree), which is like 
-	// an AST except that it preserves the text of the content.
+     	// Nord provides hierarchical structure, only.
 	ON.Nord
-
+	// ContentityRow includes all fields what get persisted 
+	// to the DB. It contains the field Raw (deeply embedded),
+	// and also an FSItem that contains an Errer. 
+	m5db.ContentityRow
+	
 	// LogInfo is (the index of the Contentity in 
 	// the larger slice) + (the processing stage ID)
 	LogInfo
-	logIdx int
-	logStg string
+	// logIdx int
+	// logStg string
 	
-	// ContentityRow is what gets persisted to the DB (and has Raw)
-	m5db.ContentityRow
-	// FU.OutputFiles // This was useful at one point
-
 	// ParserResults is parseutils.ParserResults_ffs
-	// (ffs = file format -specific)
+	// (ffs = file format -specific = "html" or "mkdn" but not
+	// "xml" cos Go's XML parser does not produce a tree structure) 
 	ParserResults interface{}
 
 	GTokens      []*gtoken.GToken
@@ -44,8 +44,8 @@ type Contentity struct { // has has has has Raw
 	*gtree.GTree // maybe not need GRootTag or RootOfASTptr
 	GTknsWriter, GTreeWriter,
 	GEchoWriter io.Writer
-
 	GLinks
+
 	// GEnts is "ENTITY"" directives (both with "%" and without).
 	GEnts map[string]*gparse.GEnt
 	// DElms is "ELEMENT" directives.
@@ -53,21 +53,27 @@ type Contentity struct { // has has has has Raw
 
 	TagTally StringTally
 	AttTally StringTally
+
+	// FU.OutputFiles // This was useful at one point
 }
 
-// LogInfo exists mainly to provide a grep'able string -
-// for example "(01:4a)". The [io.Writer] exists outside
-// of the [github.com/fbaube/mlog] logging subsystem and
-// should only be used if `mlog` is not.
-// 
+// LogInfo exists mainly to provide a grep'able string:
+// for example "(01:4a)", where 01 is the index of the
+// Contentity and 4a is the processing stage. This is
+// obv a candidate for replacement by stdlib's slog.
+//
+// The [io.Writer] field W exists outside of the
+// [github.com/fbaube/mlog] logging subsystem 
+// and should only be used if `mlog` is not.
+// .
 type LogInfo struct {
-	index int
-	stage string
+	Lindex int
+	Lstage string
 	W io.Writer
 	}
 
 func (p *LogInfo) String() string {
-     return fmt.Sprintf("(%02d:%s)", p.index, p.stage) 
+     return fmt.Sprintf("(%02d:%s)", p.Lindex, p.Lstage) 
      }
 
 func (p *Contentity) IsDir() bool {

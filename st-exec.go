@@ -56,7 +56,7 @@ func (p *Contentity) ExecuteStages() *Contentity {
 		p.L(LInfo, "Is dir (or similar): skipping")
 		return p
 	}
-	p.logStg = "--"
+	p.Lstage = "--"
 	defer func() {
 		if r := recover(); r != nil {
 		     	fmt.Fprintf(os.Stderr, "RECOVER: %v \n", r) 
