@@ -15,9 +15,6 @@ import (
 	CT "github.com/fbaube/ctoken"
 )
 
-// CntyFS is a global, which is a mistake. 
-// >> var CntyFS *ContentityFS
-
 // NewContentityFS proceeds as follows:
 //  - initialize
 //  - create an [os.DirFS]
@@ -28,7 +25,8 @@ import (
 //    parent/child links
 //
 // The path argument should probably be an absolute filepath, 
-// because a relative filepath might cause problems.
+// because a relative filepath might cause problems. Altho
+// this is the opposite of the advice for lower-level items.
 //
 // It uses the global [CntyFS], which precludes
 // re-entrancy and concurrency.
@@ -38,43 +36,56 @@ import (
 //  - is relative or absolute
 //  - ends with a trailing slash or not
 //  - is a directory or a symlink to a directory
+//
+// The only error returns for this func are:
+//  - a bad path, rejected by func FU.NewFilepaths
+//  - the path is not a directory (altho it can be
+//    a symlnk to a directory ?)
+// ContentityFS does not embed Errer and cannot
+// itself return an error. FIXME: change this ? 
+//
+// Accumulated NewContentity errors are counted
+// in the field CotentityFS.nErrors 
 // .
 func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
      	var CntyFS *ContentityFS
+     	var Empty  *ContentityFS
 	var e error 
 	var pFPs *FU.Filepaths
-	
+	Empty = new(ContentityFS) 
+
 	// --------------------
 	//  Prepare filepath(s)
 	// --------------------
 	L.L.Info("Making NewContentityFS: " + aPath)
 	pFPs, e = FU.NewFilepaths(aPath)
 	if e != nil {
-	     	// L.L.Error("NewCntyFS: bad path: %s", aPath)
-		return nil, &fs.PathError { Path:aPath, Err:e,
+	     	L.L.Error("NewCntyFS: bad path: %s", aPath)
+		ee := &fs.PathError { Path:aPath, Err:e,
 		       Op:"newcntyfs: bad root path" }
+		// Empty.SetError(ee) 
+		return Empty, ee
 	}
 	pathToUse := FU.EnsureTrailingPathSep(aPath)
 	// os.DirFS(..) does not check or report problems
 	// with the path argument, so we DIY here 
 	if !FU.IsDirAndExists(pathToUse) {
-		// L.L.Error("NewCntyFS: Not a directory: %s", path)
-		return nil, &fs.PathError { Path:aPath, Err:errors.New(
+		L.L.Error("NewCntyFS: Not a directory: %s", aPath)
+		ee := &fs.PathError { Path:aPath, Err:errors.New(
 		       "not a valid directory"), Op:"newcntyfs.root" }
+		// Empty.SetError(ee)
+		return Empty, ee
 	}
-	
 	CntyFS = new(ContentityFS)
 	// 2025.01 Change from path to AbsFP
 	CntyFS.rootAbsPath = pFPs.AbsFP // path 
 	L.L.Info("Path for new os.DirFS: " + SU.Tildotted(aPath))
-	// 2025.01 TODO Change from os.DirFS to os.Root.FS
-	/*
+	
 	var osRoot *os.Root 
 	osRoot, e = os.OpenRoot(pathToUse)
 	CntyFS.FS = osRoot.FS()
-	println("MCFILE contentityfs_new L70 FIXED? os.Root")
-	*/
-	CntyFS.FS = os.DirFS(pathToUse)
+	println("contentityfs_new L87 FIXED? os.Root")
+	// CntyFS.FS = os.DirFS(pathToUse)
 	
 	// Initialize slice & map. Their length 
 	// 0 will be detected by func [mustInit]
@@ -91,7 +102,7 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 	// being a global singleton can cause problems.
 // ======================================================================
 //	e = fs.WalkDir(CntyFS.FS, ".", wfnBuildContentityTree)
-/*
+//
 // wfnBuildContentityTree is a [fs.WalkDirFunc]
 // 
 // Altho it returns [*fs.PathError], this has to be declared as error
@@ -121,8 +132,8 @@ func NewContentityFS(aPath string, okayFilexts []string) (*ContentityFS, error){
 //
 // Note that as path separator, "/" is usually assumed, not [os.PathSep]. 
 // .
-func wfnBuildContentityTree(inPath string, inDE fs.DirEntry, inErr error) error {
-*/
+// wfnBuildContentityTree(inPath string, inDE fs.DirEntry, inErr error) error {
+// ======================================================================
 e = fs.WalkDir(CntyFS.FS, ".",
 func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	// --------------------------
@@ -136,9 +147,9 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	// --------------------
 	var isFirst = CntyFS.mustInitRoot() // first call ?
         var inName  = inDE.Name()
-	var inIsDir = inDE.IsDir()
+	var inDEisDir = inDE.IsDir()
 	// If it's a directory, make sure it has a trailing slash.
-	if inIsDir {
+	if inDEisDir {
 	   inPath = FU.EnsureTrailingPathSep(inPath)
 	   inName = FU.EnsureTrailingPathSep(inName)
 	}
@@ -154,7 +165,7 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	// ==================
 	if isFirst {
 		L.L.Info("CntyFSWalker: inPath: " + inPath)
-	   	if !inIsDir { return &fs.PathError { Path:inPath,
+	   	if !inDEisDir { return &fs.PathError { Path:inPath,
 		   	Op:"cntyfswalker.root", Err:errors.New("not a dir") } }
 		L.L.Debug("cntyfswalker.root: path: %s / %s", inName, inPath)
 		L.L.Debug("cntyfswalker.root: dirEntry: %+v", inDE)
@@ -169,7 +180,7 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	bad, rsn := excludeFilenamepath(inPath)
 	if bad {
 		L.L.Debug("Rejecting (%s): %s", inPath, rsn)
-		if inIsDir { return fs.SkipDir } 
+		if inDEisDir { return fs.SkipDir } 
 		return nil
 	}
 	// -----------------------------------------------
@@ -184,12 +195,18 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	if pCty.HasError() { 
 		L.L.Warning("Rejecting (new Contentity(%s) failed): %T %+v",
 			absPathToUse, e, e)
+		CntyFS.nErrors++
 		return nil
 	}
-	// This is where bugs have appeared when it's a directory,
-	// because other code was assuming a Contentity.
+	// ================================
+	//  Now we do things based on just 
+	//  what exactly the input DirEntry
+	//  (inDE) is - file, dir, wotevs.
+	// ================================
+	// This is where bugs appeared when it's a directory,
+	// cos calling code was assuming a valid Contentity.
 	// TODO: Not sure what happens with symlinks
-	if inIsDir {
+	if inDEisDir {
 	   	if pCty.FSItem.TypedRaw == nil {
 		   pCty.FSItem.TypedRaw = new(CT.TypedRaw)
 		   } 
@@ -200,11 +217,20 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 		// they should not be allocated for a dir !
 		// p.MimeType = "dir"
 		// p.MType = SU.MU_type_DIRLIKE
-		L.L.Okay("Item (DIR) OK; CntyPtr nil") // : MType<%s>", pCty.MType)
-	} else { // non-dir 
+		L.L.Okay("Item (DIR/) OK; no MmeType or MType") 
+	} else if inDE.Type() == 0 { // regular file
 		CntyFS.nFiles++ // just a simple counter 
-		L.L.Okay("Item OK: MType<%s> MarkupType<%s>",
+		L.L.Okay("Item (FILE) OK: MType<%s> MarkupType<%s>",
 			pCty.MType, pCty.RawType())
+	} else if (inDE.Type() & fs.ModeSymlink) != 0 { // Symlink
+	        pCty.FSItem.TypedRaw.Raw_type = SU.Raw_type_DIRLIKE
+		CntyFS.nMiscs++ // just a simple counter 
+		L.L.Okay("Item (SYML) OK: what to do ?!")
+	} else { // Some weirdness in the Mode bits 
+	        pCty.FSItem.TypedRaw.Raw_type = SU.Raw_type_DIRLIKE
+             // CntyFS.nMiscs++ // just a simple counter
+		CntyFS.nErrors++
+                L.L.Error("Item (WTF) BAD: what to do ?!")
 	}
 	// -------------------------
 	//   Also add it to the
@@ -212,7 +238,7 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	// -------------------------
 	CntyFS.asSlice = append(CntyFS.asSlice, pCty)
 	CntyFS.asMapOfAbsFP[absPathToUse] = pCty
-	// L.L.Info("ADDED TO MAP L227: " + pathToUse)
+	// L.L.Info("ADDED TO MAP L241: " + pathToUse)
 	return nil
 })
 // ======================================================================
@@ -241,12 +267,12 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 	    }
 	}
 
-	// =========================================
+	// ==============================================
 	//      SECOND PASS
 	//  Range over the slice, using the materialised
 	//  paths in asMapToAbsFS to identify parent/kid 
 	//  Nord relationships and link together
-	// =========================================
+	// ==============================================
 	// TODO This needs to be in some generalized 
 	// form, such as TreeFromMaterializedPaths
 	// =========================================

@@ -38,7 +38,7 @@ type ContentityFS struct {
 	// and it's what all the cool kids are using. 
 	asMapOfAbsFP   map[string]*Contentity
 	asMapOfRelFP   map[string]*Contentity // TODO! 
-	nItems, nFiles, nDirs int
+	nItems, nFiles, nDirs, nMiscs, nErrors int
 }
 
 func (p *ContentityFS) ItemCount() int {
