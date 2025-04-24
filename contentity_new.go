@@ -19,6 +19,15 @@ import (
 // It should accept either an absolute or a relative filepath, altho
 // relative is preferred, for various reasons, mainly because of the
 // preferences of the path and filepath stdlibs.
+//
+// TODO: Maybe it needs two boolean arguments:
+//  - One to say whether to be strict about security (using [os.Root]
+//    and Valid/Local, and
+//  - One to say whether to follow symlinks.
+// These two flags might have some interesting interactions.
+// Since this func could (but does not) use [os.Root], these can be
+// left as calling options, rather than implementing higher security	
+// using funcs [io/fs.ValidPath] and [path/filepath.IsLocal].
 // 
 // We want everything to be in a nice tree of Nords, and it means that
 // we have to create Contenties for directories too (where `Raw_type

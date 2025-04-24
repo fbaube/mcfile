@@ -41,8 +41,18 @@ import (
 //  - a bad path, rejected by func FU.NewFilepaths
 //  - the path is not a directory (altho it can be
 //    a symlnk to a directory ?)
+//  - TBD: WHat happens of [os.Root] barfs on something ? 
 // ContentityFS does not embed Errer and cannot
 // itself return an error. FIXME: change this ? 
+//
+// TODO: Maybe it needs two boolean arguments:
+//  - One to say whether to be strict about security (using [os.Root]
+//    and Valid/Local, and
+//  - One to say whether to follow symlinks.
+// These two flags might have some interesting interactions.
+// OTOH since this func can (and does?) use [os.Root], it can 
+// easily (and should probably) also default to higher security 
+// using funcs [io/fs.ValidPath] and [path/filepath.IsLocal].
 //
 // Accumulated NewContentity errors are counted
 // in the field CotentityFS.nErrors 
