@@ -233,7 +233,10 @@ func(inPath string, inDE fs.DirEntry, inErr error) error { // fs.WalkDirFunc
 		L.L.Okay("Item (FILE) OK: MType<%s> MarkupType<%s>",
 			pCty.MType, pCty.RawType())
 	} else if (inDE.Type() & fs.ModeSymlink) != 0 { // Symlink
-	        pCty.FSItem.TypedRaw.Raw_type = SU.Raw_type_DIRLIKE
+	       	if pCty.FSItem.TypedRaw == nil {
+		   pCty.FSItem.TypedRaw = new(CT.TypedRaw)
+		}
+	        pCty.FSItem.TypedRaw.Raw_type = SU.Raw_type_DIRLIKE // OOPS
 		CntyFS.nMiscs++ // just a simple counter 
 		L.L.Okay("Item (SYML) OK: what to do ?!")
 	} else { // Some weirdness in the Mode bits 
