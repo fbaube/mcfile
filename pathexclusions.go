@@ -12,12 +12,15 @@ var excludeContains = []string { ".." }
 // files, but we have to for now because we
 // are auto-generating them as outputs. 
 var excludeSuffixes = []string {
-    "~", ".sh", ".rc", ".bashrc", "gtk", "gtr",
+    "~", ".env", ".sh", ".rc", ".bashrc", "gtk", "gtr",
     "_echo", "_tkns", "_tree", ".tmp.json" }
 
 // excludeFilenamepath returns true (plus a reason) for a file base
 // name that matches a blacklist for prefix or "midfix" or suffix.
-// Excluded prefixes are also checked for following a path separator.
+//  - Excluded prefixes must follow a path separator; this rule should
+//    allow "." and "./" 8only( to pass thru unexcluded / unmolested.
+//  - Excluded suffixes apply to all names, but will not apply to 
+//    a directory name that has a path separator appended. 
 func excludeFilenamepath(s string) (bool, string) {
      var reason string  
      for _, pfx := range excludePrefixes {

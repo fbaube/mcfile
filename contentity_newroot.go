@@ -68,7 +68,7 @@ func NewRootContentity(aRootPath string) *RootContentity {
 		return pNewCty
 	}
 	// L.L.Warning("NewRootCty (PP) %+v", pCR.FSItem)
-	// nil! L.L.Warning("NewRootCty (PA) %+v", *pCR.PathAnalysis)
+	// nil! L.L.Warning("NewRootCty (CA) %+v", *pCR.ContentAnalysis)
 	// ==================================
 	//  Now fill in the ContentityRecord
 	// ==================================

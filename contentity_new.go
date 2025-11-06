@@ -56,7 +56,7 @@ func NewContentity(aPath string) *Contentity {
 	var pC       *Contentity
 	var pCR *m5db.ContentityRow
 	var pFSI  *FU.FSItem
-	var pPA   *CA.PathAnalysis
+	var pCA   *CA.ContentAnalysis
 	
 	pC = new(Contentity)
 	pC.Nord = *ON.NewNord(aPath)
@@ -84,7 +84,7 @@ func NewContentity(aPath string) *Contentity {
 	// ======================================
 	//  If it's a directory (or similar,
 	//  such as symlink) we handle it here
-	//  cos we don't need to do PathAnalysis. 
+	//  cos we don't need to do ContentAnalysis. 
 	// ======================================
 	if pFSI.IsDirlike() {
 	   	// This should fail only if the item does not exist.
@@ -110,22 +110,22 @@ func NewContentity(aPath string) *Contentity {
 	   return pC
 	}
 	// =============================
-	//  "Promote" to a PathAnalysis
+	//  "Promote" to a ContentAnalysis
 	// =============================
-	// NewPathAnalysis return (nil,nil) for DIRLIKE 
-	pPA, e = CA.NewPathAnalysis(pFSI)
+	// NewContentAnalysis return (nil,nil) for DIRLIKE 
+	pCA, e = CA.NewContentAnalysis(pFSI)
 	if e != nil { 
 	   L.L.Error("NewContentity(PP=>PA)<%s>: %s", aPath, e)
 	   println("LINE 110")
-	   pC.SetError(&fs.PathError{Op:"FSI.NewPathAnalysis.(PP=>PA)",
+	   pC.SetError(&fs.PathError{Op:"FSI.NewContentAnalysis.(PP=>PA)",
 	       Err:e,Path:aPath})
 	   return pC
 	}
-	if pPA == nil { panic("WTF") }
+	if pCA == nil { panic("WTF") }
 	// =================================
 	//  "Promote" to a ContentityRecord
 	// =================================
-	pCR = m5db.NewContentityRow(pFSI, pPA)
+	pCR = m5db.NewContentityRow(pFSI, pCA)
 	if pCR.HasError() {
 		L.L.Error("NewContentity(PA=>CR)<%s>: %s", aPath, e)
 	   	println("LINE 122")

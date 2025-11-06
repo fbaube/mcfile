@@ -305,7 +305,7 @@ func (p *Contentity) st1d_PostMeta_notmkdn() *Contentity {
 	case SU.Raw_type_XML:
 		// [Lw]DITA stuff, ?DublinCore
 		p.L(LWarning, "cty.st1.TODO: SetMTypePerDoctypeFields:")
-		p.L(LWarning, "     \\ "+p.PathAnalysis.String())
+		p.L(LWarning, "     \\ "+p.ContentAnalysis.String())
 
 	}
 	return p
